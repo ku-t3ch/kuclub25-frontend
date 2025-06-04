@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+
 import { Kanit, Mitr } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "../contexts/ThemeContext";
@@ -20,10 +20,7 @@ const mitr = Mitr({
   display: 'swap'
 });
 
-export const metadata: Metadata = {
-  title: "KU Club | ชมรมมหาวิทยาลัยเกษตรศาสตร์",
-  description: "ค้นพบและเข้าร่วมชมรมที่ใช่สำหรับคุณ มากกว่า 100 ชมรมรอคุณอยู่",
-};
+
 
 export default function RootLayout({
   children,

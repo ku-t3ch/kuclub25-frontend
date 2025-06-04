@@ -1,5 +1,5 @@
 export interface OrganizationType {
-  id: number;
+  id: string;
   name: string;
 }
 
