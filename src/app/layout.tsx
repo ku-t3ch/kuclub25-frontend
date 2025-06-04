@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Kanit, Mitr } from "next/font/google";
-import "../styles/globals.css";
+import "./globals.css";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { AuthProvider } from "../contexts/AuthContext";
 import Navbar from "../components/layout/Navbar";

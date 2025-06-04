@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
-import Logo from "../../assets/images/logo.png"; // ปรับ path ตามที่มีอยู่จริง
+import Logo from "../../assets/logo.png";
 
 // Memoized icon components to prevent re-renders
 const SunIcon = React.memo(() => (
