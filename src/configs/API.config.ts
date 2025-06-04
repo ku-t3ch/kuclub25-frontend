@@ -1,8 +1,8 @@
 export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
-  PREFIX: process.env.NEXT_API_PREFIX || '/api',
+  PREFIX: process.env.NEXT_PUBLIC_API_PREFIX || '/api',
   CLIENT_SECRET: process.env.NEXT_PUBLIC_CLIENT_SECRET || '',
-  TIMEOUT: 10000,
+  TIMEOUT: 10000, 
   
   // Endpoints
   ENDPOINTS: {

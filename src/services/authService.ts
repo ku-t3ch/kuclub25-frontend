@@ -28,10 +28,11 @@ export class AuthService {
   }
 
   private async requestNewToken(): Promise<string> {
-    const clientSecret = process.env.NEXT_CLIENT_SECRET || '';
+    // ใช้ NEXT_PUBLIC_CLIENT_SECRET สำหรับ client-side
+    const clientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET || '';
     
     if (!clientSecret) {
-      throw new Error('Client secret not configured');
+      throw new Error('Client secret not configured. Please set NEXT_PUBLIC_CLIENT_SECRET in your .env file');
     }
 
     try {
