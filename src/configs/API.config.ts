@@ -9,6 +9,10 @@ export const API_CONFIG = {
     AUTH: {
       GET_TOKEN: '/auth/get-token',
     },
+     ORGANIZATION_TYPES: {
+      LIST: '/organization-types',
+      DETAIL: (id: number) => `/organization-types/${id}`,
+    },
     ORGANIZATIONS: {
       LIST: '/organizations',
       DETAIL: (id: number) => `/organizations/${id}`,
@@ -18,14 +22,12 @@ export const API_CONFIG = {
       LIST: '/projects',
       DETAIL: (id: number) => `/projects/${id}`,
     },
+    
     // CAMPUSES: {
     //   LIST: '/campuses',
     //   DETAIL: (id: number) => `/campuses/${id}`,
     // },
-    // ORGANIZATION_TYPES: {
-    //   LIST: '/organization-types',
-    //   DETAIL: (id: number) => `/organization-types/${id}`,
-    // },
+
   }, 
   
   // Headers
