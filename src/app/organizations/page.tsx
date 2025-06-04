@@ -1,94 +1,14 @@
-"use client";
-
-import React, { useState, useMemo } from "react";
-import { useTheme } from "../contexts/ThemeContext";
-import { useOrganizationTypes } from "../hooks/useOrganizationType";
-import { useOrganizations } from "../hooks/useOrganization";
-import HeroSection from "../components/home/heroSection";
-import CategorySection from "../components/home/categorySection";
-import OrganizationSection from "../components/home/organizationSection";
-
-export default function Home() {
-  const { resolvedTheme } = useTheme();
-  const { organizationTypes, loading: typesLoading } = useOrganizationTypes();
-  const { organizations, loading: orgsLoading } = useOrganizations();
-  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
-
-  const combine = (...classes: string[]) => {
-    return classes.filter(Boolean).join(" ");
-  };
-
-  const getValueForTheme = (darkValue: string, lightValue: string) => {
-    return resolvedTheme === "dark" ? darkValue : lightValue;
-  };
-
-  // สร้าง categories จาก organization types และใช้ name เป็น id
-  const categories = useMemo(() => {
-    const allCategory = { id: undefined, name: "ทั้งหมด" };
-    const typeCategories = organizationTypes.map(type => ({
-      id: type.name,
-      name: type.name
-    }));
-    
-    return [allCategory, ...typeCategories];
-  }, [organizationTypes]);
-
-  const totalClubCount = useMemo(() => {
-    return organizations.length;
-  }, [organizations]);
-
-  // Filter organizations based on active category (type name)
-  const filteredOrganizations = useMemo(() => {
-    if (activeCategory === undefined) {
-      return organizations; // Show all
-    }
-    
-    return organizations.filter(org => {
-      const orgTypeName = org.org_type_name;
-      return orgTypeName === activeCategory;
-    });
-  }, [organizations, activeCategory]);
-
-  const handleCategoryChange = (categoryName: string | undefined) => {
-    setActiveCategory(categoryName);
-  };
-
-  // Loading state is true if either types or organizations are loading
-  const loading = typesLoading || orgsLoading;
-
+import React from 'react';
+export default function OrganizationsPage() {
   return (
-    <div
-      className={combine(
-        "min-h-screen pt-16 md:pt-20",
-        getValueForTheme(
-          "bg-gradient-to-b from-[#051D35] to-[#091428]",
-          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-        )
-      )}
-    >
-      <HeroSection
-        title="ค้นพบชมรมที่ใช่สำหรับคุณ"
-        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
-      />
-
-      <div className="h-8 md:h-12"/>
-      
-      <CategorySection
-        categories={categories}
-        activeCategory={activeCategory}
-        totalClubCount={totalClubCount}
-        loading={loading}
-        onCategoryChange={handleCategoryChange}
-      />
-
-      <OrganizationSection
-        organizations={organizations}
-        filteredOrganizations={filteredOrganizations}
-        activeCategory={activeCategory}
-        categories={categories}
-        loading={loading}
-        onCategoryChange={handleCategoryChange}
-      />
-    </div>
+    <main className="min-h-screen pt-16 md:pt-20">
+      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <h1 className="text-3xl font-bold text-center mb-8">ชมรม</h1>
+        {/* เนื้อหาของหน้าชมรม */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Organization cards จะอยู่ที่นี่ */}
+        </div>
+      </div>
+    </main>
   );
 }

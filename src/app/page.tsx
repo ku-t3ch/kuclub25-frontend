@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
@@ -13,6 +13,8 @@ export default function Home() {
   const { organizationTypes, loading: typesLoading } = useOrganizationTypes();
   const { organizations, loading: orgsLoading } = useOrganizations();
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const combine = (...classes: string[]) => {
     return classes.filter(Boolean).join(" ");
@@ -37,23 +39,69 @@ export default function Home() {
     return organizations.length;
   }, [organizations]);
 
-  // Filter organizations based on active category (type name)
-  const filteredOrganizations = useMemo(() => {
-    if (activeCategory === undefined) {
-      return organizations; // Show all
-    }
+  // Improved search function with Thai text support
+  const searchOrganizations = useCallback((query: string, orgs: typeof organizations) => {
+    if (!query.trim()) return orgs;
+
+    const searchTerm = query.toLowerCase().trim();
     
-    return organizations.filter(org => {
-      const orgTypeName = org.org_type_name;
-      return orgTypeName === activeCategory;
+    return orgs.filter(org => {
+      const thaiName = org.orgnameth?.toLowerCase() || '';
+      const englishName = org.orgnameen?.toLowerCase() || '';
+      const nickname = org.org_nickname?.toLowerCase() || '';
+      const description = org.description?.toLowerCase() || '';
+      const orgType = org.org_type_name?.toLowerCase() || '';
+
+      return (
+        thaiName.includes(searchTerm) ||
+        englishName.includes(searchTerm) ||
+        nickname.includes(searchTerm) ||
+        description.includes(searchTerm) ||
+        orgType.includes(searchTerm)
+      );
     });
-  }, [organizations, activeCategory]);
+  }, []);
 
-  const handleCategoryChange = (categoryName: string | undefined) => {
+  // Filter organizations based on active category and search query
+  const filteredOrganizations = useMemo(() => {
+    let filtered = organizations;
+
+    // Apply search filter first if there's a search query
+    if (searchQuery.trim()) {
+      filtered = searchOrganizations(searchQuery, filtered);
+    }
+
+    // Then apply category filter if a category is selected
+    if (activeCategory !== undefined) {
+      filtered = filtered.filter(org => {
+        return org.org_type_name === activeCategory;
+      });
+    }
+
+    return filtered;
+  }, [organizations, activeCategory, searchQuery, searchOrganizations]);
+
+  const handleCategoryChange = useCallback((categoryName: string | undefined) => {
     setActiveCategory(categoryName);
-  };
+  }, []);
 
-  // Loading state is true if either types or organizations are loading
+  const handleSearch = useCallback((query: string) => {
+    setIsSearching(true);
+    
+    // Simulate search delay for better UX
+    setTimeout(() => {
+      setSearchQuery(query);
+      
+      // Reset category when searching to show all matching results
+      if (query.trim()) {
+        setActiveCategory(undefined);
+      }
+      
+      setIsSearching(false);
+    }, 300);
+  }, []);
+
+  // Loading state is true if either types or organizations are loading or if searching
   const loading = typesLoading || orgsLoading;
 
   return (
@@ -69,6 +117,9 @@ export default function Home() {
       <HeroSection
         title="ค้นพบชมรมที่ใช่สำหรับคุณ"
         description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
+        onSearch={handleSearch}
+        initialQuery={searchQuery}
+        isLoading={isSearching}
       />
 
       <div className="h-8 md:h-12"/>
@@ -76,7 +127,7 @@ export default function Home() {
       <CategorySection
         categories={categories}
         activeCategory={activeCategory}
-        totalClubCount={totalClubCount}
+        totalClubCount={searchQuery ? filteredOrganizations.length : totalClubCount}
         loading={loading}
         onCategoryChange={handleCategoryChange}
       />
@@ -86,7 +137,7 @@ export default function Home() {
         filteredOrganizations={filteredOrganizations}
         activeCategory={activeCategory}
         categories={categories}
-        loading={loading}
+        loading={loading || isSearching}
         onCategoryChange={handleCategoryChange}
       />
     </div>
