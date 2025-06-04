@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Mitr:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=Comfortaa:wght@300;400;500;600;700&display=swap');
+
+* {
+  font-family: 'Kanit', 'Mitr', 'Nunito', 'Quicksand', system-ui, sans-serif;
+}
+
+body {
+  font-family: 'Kanit', 'Mitr', 'Nunito', 'Quicksand', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Mitr', 'Kanit', 'Nunito', system-ui, sans-serif;
+}
+
+button {
+  font-family: 'Kanit', 'Mitr', 'Nunito', system-ui, sans-serif;
+}
