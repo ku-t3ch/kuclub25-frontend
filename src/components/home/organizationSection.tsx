@@ -9,10 +9,10 @@ import { Organization } from "../../types/organization";
 interface OrganizationSectionProps {
   organizations: Organization[];
   filteredOrganizations: Organization[];
-  activeCategory: string | undefined; // เปลี่ยนเป็น string
-  categories: Array<{ id: string | undefined; name: string }>; // เปลี่ยนเป็น string
+  activeCategory: string | undefined;
+  categories: Array<{ id: string | undefined; name: string }>;
   loading: boolean;
-  onCategoryChange: (categoryId: string | undefined) => void; // เปลี่ยนเป็น string
+  onCategoryChange: (categoryId: string | undefined) => void;
 }
 
 const OrganizationSection: React.FC<OrganizationSectionProps> = ({
@@ -184,13 +184,13 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
               "text-xl font-semibold mb-2",
               getValueForTheme("text-white", "text-gray-900")
             )}>
-              ไม่พบชมรมในหมวดหมู่นี้
+              ไม่พบชมรมในการค้นหานี้
             </h3>
             <p className={combine(
               "text-sm max-w-md mx-auto mb-6",
               getValueForTheme("text-gray-300", "text-gray-600")
             )}>
-              ลองเลือกหมวดหมู่อื่น หรือดูชมรมทั้งหมดเพื่อค้นพบชมรมที่น่าสนใจ
+              ลองใช้คำค้นหาอื่น หรือเลือกหมวดหมู่ต่างๆ เพื่อค้นพบชมรมที่น่าสนใจ
             </p>
             <motion.button
               onClick={() => onCategoryChange(undefined)}
