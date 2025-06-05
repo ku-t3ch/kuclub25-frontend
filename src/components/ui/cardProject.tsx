@@ -1,0 +1,415 @@
+import React, { useMemo, useCallback } from "react";
+import { useThemeUtils } from "../../hooks/useThemeUtils";
+import { formatDateForDisplay } from "../../utils/formatdate";
+import { Project } from "../../types/project";
+import { ACTIVITY_LABELS, ACTIVITY_COLORS } from "../../constants/activity";
+import ProjectCardDateDisplay from "./dateDisplay";
+
+interface ProjectCardProps {
+  project: Project;
+  onClick?: (project: Project) => void;
+}
+
+interface ActivityTag {
+  type: string;
+  key: keyof typeof ACTIVITY_COLORS;
+  typeColor: 'purple' | 'orange' | 'emerald' | 'default';
+}
+
+const ALLOWED_ACTIVITY_TYPES = [
+  "competency_development_activities",
+  "social_activities",
+  "university_activities",
+] as const;
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
+  const { getValueForTheme, combine } = useThemeUtils();
+
+  // Extract and process project data
+  const projectData = useMemo(() => {
+    const startDate = project.date_start_the_project || project.date_start;
+    const endDate = project.date_end_the_project || project.date_end;
+
+    return {
+      orgName: project.org_nickname || project.org_name_th || project.org_name_en || "",
+      isMultiDayProject: Boolean(
+        startDate && 
+        endDate && 
+        new Date(startDate).toDateString() !== new Date(endDate).toDateString()
+      ),
+      displayName: project.project_name_th || project.name_th || 
+                   project.project_name_en || project.name_en || 
+                   "ไม่ระบุชื่อโครงการ",
+      displayLocation: typeof project.schedule === "object" && project.schedule?.location
+        ? project.schedule.location
+        : project.project_location || project.location || "ไม่ระบุสถานที่",
+      startDate,
+      endDate,
+      displayMonth: startDate 
+        ? new Date(startDate).toLocaleString("th-TH", { month: "short" })
+        : "?",
+      displayDay: startDate ? new Date(startDate).getDate().toString() : "?",
+      displayEndDay: endDate ? new Date(endDate).getDate().toString() : null,
+    };
+  }, [project]);
+
+  // Process activity hours into activity tags
+  const activityTags = useMemo((): ActivityTag[] => {
+    if (!project.activity_hours || 
+        typeof project.activity_hours !== "object" || 
+        Array.isArray(project.activity_hours)) {
+      return [];
+    }
+
+    const activities: ActivityTag[] = [];
+
+    Object.entries(project.activity_hours).forEach(([key, value]) => {
+      if (key === "__proto__") return;
+
+      // Handle nested competency_development_activities
+      if (key === "competency_development_activities" && 
+          typeof value === "object" && 
+          value !== null && 
+          !Array.isArray(value)) {
+        
+        const totalHours = Object.values(value as Record<string, number>)
+          .filter((hours): hours is number => typeof hours === "number" && hours > 0)
+          .reduce((sum, hours) => sum + hours, 0);
+
+        if (totalHours > 0) {
+          activities.push({
+            type: ACTIVITY_LABELS[key] || key.replace(/_/g, " "),
+            key: key as keyof typeof ACTIVITY_COLORS,
+            typeColor: 'purple'
+          });
+        }
+      } 
+      // Handle direct activity types
+      else if (ALLOWED_ACTIVITY_TYPES.includes(key as any) && 
+               typeof value === "number" && 
+               value > 0) {
+        
+        const typeColor = key === 'social_activities' ? 'orange' :
+                         key === 'university_activities' ? 'emerald' : 'default';
+        
+        activities.push({
+          type: ACTIVITY_LABELS[key as keyof typeof ACTIVITY_LABELS] || 
+                key.replace(/_/g, " "),
+          key: key as keyof typeof ACTIVITY_COLORS,
+          typeColor
+        });
+      }
+    });
+
+    return activities;
+  }, [project.activity_hours]);
+
+  // Format date range for display
+  const dateRange = useMemo(() => {
+    if (!projectData.startDate && !projectData.endDate) {
+      return "ไม่ระบุวันที่";
+    }
+
+    const start = formatDateForDisplay(projectData.startDate);
+    const end = formatDateForDisplay(projectData.endDate);
+
+    return start === end || !end ? start : `${start} - ${end}`;
+  }, [projectData.startDate, projectData.endDate]);
+
+  // Theme styles configuration
+  const styles = useMemo(() => ({
+    card: getValueForTheme(
+      "bg-gradient-to-b from-white/5 to-white/3 border border-white/10 hover:border-blue-400/30",
+      "bg-white border border-gray-100 hover:border-primary/20"
+    ),
+    orgIcon: getValueForTheme("text-blue-300/90", "text-primary/80"),
+    title: getValueForTheme(
+      "text-white group-hover:text-blue-100",
+      "text-gray-800 group-hover:text-primary"
+    ),
+    dateBg: getValueForTheme(
+      "bg-gradient-to-br from-blue-500/70 to-indigo-600/70 border border-blue-400/20",
+      "bg-gradient-to-br from-primary/80 to-teal-600/70 border border-primary/20"
+    ),
+    dateHover: getValueForTheme(
+      "group-hover:from-blue-500/80 group-hover:to-indigo-600/80",
+      "group-hover:from-primary/90 group-hover:to-teal-500/80"
+    ),
+    details: getValueForTheme(
+      "text-white/70 group-hover:text-blue-200/90",
+      "text-gray-500 group-hover:text-primary/80"
+    ),
+    iconBg: getValueForTheme(
+      "bg-blue-500/10 text-blue-400/80",
+      "bg-primary/5 text-primary/60"
+    ),
+    button: getValueForTheme(
+      "bg-gradient-to-r from-blue-800/20 to-indigo-800/20 hover:from-blue-700/30 hover:to-indigo-700/30",
+      "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary/5 hover:to-primary/10"
+    ),
+    buttonBorder: getValueForTheme(
+      "border-white/5 hover:border-blue-400/10",
+      "border-gray-100 hover:border-primary/10"
+    ),
+    buttonText: getValueForTheme(
+      "text-white/70 hover:text-white/90",
+      "text-gray-500 hover:text-primary"
+    ),
+    buttonIcon: getValueForTheme(
+      "text-blue-300/70 group-hover:text-blue-200",
+      "text-primary/50 group-hover:text-primary"
+    ),
+  }), [getValueForTheme]);
+
+  // Event handlers
+  const handleClick = useCallback(() => onClick?.(project), [onClick, project]);
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
+
+  const handleButtonClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleClick();
+  }, [handleClick]);
+
+  // Activity Tag Colors
+  const getTagColors = useCallback((typeColor: string) => {
+    const theme = getValueForTheme('dark', 'light');
+    const colorMap = {
+      purple: theme === 'dark' 
+        ? "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30"
+        : "bg-purple-50 text-blue-600 ring-1 ring-blue-200",
+      emerald: theme === 'dark'
+        ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30"
+        : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200",
+      orange: theme === 'dark'
+        ? "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30"
+        : "bg-orange-50 text-orange-600 ring-1 ring-orange-200",
+      default: theme === 'dark'
+        ? "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30"
+        : "bg-gray-50 text-gray-600 ring-1 ring-gray-200"
+    };
+    return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
+  }, [getValueForTheme]);
+
+  return (
+    <div
+      className={combine(
+        "h-full flex flex-col overflow-hidden group cursor-pointer",
+        "backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
+        styles.card
+      )}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      aria-label={`ดูรายละเอียด ${projectData.displayName}`}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="flex flex-col h-full relative">
+        {/* Main Content */}
+        <div className="flex p-2 sm:p-3 md:p-4 items-start gap-2 sm:gap-3 md:gap-4 relative z-10 flex-grow">
+          
+          {/* Date Display */}
+          <div
+            className={combine(
+              "flex-shrink-0 rounded-lg p-1.5 sm:p-2 md:p-3 text-center",
+              "min-w-[3.5rem] sm:min-w-[4rem] md:min-w-[5rem] shadow-sm",
+              "transition-all duration-300",
+              styles.dateBg,
+              styles.dateHover
+            )}
+          >
+            <div className="text-white/90 text-3xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
+              {projectData.displayMonth}
+            </div>
+            <ProjectCardDateDisplay
+              isMultiDayProject={projectData.isMultiDayProject}
+              startDateTime={projectData.startDate ? new Date(projectData.startDate) : undefined}
+              endDateTime={projectData.endDate ? new Date(projectData.endDate) : undefined}
+              dayStart={projectData.displayDay}
+              dayEnd={projectData.displayEndDay}
+              day={projectData.displayDay}
+            />
+          </div>
+
+          {/* Content Section */}
+          <div className="flex-grow">
+            
+            {/* Project Title */}
+            <h3
+              className={combine(
+                "font-medium mb-0 line-clamp-2 leading-tight transition-colors duration-300 py-1",
+                "text-sm sm:text-base md:text-lg",
+                styles.title
+              )}
+            >
+              {projectData.displayName}
+            </h3>
+
+            {/* Organization Name */}
+            {projectData.orgName && (
+              <div
+                className={combine(
+                  "mb-1 sm:mb-1.5 md:mb-2 text-3xs sm:text-2xs md:text-xs font-medium flex items-center",
+                  styles.orgIcon
+                )}
+              >
+                <svg
+                  className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+                <span className="truncate">{projectData.orgName}</span>
+              </div>
+            )}
+
+            {/* Activity Tags */}
+            {activityTags.length > 0 && (
+              <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-1.5 sm:mb-2 md:mb-3">
+                {activityTags.map((tag, index) => (
+                  <div
+                    key={`${tag.key}-${index}`}
+                    className={combine(
+                      "inline-flex items-center px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-0.75 md:py-1 rounded-full text-3xs sm:text-2xs md:text-xs font-medium",
+                      getTagColors(tag.typeColor),
+                      "transition-all duration-300 hover:shadow-sm"
+                    )}
+                  >
+                    {tag.type}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Project Details */}
+            <div className="flex flex-col space-y-1 sm:space-y-1.5 text-3xs sm:text-2xs md:text-xs mt-1 sm:mt-1.5 md:mt-2">
+              {/* Date */}
+              <div
+                className={combine(
+                  "flex items-center transition-colors duration-300",
+                  styles.details
+                )}
+              >
+                <span
+                  className={combine(
+                    "flex items-center justify-center w-3 sm:w-3.5 md:w-4 h-3 sm:h-3.5 md:h-4",
+                    "rounded-full mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0",
+                    styles.iconBg
+                  )}
+                >
+                  <svg
+                    className="w-1.5 sm:w-2 md:w-2.5 h-1.5 sm:h-2 md:h-2.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </span>
+                <span className="break-words">{dateRange}</span>
+              </div>
+
+              {/* Location */}
+              <div
+                className={combine(
+                  "flex items-start transition-colors duration-300",
+                  styles.details
+                )}
+              >
+                <span
+                  className={combine(
+                    "flex items-center justify-center w-3 sm:w-3.5 md:w-4 h-3 sm:h-3.5 md:h-4",
+                    "rounded-full mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0 mt-0.5",
+                    styles.iconBg
+                  )}
+                >
+                  <svg
+                    className="w-1.5 sm:w-2 md:w-2.5 h-1.5 sm:h-2 md:h-2.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                </span>
+                <span className="break-words">
+                  {projectData.displayLocation}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <button
+          onClick={handleButtonClick}
+          className={combine(
+            "w-full mt-auto py-1 sm:py-1.5 md:py-2 px-2 sm:px-3 md:px-4",
+            "transition-all duration-300 text-3xs sm:text-2xs md:text-xs font-medium",
+            "border-t rounded-b-xl",
+            styles.button,
+            styles.buttonBorder
+          )}
+          aria-label={`ดูรายละเอียด ${projectData.displayName}`}
+        >
+          <div
+            className={combine(
+              "flex items-center justify-center",
+              styles.buttonText
+            )}
+          >
+            <span>ดูรายละเอียด</span>
+            <div className="ml-1 sm:ml-1.5 md:ml-2 flex items-center">
+              <svg
+                className={combine(
+                  "w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3",
+                  styles.buttonIcon
+                )}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default React.memo(ProjectCard);
