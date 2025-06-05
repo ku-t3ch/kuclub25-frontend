@@ -4,15 +4,20 @@ import React, { useState, useMemo, useCallback } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
+import { useAllProjects } from "../hooks/useProject";
 import HeroSection from "../components/home/heroSection";
 import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
+import UpcomingProjectSection from "../components/home/upcomingProjectSection";
 
 export default function Home() {
   const { resolvedTheme } = useTheme();
   const { organizationTypes, loading: typesLoading } = useOrganizationTypes();
   const { organizations, loading: orgsLoading } = useOrganizations();
-  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
+  const { projects, loading: projectsLoading } = useAllProjects();
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(
+    undefined
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
@@ -24,14 +29,13 @@ export default function Home() {
     return resolvedTheme === "dark" ? darkValue : lightValue;
   };
 
-  // สร้าง categories จาก organization types และใช้ name เป็น id
   const categories = useMemo(() => {
     const allCategory = { id: undefined, name: "ทั้งหมด" };
-    const typeCategories = organizationTypes.map(type => ({
+    const typeCategories = organizationTypes.map((type) => ({
       id: type.name,
-      name: type.name
+      name: type.name,
     }));
-    
+
     return [allCategory, ...typeCategories];
   }, [organizationTypes]);
 
@@ -39,28 +43,32 @@ export default function Home() {
     return organizations.length;
   }, [organizations]);
 
+  console.log("Projects:", projects);
   // Improved search function with Thai text support
-  const searchOrganizations = useCallback((query: string, orgs: typeof organizations) => {
-    if (!query.trim()) return orgs;
+  const searchOrganizations = useCallback(
+    (query: string, orgs: typeof organizations) => {
+      if (!query.trim()) return orgs;
 
-    const searchTerm = query.toLowerCase().trim();
-    
-    return orgs.filter(org => {
-      const thaiName = org.orgnameth?.toLowerCase() || '';
-      const englishName = org.orgnameen?.toLowerCase() || '';
-      const nickname = org.org_nickname?.toLowerCase() || '';
-      const description = org.description?.toLowerCase() || '';
-      const orgType = org.org_type_name?.toLowerCase() || '';
+      const searchTerm = query.toLowerCase().trim();
 
-      return (
-        thaiName.includes(searchTerm) ||
-        englishName.includes(searchTerm) ||
-        nickname.includes(searchTerm) ||
-        description.includes(searchTerm) ||
-        orgType.includes(searchTerm)
-      );
-    });
-  }, []);
+      return orgs.filter((org) => {
+        const thaiName = org.orgnameth?.toLowerCase() || "";
+        const englishName = org.orgnameen?.toLowerCase() || "";
+        const nickname = org.org_nickname?.toLowerCase() || "";
+        const description = org.description?.toLowerCase() || "";
+        const orgType = org.org_type_name?.toLowerCase() || "";
+
+        return (
+          thaiName.includes(searchTerm) ||
+          englishName.includes(searchTerm) ||
+          nickname.includes(searchTerm) ||
+          description.includes(searchTerm) ||
+          orgType.includes(searchTerm)
+        );
+      });
+    },
+    []
+  );
 
   // Filter organizations based on active category and search query
   const filteredOrganizations = useMemo(() => {
@@ -73,7 +81,7 @@ export default function Home() {
 
     // Then apply category filter if a category is selected
     if (activeCategory !== undefined) {
-      filtered = filtered.filter(org => {
+      filtered = filtered.filter((org) => {
         return org.org_type_name === activeCategory;
       });
     }
@@ -81,24 +89,33 @@ export default function Home() {
     return filtered;
   }, [organizations, activeCategory, searchQuery, searchOrganizations]);
 
-  const handleCategoryChange = useCallback((categoryName: string | undefined) => {
-    setActiveCategory(categoryName);
-  }, []);
+  const handleCategoryChange = useCallback(
+    (categoryName: string | undefined) => {
+      setActiveCategory(categoryName);
+    },
+    []
+  );
 
   const handleSearch = useCallback((query: string) => {
     setIsSearching(true);
-    
+
     // Simulate search delay for better UX
     setTimeout(() => {
       setSearchQuery(query);
-      
+
       // Reset category when searching to show all matching results
       if (query.trim()) {
         setActiveCategory(undefined);
       }
-      
+
       setIsSearching(false);
     }, 300);
+  }, []);
+
+  const handleProjectClick = useCallback((project: any) => {
+    // Navigate to project detail page
+    console.log("Navigate to project:", project.id);
+    // You can implement navigation logic here
   }, []);
 
   // Loading state is true if either types or organizations are loading or if searching
@@ -122,12 +139,14 @@ export default function Home() {
         isLoading={isSearching}
       />
 
-      <div className="h-8 md:h-12"/>
-      
+      <div className="h-8 md:h-12" />
+
       <CategorySection
         categories={categories}
         activeCategory={activeCategory}
-        totalClubCount={searchQuery ? filteredOrganizations.length : totalClubCount}
+        totalClubCount={
+          searchQuery ? filteredOrganizations.length : totalClubCount
+        }
         loading={loading}
         onCategoryChange={handleCategoryChange}
       />
@@ -139,6 +158,15 @@ export default function Home() {
         categories={categories}
         loading={loading || isSearching}
         onCategoryChange={handleCategoryChange}
+      />
+
+      {/* Add spacing between sections */}
+      <div className="h-16" />
+      <UpcomingProjectSection
+        projects={projects}
+        loading={projectsLoading}
+        onProjectClick={handleProjectClick}
+        maxProjects={6}
       />
     </div>
   );
