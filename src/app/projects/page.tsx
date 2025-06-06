@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
@@ -96,6 +97,8 @@ export default function ProjectsPage() {
       'bg-gradient-to-b from-transparent via-white/50 to-white/80'
     ),
   }), [getValueForTheme]);
+
+  // ...existing utility functions and state management...
 
   // Utility function to create date from project data
   const createProjectDate = useCallback((project: any, isEndDate = false): Date | null => {
@@ -388,52 +391,57 @@ export default function ProjectsPage() {
     >
       {BackgroundElements}
 
-      <div className="hidden sm:block sm:h-20 md:h-24" />
+      {/* Fixed spacing for navbar */}
+      <div className="h-16 sm:h-20 md:h-24" />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8 max-w-6xl relative z-10"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl relative z-10"
       >
-        {/* Header section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+        {/* Header section - Fixed responsive layout */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-6 sm:mb-8">
           <h1
             className={combine(
-              "text-2xl sm:text-3xl md:text-4xl font-bold py-3 text-center sm:text-left w-full sm:w-auto",
-              "tracking-wide leading-tight",
+              "text-2xl sm:text-3xl lg:text-4xl font-bold text-center lg:text-left",
+              "tracking-wide leading-tight flex-shrink-0",
               themeValues.titleText
             )}
           >
             โครงการทั้งหมด
           </h1>
 
-          <div className="flex justify-center sm:justify-start w-full sm:w-auto">
+          <div className="flex justify-center lg:justify-end">
             <ViewToggle viewMode={viewMode} setViewMode={handleViewModeChange} />
           </div>
         </div>
 
-        {/* Activity Type Filter */}
-        <ActivityTypeFilter 
-          activeFilters={activeFilters} 
-          toggleFilter={toggleFilter} 
-          ACTIVITY_TYPES={ACTIVITY_TYPES}
-        />
+        {/* Activity Type Filter - Improved spacing */}
+        <div className="mb-6 sm:mb-8">
+          <ActivityTypeFilter 
+            activeFilters={activeFilters} 
+            toggleFilter={toggleFilter} 
+            ACTIVITY_TYPES={ACTIVITY_TYPES}
+          />
+        </div>
 
         {/* Loading State */}
         {isLoading ? (
           LoadingComponent
         ) : (
-          <>
-            {/* Month Selector */}
-            <MonthSelector 
-              currentDate={currentDate} 
-              selectedMonth={selectedMonth} 
-              goToPreviousMonth={goToPreviousMonth}
-              goToNextMonth={goToNextMonth}
-            />
+          <div className="space-y-6 sm:space-y-8">
+            {/* Month Selector - Better spacing */}
+            <div className="mb-6 sm:mb-8">
+              <MonthSelector 
+                currentDate={currentDate} 
+                selectedMonth={selectedMonth} 
+                goToPreviousMonth={goToPreviousMonth}
+                goToNextMonth={goToNextMonth}
+              />
+            </div>
 
-            {/* Main Content */}
+            {/* Main Content - Improved container */}
             <AnimatePresence mode="wait">
               {viewMode === "calendar" ? (
                 <motion.div
@@ -442,6 +450,7 @@ export default function ProjectsPage() {
                   initial="initial"
                   animate="animate"
                   exit="exit"
+                  className="space-y-6 sm:space-y-8"
                   ref={projectsListRef}
                 >
                   <CalendarViewSection 
@@ -456,16 +465,18 @@ export default function ProjectsPage() {
                     ACTIVITY_TYPES={ACTIVITY_TYPES}
                   />
                   
-                  {/* Selected Date Projects */}
+                  {/* Selected Date Projects - Better spacing */}
                   <AnimatePresence>
                     {selectedDate && projectsOnSelectedDate.length > 0 && (
-                      <SelectedDateProject
-                        selectedDate={selectedDate}
-                        projectsOnSelectedDate={projectsOnSelectedDate}
-                        setSelectedDate={setSelectedDate}
-                        getActivityColor={(type: string) => getActivityColor(type, ACTIVITY_TYPES)}
-                        ACTIVITY_TYPES={ACTIVITY_TYPES}
-                      />
+                      <div className="mt-8">
+                        <SelectedDateProject
+                          selectedDate={selectedDate}
+                          projectsOnSelectedDate={projectsOnSelectedDate}
+                          setSelectedDate={setSelectedDate}
+                          getActivityColor={(type: string) => getActivityColor(type, ACTIVITY_TYPES)}
+                          ACTIVITY_TYPES={ACTIVITY_TYPES}
+                        />
+                      </div>
                     )}
                   </AnimatePresence>
                 </motion.div>
@@ -476,7 +487,7 @@ export default function ProjectsPage() {
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  className="mb-6 sm:mb-10"
+                  className="pb-8"
                 >
                   <ProjectList
                     filteredProjectsByMonth={filteredProjectsByMonth}
@@ -487,7 +498,7 @@ export default function ProjectsPage() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </>
+          </div>
         )}
       </motion.div>
     </motion.div>
