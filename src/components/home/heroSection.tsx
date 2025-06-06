@@ -74,7 +74,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <div className="relative w-full h-[70vh] overflow-hidden">
       <Vortex
-        backgroundColor="black"
+        backgroundColor="transparent"
         rangeY={800}
         particleCount={500}
         baseHue={120}
