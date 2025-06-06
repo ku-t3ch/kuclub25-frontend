@@ -7,7 +7,6 @@ import { parseDate, formatDateForDisplay, formatDateTimeForDisplay, formatTimeOn
 
 // Enhanced project normalization with date formatting
 const normalizeProject = (project: Project): Project => {
-    console.log('Normalizing project:', project);
   const normalized = {
     ...project,
     id: String(project.id),

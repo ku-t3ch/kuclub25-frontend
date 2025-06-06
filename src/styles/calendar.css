@@ -1,0 +1,708 @@
+/* Calendar Styles with Theme Support */
+
+/* ซ่อนแถบเครื่องมือของปฏิทินเพื่อใช้ตัวควบคุมของเราเอง */
+.calendar-container .rbc-toolbar {
+  display: none;
+}
+
+/*****************************/
+/* COMMON STYLES FOR THEMES */
+/*****************************/
+
+/* Multi-day project styling - base styles */
+.multi-day-project {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* Fix for project continuation across days */
+.rbc-event.rbc-event-continues-prior {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rbc-event.rbc-event-continues-after {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Ensure projects span full cell width */
+.rbc-event {
+  min-width: 100% !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Fix project content display */
+.project-component {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 2px;
+}
+
+.project-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+  letter-spacing: 0.2px;
+}
+
+/* Project overlap improvement - used by both themes */
+.rbc-event-overlaps {
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for day selection */
+@keyframes daySelect {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.rbc-day-bg.day-selected {
+  animation: daySelect 0.3s ease;
+}
+
+/* Animations - shared across themes */
+@keyframes pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes expandWidth {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes projectPulse {
+  0% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+  50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Smoother date transitions when switching months */
+.rbc-month-view {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.month-change .rbc-month-view {
+  opacity: 0;
+}
+
+/* Calendar cell styles - consolidated */
+.has-projects {
+  position: relative;
+}
+
+/* Common date cell styles */
+.rbc-date-cell {
+  position: relative;
+  padding-bottom: 20px !important;
+}
+
+/* Hide events completely */
+.rbc-event {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+}
+
+.rbc-event-content {
+  display: none !important;
+}
+
+/* Fix for off-range date detection */
+.rbc-off-range {
+  opacity: 0.5;
+}
+
+/* Fix calendar wrapper themes */
+.calendar-wrapper-dark,
+.calendar-wrapper-light {
+  overflow: visible !important;
+}
+
+/* Fix project tooltips */
+.project-tooltip {
+  display: none !important;
+}
+
+/*****************************/
+/* DARK THEME STYLES        */
+/*****************************/
+
+/* Multi-day project styling for dark theme */
+.calendar-wrapper-dark .multi-day-project {
+  background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%) !important;
+}
+
+/* ปรับแต่งมุมมองเดือนให้ดูทันสมัยสำหรับธีม Dark */
+.calendar-wrapper-dark .rbc-month-view {
+  background-color: rgba(11, 20, 33, 0.95);
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calendar-wrapper-dark:hover .rbc-month-view {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ส่วนหัวของตาราง (วันในสัปดาห์) */
+.calendar-wrapper-dark .rbc-header,
+.dark-theme .rbc-header {
+  font-weight: 400;
+  background-color: rgba(59, 130, 246, 0.1);
+  padding: 14px 0;
+  color: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+/* สไตล์ border ระหว่างช่อง */
+.calendar-wrapper-dark .rbc-header + .rbc-header {
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* พื้นหลังของแต่ละวัน */
+.calendar-wrapper-dark .rbc-day-bg,
+.dark-theme .rbc-day-bg {
+  background-color: rgba(13, 23, 37, 0.8);
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  border-right: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+/* เอฟเฟกต์เมื่อวางเมาส์บนวัน */
+.calendar-wrapper-dark .rbc-day-bg:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* วันปัจจุบัน */
+.calendar-wrapper-dark .rbc-today,
+.dark-theme .rbc-today {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-wrapper-dark .rbc-today::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(59, 130, 246, 0.15);
+  z-index: -1;
+  animation: pulse 2s infinite;
+}
+
+/* เลขวันที่ */
+.calendar-wrapper-dark .rbc-date-cell,
+.dark-theme .rbc-date-cell {
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.7);
+  position: relative;
+  font-size: 0.85rem;
+}
+
+/* Indicator for days with projects */
+.calendar-wrapper-dark .rbc-date-cell.dark-theme-has-projects {
+  font-weight: 500;
+  color: #3b82f6;
+}
+
+.dark-theme-has-projects .rbc-day-bg,
+.calendar-wrapper-dark .has-projects .rbc-day-bg {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* วันที่นอกเดือนปัจจุบัน */
+.calendar-wrapper-dark .rbc-off-range-bg {
+  background-color: rgba(10, 18, 30, 0.9);
+}
+
+.calendar-wrapper-dark .rbc-off-range,
+.dark-theme .rbc-off-range {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* สไตล์ border ระหว่างช่อง */
+.calendar-wrapper-dark .rbc-month-row + .rbc-month-row,
+.dark-theme .rbc-month-row {
+  border-top: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calendar-wrapper-dark .rbc-day-bg + .rbc-day-bg {
+  border-left: none;
+}
+
+/* Month selector active state for dark theme */
+.calendar-wrapper-dark .month-selector-active::before {
+  background-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+/* Dark theme day selected animation */
+.calendar-wrapper-dark .rbc-day-bg.day-selected {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+/* Dark theme scrollbar */
+.calendar-wrapper-dark::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+.calendar-wrapper-dark::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.calendar-wrapper-dark::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+/* Month label enhancement for dark theme */
+.calendar-wrapper-dark .month-year-label {
+  background: linear-gradient(to right, #38bdf8, #0ea5e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
+}
+
+.calendar-wrapper-dark .month-year-label::after {
+  background: linear-gradient(to right, #38bdf8, transparent);
+}
+
+/* Glassmorphism panel for dark theme */
+.calendar-wrapper-dark .glass-panel {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/*****************************/
+/* LIGHT THEME STYLES       */
+/*****************************/
+
+/* Multi-day project styling for light theme */
+.calendar-wrapper-light .multi-day-project {
+  background: linear-gradient(135deg, #006C67 0%, #00A49A 100%) !important;
+}
+
+/* ปรับแต่งมุมมองเดือนให้ดูทันสมัยสำหรับธีม Light */
+.calendar-wrapper-light .rbc-month-view {
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.calendar-wrapper-light:hover .rbc-month-view {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ส่วนหัวของตาราง (วันในสัปดาห์) */
+.calendar-wrapper-light .rbc-header,
+.light-theme .rbc-header {
+  font-weight: 500;
+  background-color: rgba(0, 108, 103, 0.05);
+  padding: 14px 0;
+  color: #374151;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+/* สไตล์ border ระหว่างช่อง */
+.calendar-wrapper-light .rbc-header + .rbc-header {
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* พื้นหลังของแต่ละวัน */
+.calendar-wrapper-light .rbc-day-bg,
+.light-theme .rbc-day-bg {
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  border-right: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* เอฟเฟกต์เมื่อวางเมาส์บนวัน */
+.calendar-wrapper-light .rbc-day-bg:hover {
+  background-color: rgba(0, 108, 103, 0.05);
+}
+
+/* วันปัจจุบัน */
+.calendar-wrapper-light .rbc-today,
+.light-theme .rbc-today {
+  background-color: rgba(0, 108, 103, 0.1) !important;
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-wrapper-light .rbc-today::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(0, 108, 103, 0.1);
+  z-index: -1;
+  animation: pulse 2s infinite;
+}
+
+/* เลขวันที่ */
+.calendar-wrapper-light .rbc-date-cell,
+.light-theme .rbc-date-cell {
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: normal;
+  color: #4b5563;
+  position: relative;
+  font-size: 0.85rem;
+}
+
+/* Indicator for days with projects */
+.calendar-wrapper-light .rbc-date-cell.light-theme-has-projects {
+  font-weight: 500;
+  color: #006C67;
+}
+
+.light-theme-has-projects .rbc-day-bg,
+.calendar-wrapper-light .has-projects .rbc-day-bg {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* วันที่นอกเดือนปัจจุบัน */
+.calendar-wrapper-light .rbc-off-range-bg {
+  background-color: rgba(249, 250, 251, 0.8);
+}
+
+.calendar-wrapper-light .rbc-off-range,
+.light-theme .rbc-off-range {
+  color: rgba(156, 163, 175, 0.7);
+}
+
+/* สไตล์ border ระหว่างช่อง */
+.calendar-wrapper-light .rbc-month-row + .rbc-month-row,
+.light-theme .rbc-month-row {
+  border-top: none;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+}
+
+.calendar-wrapper-light .rbc-day-bg + .rbc-day-bg {
+  border-left: none;
+}
+
+/* Month selector active state for light theme */
+.calendar-wrapper-light .month-selector-active::before {
+  background-color: #006C67;
+  box-shadow: 0 0 8px rgba(0, 108, 103, 0.5);
+}
+
+/* Light theme day selected animation */
+.calendar-wrapper-light .rbc-day-bg.day-selected {
+  background-color: rgba(0, 108, 103, 0.2);
+}
+
+/* Light theme scrollbar */
+.calendar-wrapper-light::-webkit-scrollbar-track {
+  background: rgba(249, 250, 251, 0.8);
+}
+
+.calendar-wrapper-light::-webkit-scrollbar-thumb {
+  background: rgba(0, 108, 103, 0.2);
+}
+
+.calendar-wrapper-light::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 108, 103, 0.4);
+}
+
+/* Month label enhancement for light theme */
+.calendar-wrapper-light .month-year-label {
+  background: linear-gradient(to right, #006C67, #00A49A);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 10px rgba(0, 108, 103, 0.2);
+}
+
+.calendar-wrapper-light .month-year-label::after {
+  background: linear-gradient(to right, #006C67, transparent);
+}
+
+/* Glassmorphism panel for light theme */
+.calendar-wrapper-light .glass-panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Activity dots styling - consolidated */
+.day-indicator-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.day-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  transform-origin: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
+}
+
+/* Hover effect */
+.has-projects:hover .day-indicator {
+  transform: scale(1.3);
+}
+
+/* Project count styling - consolidated */
+.project-count {
+  position: absolute;
+  top: 20px;
+  background-color: #60a5fa;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  color: white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transform-origin: center;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Hover effect for project count */
+.has-projects:hover .project-count {
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Theme-specific styles for project count */
+.calendar-wrapper-dark .project-count,
+.dark-theme .project-count {
+  background-color: #4f46e5;
+  background-image: linear-gradient(135deg, #4f46e5, #60a5fa);
+}
+
+.calendar-wrapper-light .project-count,
+.light-theme .project-count {
+  background-color: #059669;
+  background-image: linear-gradient(135deg, #047857, #10b981);
+}
+
+/* Activity type colors */
+.day-indicator.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.day-indicator.bg-teal-500 {
+  background-color: #14b8a6;
+}
+
+.day-indicator.bg-purple-500 {
+  background-color: #a855f7;
+}
+
+.day-indicator.bg-gray-400 {
+  background-color: #9ca3af;
+}
+
+/* Active filter button styles */
+.filter-button-active {
+  transform: scale(1.05);
+  position: relative;
+  font-weight: 500;
+}
+
+.filter-button-active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.dark-theme .filter-button-active::after {
+  background-color: #3b82f6;
+}
+
+.light-theme .filter-button-active::after {
+  background-color: #006C67;
+}
+
+/* Mobile calendar fixes */
+@media (max-width: 640px) {
+  .rbc-calendar {
+    font-size: 0.8rem;
+  }
+  
+  .rbc-month-view {
+    height: calc(100% - 36px);
+  }
+  
+  .rbc-header {
+    padding: 6px 3px;
+  }
+  
+  .rbc-date-cell {
+    padding: 2px 0 16px !important;
+  }
+  
+  .day-indicator {
+    width: 3px;
+    height: 3px;
+  }
+  
+  .day-indicator-container {
+    bottom: 4px;
+    gap: 1px;
+  }
+  
+  .rbc-toolbar {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .rbc-toolbar-label {
+    margin: 8px 0;
+  }
+  
+  /* Hide toolbar since we have our own month selector */
+  .rbc-toolbar {
+    display: none;
+  }
+  
+  /* Selected date fits better on small screens */
+  .rbc-date-cell.selected-date a {
+    width: 22px;
+    height: 22px;
+    line-height: 18px;
+  }
+}
+
+/* Make calendar responsive for all devices */
+.mobile-calendar-fix .rbc-row-bg {
+  display: flex;
+  flex: 1;
+}
+
+.mobile-calendar-fix .rbc-row-content {
+  flex: 1;
+}
+
+.mobile-calendar-fix .rbc-month-view,
+.mobile-calendar-fix .rbc-month-row,
+.mobile-calendar-fix .rbc-row-bg,
+.mobile-calendar-fix .rbc-row-content {
+  min-height: 1px;
+}
+
+@media (max-width: 768px) {
+  .day-indicator {
+    width: 7px;
+    height: 7px;
+    margin: 0 1px;
+  }
+  
+  .day-indicator-container {
+    bottom: 4px;
+    gap: 2px;
+  }
+}
+
+/* Further adjustments for very small screens */
+@media (max-width: 480px) {
+  .day-indicator {
+    width: 6px;
+    height: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .has-projects:hover .day-indicator {
+    transform: scale(1.2);
+  }
+  
+  .day-indicator-container {
+    bottom: 3px;
+    gap: 3px;
+  }
+}

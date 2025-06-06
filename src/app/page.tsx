@@ -43,7 +43,6 @@ export default function Home() {
     return organizations.length;
   }, [organizations]);
 
-  console.log("Projects:", projects);
   // Improved search function with Thai text support
   const searchOrganizations = useCallback(
     (query: string, orgs: typeof organizations) => {
@@ -113,9 +112,7 @@ export default function Home() {
   }, []);
 
   const handleProjectClick = useCallback((project: any) => {
-    // Navigate to project detail page
-    console.log("Navigate to project:", project.id);
-    // You can implement navigation logic here
+    
   }, []);
 
   // Loading state is true if either types or organizations are loading or if searching
