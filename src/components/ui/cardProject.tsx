@@ -30,6 +30,66 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     const startDate = project.date_start_the_project || project.date_start;
     const endDate = project.date_end_the_project || project.date_end;
 
+    // Helper function to format month display with better spacing
+    const getMonthDisplay = () => {
+      if (!startDate) return { text: "?", isRange: false };
+
+      const start = new Date(startDate);
+      const end = endDate ? new Date(endDate) : start;
+
+      // Check if dates are valid
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        const fallback = start.toLocaleString("th-TH", { month: "short" }) || "?";
+        return { text: fallback, isRange: false };
+      }
+
+      // Same month and year
+      if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+        return { 
+          text: start.toLocaleString("th-TH", { month: "short" }), 
+          isRange: false 
+        };
+      }
+
+      // Different months, same year
+      if (start.getFullYear() === end.getFullYear()) {
+        const startMonth = start.toLocaleString("th-TH", { month: "short" });
+        const endMonth = end.toLocaleString("th-TH", { month: "short" });
+        return { 
+          text: `${startMonth} – ${endMonth}`, // En dash with spaces
+          isRange: true,
+          startMonth,
+          endMonth
+        };
+      }
+
+      // Different years
+      const startMonth = start.toLocaleString("th-TH", { month: "short" });
+      const endMonth = end.toLocaleString("th-TH", { month: "short" });
+      const startYear = start.getFullYear();
+      const endYear = end.getFullYear();
+      
+      // If years are very different, show years too
+      if (Math.abs(endYear - startYear) > 1) {
+        return { 
+          text: `${startMonth} ${startYear.toString().slice(-2)} – ${endMonth} ${endYear.toString().slice(-2)}`,
+          isRange: true,
+          startMonth: `${startMonth} ${startYear.toString().slice(-2)}`,
+          endMonth: `${endMonth} ${endYear.toString().slice(-2)}`,
+          hasYear: true
+        };
+      }
+      
+      return { 
+        text: `${startMonth} – ${endMonth}`,
+        isRange: true,
+        startMonth,
+        endMonth
+      };
+    };
+
+    const monthDisplay = getMonthDisplay();
+
     return {
       orgName: project.org_nickname || project.org_name_th || project.org_name_en || "",
       isMultiDayProject: Boolean(
@@ -45,9 +105,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         : project.project_location || project.location || "ไม่ระบุสถานที่",
       startDate,
       endDate,
-      displayMonth: startDate 
-        ? new Date(startDate).toLocaleString("th-TH", { month: "short" })
-        : "?",
+      monthDisplay, // Enhanced month display object
       displayDay: startDate ? new Date(startDate).getDate().toString() : "?",
       displayEndDay: endDate ? new Date(endDate).getDate().toString() : null,
     };
@@ -196,6 +254,58 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
   }, [getValueForTheme]);
 
+  // Enhanced month display component
+  const renderMonthDisplay = useMemo(() => {
+    const { monthDisplay } = projectData;
+    
+    if (!monthDisplay.isRange) {
+      // Single month display - ใช้ขนาดเดียวกับ test case อื่น
+      return (
+        <div className="text-white/90 text-3xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
+          {monthDisplay.text}
+        </div>
+      );
+    }
+
+    // Range display for cross-month projects with proper spacing
+    if (monthDisplay.startMonth && monthDisplay.endMonth) {
+      return (
+        <div className="text-white/90 font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
+          <div className="flex items-center justify-center">
+  
+            <div className="text-3xs sm:text-2xs md:text-xs opacity-90 text-center">
+              {monthDisplay.startMonth}
+            </div>
+
+            <div className="w-1 sm:w-1.5 md:w-2"/>
+            
+        
+            <div className="flex items-center justify-center">
+              -
+            </div>
+            
+         
+            <div className="w-1 sm:w-1.5 md:w-2"/>
+            
+    
+            <div className="text-3xs sm:text-2xs md:text-xs opacity-90 text-center">
+              {monthDisplay.endMonth}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Fallback to text display with enhanced spacing - ปรับขนาดให้เท่ากับ test case อื่น
+    return (
+      <div className="text-white/90 font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
+        <div className="text-3xs sm:text-2xs md:text-xs leading-tight text-center whitespace-nowrap">
+          {monthDisplay.text}
+        </div>
+      </div>
+    );
+  }, [projectData.monthDisplay]);
+
   return (
     <div
       className={combine(
@@ -223,9 +333,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
               styles.dateHover
             )}
           >
-            <div className="text-white/90 text-3xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
-              {projectData.displayMonth}
-            </div>
+            {/* Enhanced month display with proper spacing */}
+            {renderMonthDisplay}
+            
             <ProjectCardDateDisplay
               isMultiDayProject={projectData.isMultiDayProject}
               startDateTime={projectData.startDate ? new Date(projectData.startDate) : undefined}
