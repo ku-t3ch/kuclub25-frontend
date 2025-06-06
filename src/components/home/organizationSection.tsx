@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import CardOrganization from "../ui/cardOrganization";
@@ -23,6 +23,16 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
   onCategoryChange
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
+  const [showAll, setShowAll] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Get active category name
   const activeCategoryName = useMemo(() => 
@@ -30,8 +40,30 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
     [categories, activeCategory]
   );
 
+  // Display logic with different limits for mobile/desktop
+  const { displayedOrganizations, hasMore, limit } = useMemo(() => {
+    const limit = isMobile ? 8 : 12;
+    if (showAll) {
+      return {
+        displayedOrganizations: filteredOrganizations,
+        hasMore: false,
+        limit
+      };
+    }
+    return {
+      displayedOrganizations: filteredOrganizations.slice(0, limit),
+      hasMore: filteredOrganizations.length > limit,
+      limit
+    };
+  }, [filteredOrganizations, showAll, isMobile]);
+
   const hasResults = !loading && filteredOrganizations.length > 0;
   const isEmpty = !loading && filteredOrganizations.length === 0;
+
+  // Reset showAll when category changes
+  useEffect(() => {
+    setShowAll(false);
+  }, [activeCategory]);
 
   // Animation variants (simplified)
   const containerVariants = {
@@ -45,7 +77,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
   };
 
   return (
-    <section className="relative px-4 xs:px-5 sm:px-6 lg:px-8 py-8">
+    <section className="relative px-4 xs:px-5 sm:px-6 lg:px-8 py-2">
       <div className="max-w-7xl mx-auto">
         
         {/* Results Header */}
@@ -96,64 +128,76 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                 </svg>
               </button>
             </div>
-
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm">
-              <span className={getValueForTheme("text-gray-400", "text-gray-500")}>
-                กำลังแสดง:
-              </span>
-              <span className={combine(
-                "px-2 py-1 rounded-full text-xs font-medium",
-                getValueForTheme("bg-blue-500/20 text-blue-200", "bg-[#006C67]/10 text-[#006C67]")
-              )}>
-                {activeCategoryName}
-              </span>
-              <span className={combine("text-xs", getValueForTheme("text-gray-400", "text-gray-500"))}>
-                ({filteredOrganizations.length} ชมรม)
-              </span>
-            </div>
           </motion.div>
         )}
 
         {/* Organizations Grid */}
         {hasResults && (
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {filteredOrganizations.map((organization) => (
-              <motion.div key={organization.id} variants={itemVariants} layout>
-                <CardOrganization organization={organization} />
+          <>
+            <motion.div
+              className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {displayedOrganizations.map((organization) => (
+                <motion.div key={organization.id} variants={itemVariants} layout>
+                  <CardOrganization organization={organization} />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Show More Button */}
+            {hasMore && (
+              <motion.div 
+                className="text-center mt-6 sm:mt-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <motion.button
+                  onClick={() => setShowAll(true)}
+                  className={combine(
+                    "px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base font-medium transition-all duration-200",
+                    "border-2 border-dashed",
+                    getValueForTheme(
+                      "border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-blue-200",
+                      "border-[#006C67]/30 bg-[#006C67]/10 hover:bg-[#006C67]/20 text-[#006C67] hover:text-[#005550]"
+                    )
+                  )}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  ดูชมรมทั้งหมด ({filteredOrganizations.length - limit} เพิ่มเติม)
+                </motion.button>
               </motion.div>
-            ))}
-          </motion.div>
+            )}
+          </>
         )}
 
         {/* Loading Skeletons */}
         {loading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {Array.from({ length: 8 }, (_, i) => (
               <div key={i} className={combine(
-                "animate-pulse rounded-2xl h-80",
+                "animate-pulse rounded-2xl h-64 sm:h-80",
                 getValueForTheme("bg-gray-700/30", "bg-gray-200/80")
               )}>
                 <div className={combine(
-                  "h-48 rounded-t-2xl mb-4",
+                  "h-32 sm:h-48 rounded-t-2xl mb-3 sm:mb-4",
                   getValueForTheme("bg-gray-600/40", "bg-gray-300/60")
                 )} />
-                <div className="p-4 space-y-3">
+                <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                   <div className={combine(
-                    "h-4 rounded w-3/4",
+                    "h-3 sm:h-4 rounded w-3/4",
                     getValueForTheme("bg-gray-600/40", "bg-gray-300/60")
                   )} />
                   <div className={combine(
-                    "h-3 rounded w-1/2",
+                    "h-2 sm:h-3 rounded w-1/2",
                     getValueForTheme("bg-gray-600/40", "bg-gray-300/60")
                   )} />
                   <div className={combine(
-                    "h-8 rounded-lg w-full mt-4",
+                    "h-6 sm:h-8 rounded-lg w-full mt-3 sm:mt-4",
                     getValueForTheme("bg-gray-600/40", "bg-gray-300/60")
                   )} />
                 </div>
@@ -181,13 +225,13 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
               </svg>
             </div>
             <h3 className={combine(
-              "text-xl font-semibold mb-2",
+              "text-lg sm:text-xl font-semibold mb-2",
               getValueForTheme("text-white", "text-gray-900")
             )}>
               ไม่พบชมรมในหมวดหมู่นี้
             </h3>
             <p className={combine(
-              "text-sm max-w-md mx-auto mb-6",
+              "text-xs sm:text-sm max-w-md mx-auto mb-4 sm:mb-6",
               getValueForTheme("text-gray-300", "text-gray-600")
             )}>
               ลองเลือกหมวดหมู่อื่น หรือดูชมรมทั้งหมดเพื่อค้นพบชมรมที่น่าสนใจ
@@ -195,7 +239,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
             <motion.button
               onClick={() => onCategoryChange(undefined)}
               className={combine(
-                "px-6 py-3 rounded-xl font-medium transition-all duration-200",
+                "px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-200",
                 getValueForTheme("bg-blue-600 hover:bg-blue-700 text-white", "bg-[#006C67] hover:bg-[#005550] text-white")
               )}
               whileHover={{ scale: 1.02 }}

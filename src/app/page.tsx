@@ -51,6 +51,22 @@ export default function Home() {
     });
   }, [organizations, activeCategory]);
 
+  // Create category count map
+  const categoryCountMap = useMemo(() => {
+    const countMap = new Map<string | undefined, number>();
+    
+    // Count for "ทั้งหมด" (all organizations)
+    countMap.set(undefined, organizations.length);
+    
+    // Count for each specific category
+    organizationTypes.forEach(type => {
+      const count = organizations.filter(org => org.org_type_name === type.name).length;
+      countMap.set(type.name, count);
+    });
+    
+    return countMap;
+  }, [organizations, organizationTypes]);
+
   const handleCategoryChange = (categoryName: string | undefined) => {
     setActiveCategory(categoryName);
   };
@@ -63,7 +79,7 @@ export default function Home() {
       className={combine(
         "min-h-screen pt-16 md:pt-20",
         getValueForTheme(
-          "bg-gradient-to-b from-[#051D35] to-[#091428]",
+          "bg-gradient-to-b from-[#000000] to-[#123067]",
           "bg-gradient-to-b from-white via-gray-50 to-gray-100"
         )
       )}
@@ -73,12 +89,13 @@ export default function Home() {
         description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
       />
 
-      <div className="h-8 md:h-12"/>
+      <div className="h-9"/>
       
       <CategorySection
         categories={categories}
         activeCategory={activeCategory}
         totalClubCount={totalClubCount}
+        categoryCountMap={categoryCountMap}
         loading={loading}
         onCategoryChange={handleCategoryChange}
       />
@@ -95,21 +112,3 @@ export default function Home() {
   );
 }
 
-// export default function VortexDemo() {
-  
-//   return (
-//     <div className="w-[calc(100%-4rem)] mx-auto rounded-md  h-[30rem] overflow-hidden">
-//       <Vortex
-//         backgroundColor="black"
-//         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
-//       >
-//         <h2 className="text-white text-2xl md:text-6xl font-bold text-center">
-//           ค้นพบชมรมที่ใช่สำหรับคุณ
-//         </h2>
-//         <p className="text-white text-sm md:text-2xl max-w-xl mt-6 text-center">
-//           เลือกจากกว่า 100 ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต
-//         </p>
-//       </Vortex>
-//     </div>
-//   );
-// }
