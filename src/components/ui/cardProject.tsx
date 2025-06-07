@@ -327,8 +327,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
           <div
             className={combine(
               "flex-shrink-0 rounded-lg p-1.5 sm:p-2 md:p-3 text-center",
-              "min-w-[3.5rem] sm:min-w-[4rem] md:min-w-[5rem] shadow-sm",
-              "transition-all duration-300",
+              "min-w-[5rem] sm:min-w-[4rem] md:min-w-[5rem] shadow-sm",
+              "transition-all duration-300 min-h-[3rem] sm:min-h-[4rem] md:min-h-[5rem]",
               styles.dateBg,
               styles.dateHover
             )}

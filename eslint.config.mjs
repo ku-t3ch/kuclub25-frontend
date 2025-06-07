@@ -13,12 +13,14 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   ...compat.config({
     rules: {
-      "no-unused-vars": "warn",
+      "no-unused-vars": "off",
       "react/react-in-jsx-scope": "off",
       "@next/next/no-img-element": "off",
       "@next/next/no-html-link-for-pages": [
         "error",
-        ["./pages/index.js", "./pages/about.js"],
+        {
+          pages: ["./pages/index.js", "./pages/about.js"],
+        },
       ],
     },
   }),

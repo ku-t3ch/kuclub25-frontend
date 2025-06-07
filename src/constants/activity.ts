@@ -1,12 +1,16 @@
 export const ACTIVITY_LABELS = {
   competency_development_activities: 'กิจกรรมเสริมสร้างสมรรถนะ',
-  health: 'สุขภาพ',
-  interpersonal_relationships_and_communication: 'ความสัมพันธ์ระหว่างบุคคลและการสื่อสาร',
-  thinking_and_learning: 'การคิดและการเรียนรู้',
-  virtue: 'คุณธรรมจริยธรรม',
   social_activities: 'กิจกรรมสังคม',
   university_activities: 'กิจกรรมมหาวิทยาลัย'
 } as const;
+
+export const competencyNames = {
+  health: "สุขภาพ",
+  virtue: "คุณธรรมจริยธรรม",
+  thinking_and_learning: "การคิดและการเรียนรู้",
+  interpersonal_relationships_and_communication: "ความสัมพันธ์ระหว่างบุคคลและการสื่อสาร",
+} as const;
+
 
 export const ACTIVITY_COLORS = {
   competency_development_activities: {

@@ -24,7 +24,7 @@ module.exports = {
       colors: {
         "ku-primary": {
           DEFAULT: "#051D35",
-          light: "#0A1C30",
+          light: "#006C67",
           dark: "#041628",
         },
         primary: {
