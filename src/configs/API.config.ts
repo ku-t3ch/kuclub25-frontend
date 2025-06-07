@@ -11,23 +11,18 @@ export const API_CONFIG = {
     },
      ORGANIZATION_TYPES: {
       LIST: '/organization-types',
-      DETAIL: (id: number) => `/organization-types/${id}`,
+      DETAIL: (id: string) => `/organization-types/${id}`,
     },
     ORGANIZATIONS: {
       LIST: '/organizations',
-      DETAIL: (id: number) => `/organizations/${id}`,
+      DETAIL: (id: string) => `/organizations/${id}`,
 
     },
     PROJECTS: {
       LIST: '/projects',
-      DETAIL: (id: number) => `/projects/${id}`,
+      DETAIL: (id: string) => `/projects/${id}`,
     },
     
-    // CAMPUSES: {
-    //   LIST: '/campuses',
-    //   DETAIL: (id: number) => `/campuses/${id}`,
-    // },
-
   }, 
   
   // Headers

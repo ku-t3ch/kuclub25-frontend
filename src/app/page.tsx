@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation"; // Correct import for App Router
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
@@ -10,8 +11,10 @@ import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
 import UpcomingProjectSection from "../components/home/upcomingProjectSection";
 
+
 export default function Home() {
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
   const { organizationTypes, loading: typesLoading } = useOrganizationTypes();
   const { organizations, loading: orgsLoading } = useOrganizations();
   const { projects, loading: projectsLoading } = useAllProjects();
@@ -43,7 +46,6 @@ export default function Home() {
     return organizations.length;
   }, [organizations]);
 
-  // Improved search function with Thai text support
   const searchOrganizations = useCallback(
     (query: string, orgs: typeof organizations) => {
       if (!query.trim()) return orgs;
@@ -112,8 +114,18 @@ export default function Home() {
   }, []);
 
   const handleProjectClick = useCallback((project: any) => {
-    
-  }, []);
+    try {
+      const projectId = project.id || project.projectid || project.project_id;
+      
+      if (!projectId) {
+        console.error('Project ID not found:', project);
+        return;
+      }
+      router.push(`/projects/${projectId}`);
+    } catch (error) {
+      console.error('Error navigating to project:', error);
+    }
+  }, [router]);
 
   // Loading state is true if either types or organizations are loading or if searching
   const loading = typesLoading || orgsLoading;

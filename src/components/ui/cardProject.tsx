@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
+import { useRouter } from "next/navigation";
 import { formatDateForDisplay } from "../../utils/formatdate";
 import { Project } from "../../types/project";
 import { ACTIVITY_LABELS, ACTIVITY_COLORS } from "../../constants/activity";
@@ -13,7 +14,7 @@ interface ProjectCardProps {
 interface ActivityTag {
   type: string;
   key: keyof typeof ACTIVITY_COLORS;
-  typeColor: 'purple' | 'orange' | 'emerald' | 'default';
+  typeColor: "purple" | "orange" | "emerald" | "default";
 }
 
 const ALLOWED_ACTIVITY_TYPES = [
@@ -24,7 +25,7 @@ const ALLOWED_ACTIVITY_TYPES = [
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   const { getValueForTheme, combine } = useThemeUtils();
-
+  const router = useRouter();
   // Extract and process project data
   const projectData = useMemo(() => {
     const startDate = project.date_start_the_project || project.date_start;
@@ -39,15 +40,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
       // Check if dates are valid
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        const fallback = start.toLocaleString("th-TH", { month: "short" }) || "?";
+        const fallback =
+          start.toLocaleString("th-TH", { month: "short" }) || "?";
         return { text: fallback, isRange: false };
       }
 
       // Same month and year
-      if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-        return { 
-          text: start.toLocaleString("th-TH", { month: "short" }), 
-          isRange: false 
+      if (
+        start.getMonth() === end.getMonth() &&
+        start.getFullYear() === end.getFullYear()
+      ) {
+        return {
+          text: start.toLocaleString("th-TH", { month: "short" }),
+          isRange: false,
         };
       }
 
@@ -55,11 +60,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       if (start.getFullYear() === end.getFullYear()) {
         const startMonth = start.toLocaleString("th-TH", { month: "short" });
         const endMonth = end.toLocaleString("th-TH", { month: "short" });
-        return { 
+        return {
           text: `${startMonth} – ${endMonth}`, // En dash with spaces
           isRange: true,
           startMonth,
-          endMonth
+          endMonth,
         };
       }
 
@@ -68,41 +73,52 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       const endMonth = end.toLocaleString("th-TH", { month: "short" });
       const startYear = start.getFullYear();
       const endYear = end.getFullYear();
-      
+
       // If years are very different, show years too
       if (Math.abs(endYear - startYear) > 1) {
-        return { 
-          text: `${startMonth} ${startYear.toString().slice(-2)} – ${endMonth} ${endYear.toString().slice(-2)}`,
+        return {
+          text: `${startMonth} ${startYear
+            .toString()
+            .slice(-2)} – ${endMonth} ${endYear.toString().slice(-2)}`,
           isRange: true,
           startMonth: `${startMonth} ${startYear.toString().slice(-2)}`,
           endMonth: `${endMonth} ${endYear.toString().slice(-2)}`,
-          hasYear: true
+          hasYear: true,
         };
       }
-      
-      return { 
+
+      return {
         text: `${startMonth} – ${endMonth}`,
         isRange: true,
         startMonth,
-        endMonth
+        endMonth,
       };
     };
 
     const monthDisplay = getMonthDisplay();
 
     return {
-      orgName: project.org_nickname || project.org_name_th || project.org_name_en || "",
+      orgName:
+        project.org_nickname ||
+        project.org_name_th ||
+        project.org_name_en ||
+        "",
       isMultiDayProject: Boolean(
-        startDate && 
-        endDate && 
-        new Date(startDate).toDateString() !== new Date(endDate).toDateString()
+        startDate &&
+          endDate &&
+          new Date(startDate).toDateString() !==
+            new Date(endDate).toDateString()
       ),
-      displayName: project.project_name_th || project.name_th || 
-                   project.project_name_en || project.name_en || 
-                   "ไม่ระบุชื่อโครงการ",
-      displayLocation: typeof project.schedule === "object" && project.schedule?.location
-        ? project.schedule.location
-        : project.project_location || project.location || "ไม่ระบุสถานที่",
+      displayName:
+        project.project_name_th ||
+        project.name_th ||
+        project.project_name_en ||
+        project.name_en ||
+        "ไม่ระบุชื่อโครงการ",
+      displayLocation:
+        typeof project.schedule === "object" && project.schedule?.location
+          ? project.schedule.location
+          : project.project_location || project.location || "ไม่ระบุสถานที่",
       startDate,
       endDate,
       monthDisplay, // Enhanced month display object
@@ -113,9 +129,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
   // Process activity hours into activity tags
   const activityTags = useMemo((): ActivityTag[] => {
-    if (!project.activity_hours || 
-        typeof project.activity_hours !== "object" || 
-        Array.isArray(project.activity_hours)) {
+    if (
+      !project.activity_hours ||
+      typeof project.activity_hours !== "object" ||
+      Array.isArray(project.activity_hours)
+    ) {
       return [];
     }
 
@@ -125,36 +143,45 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       if (key === "__proto__") return;
 
       // Handle nested competency_development_activities
-      if (key === "competency_development_activities" && 
-          typeof value === "object" && 
-          value !== null && 
-          !Array.isArray(value)) {
-        
+      if (
+        key === "competency_development_activities" &&
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
         const totalHours = Object.values(value as Record<string, number>)
-          .filter((hours): hours is number => typeof hours === "number" && hours > 0)
+          .filter(
+            (hours): hours is number => typeof hours === "number" && hours > 0
+          )
           .reduce((sum, hours) => sum + hours, 0);
 
         if (totalHours > 0) {
           activities.push({
             type: ACTIVITY_LABELS[key] || key.replace(/_/g, " "),
             key: key as keyof typeof ACTIVITY_COLORS,
-            typeColor: 'purple'
+            typeColor: "purple",
           });
         }
-      } 
+      }
       // Handle direct activity types
-      else if (ALLOWED_ACTIVITY_TYPES.includes(key as any) && 
-               typeof value === "number" && 
-               value > 0) {
-        
-        const typeColor = key === 'social_activities' ? 'orange' :
-                         key === 'university_activities' ? 'emerald' : 'default';
-        
+      else if (
+        ALLOWED_ACTIVITY_TYPES.includes(key as any) &&
+        typeof value === "number" &&
+        value > 0
+      ) {
+        const typeColor =
+          key === "social_activities"
+            ? "orange"
+            : key === "university_activities"
+            ? "emerald"
+            : "default";
+
         activities.push({
-          type: ACTIVITY_LABELS[key as keyof typeof ACTIVITY_LABELS] || 
-                key.replace(/_/g, " "),
+          type:
+            ACTIVITY_LABELS[key as keyof typeof ACTIVITY_LABELS] ||
+            key.replace(/_/g, " "),
           key: key as keyof typeof ACTIVITY_COLORS,
-          typeColor
+          typeColor,
         });
       }
     });
@@ -175,89 +202,105 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   }, [projectData.startDate, projectData.endDate]);
 
   // Theme styles configuration
-  const styles = useMemo(() => ({
-    card: getValueForTheme(
-      "bg-gradient-to-b from-white/5 to-white/3 border border-white/10 hover:border-blue-400/30",
-      "bg-white border border-gray-100 hover:border-primary/20"
-    ),
-    orgIcon: getValueForTheme("text-blue-300/90", "text-primary/80"),
-    title: getValueForTheme(
-      "text-white group-hover:text-blue-100",
-      "text-gray-800 group-hover:text-primary"
-    ),
-    dateBg: getValueForTheme(
-      "bg-gradient-to-br from-blue-500/70 to-indigo-600/70 border border-blue-400/20",
-      "bg-gradient-to-br from-primary/80 to-teal-600/70 border border-primary/20"
-    ),
-    dateHover: getValueForTheme(
-      "group-hover:from-blue-500/80 group-hover:to-indigo-600/80",
-      "group-hover:from-primary/90 group-hover:to-teal-500/80"
-    ),
-    details: getValueForTheme(
-      "text-white/70 group-hover:text-blue-200/90",
-      "text-gray-500 group-hover:text-primary/80"
-    ),
-    iconBg: getValueForTheme(
-      "bg-blue-500/10 text-blue-400/80",
-      "bg-primary/5 text-primary/60"
-    ),
-    button: getValueForTheme(
-      "bg-gradient-to-r from-blue-800/20 to-indigo-800/20 hover:from-blue-700/30 hover:to-indigo-700/30",
-      "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary/5 hover:to-primary/10"
-    ),
-    buttonBorder: getValueForTheme(
-      "border-white/5 hover:border-blue-400/10",
-      "border-gray-100 hover:border-primary/10"
-    ),
-    buttonText: getValueForTheme(
-      "text-white/70 hover:text-white/90",
-      "text-gray-500 hover:text-primary"
-    ),
-    buttonIcon: getValueForTheme(
-      "text-blue-300/70 group-hover:text-blue-200",
-      "text-primary/50 group-hover:text-primary"
-    ),
-  }), [getValueForTheme]);
+  const styles = useMemo(
+    () => ({
+      card: getValueForTheme(
+        "bg-gradient-to-b from-white/5 to-white/3 border border-white/10 hover:border-blue-400/30",
+        "bg-white border border-gray-100 hover:border-primary/20"
+      ),
+      orgIcon: getValueForTheme("text-blue-300/90", "text-primary/80"),
+      title: getValueForTheme(
+        "text-white group-hover:text-blue-100",
+        "text-gray-800 group-hover:text-primary"
+      ),
+      dateBg: getValueForTheme(
+        "bg-gradient-to-br from-blue-500/70 to-indigo-600/70 border border-blue-400/20",
+        "bg-gradient-to-br from-primary/80 to-teal-600/70 border border-primary/20"
+      ),
+      dateHover: getValueForTheme(
+        "group-hover:from-blue-500/80 group-hover:to-indigo-600/80",
+        "group-hover:from-primary/90 group-hover:to-teal-500/80"
+      ),
+      details: getValueForTheme(
+        "text-white/70 group-hover:text-blue-200/90",
+        "text-gray-500 group-hover:text-primary/80"
+      ),
+      iconBg: getValueForTheme(
+        "bg-blue-500/10 text-blue-400/80",
+        "bg-primary/5 text-primary/60"
+      ),
+      button: getValueForTheme(
+        "bg-gradient-to-r from-blue-800/20 to-indigo-800/20 hover:from-blue-700/30 hover:to-indigo-700/30",
+        "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary/5 hover:to-primary/10"
+      ),
+      buttonBorder: getValueForTheme(
+        "border-white/5 hover:border-blue-400/10",
+        "border-gray-100 hover:border-primary/10"
+      ),
+      buttonText: getValueForTheme(
+        "text-white/70 hover:text-white/90",
+        "text-gray-500 hover:text-primary"
+      ),
+      buttonIcon: getValueForTheme(
+        "text-blue-300/70 group-hover:text-blue-200",
+        "text-primary/50 group-hover:text-primary"
+      ),
+    }),
+    [getValueForTheme]
+  );
 
   // Event handlers
   const handleClick = useCallback(() => onClick?.(project), [onClick, project]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleClick();
-    }
-  }, [handleClick]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick]
+  );
 
-  const handleButtonClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    handleClick();
-  }, [handleClick]);
+  const handleButtonClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      handleClick();
+    },
+    [handleClick]
+  );
 
   // Activity Tag Colors
-  const getTagColors = useCallback((typeColor: string) => {
-    const theme = getValueForTheme('dark', 'light');
-    const colorMap = {
-      purple: theme === 'dark' 
-        ? "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30"
-        : "bg-purple-50 text-blue-600 ring-1 ring-blue-200",
-      emerald: theme === 'dark'
-        ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30"
-        : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200",
-      orange: theme === 'dark'
-        ? "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30"
-        : "bg-orange-50 text-orange-600 ring-1 ring-orange-200",
-      default: theme === 'dark'
-        ? "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30"
-        : "bg-gray-50 text-gray-600 ring-1 ring-gray-200"
-    };
-    return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
-  }, [getValueForTheme]);
+  const getTagColors = useCallback(
+    (typeColor: string) => {
+      const theme = getValueForTheme("dark", "light");
+      const colorMap = {
+        purple:
+          theme === "dark"
+            ? "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30"
+            : "bg-purple-50 text-blue-600 ring-1 ring-blue-200",
+        emerald:
+          theme === "dark"
+            ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30"
+            : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200",
+        orange:
+          theme === "dark"
+            ? "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30"
+            : "bg-orange-50 text-orange-600 ring-1 ring-orange-200",
+        default:
+          theme === "dark"
+            ? "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30"
+            : "bg-gray-50 text-gray-600 ring-1 ring-gray-200",
+      };
+      return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
+    },
+    [getValueForTheme]
+  );
 
   // Enhanced month display component
   const renderMonthDisplay = useMemo(() => {
     const { monthDisplay } = projectData;
-    
+
     if (!monthDisplay.isRange) {
       // Single month display - ใช้ขนาดเดียวกับ test case อื่น
       return (
@@ -272,22 +315,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       return (
         <div className="text-white/90 font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
           <div className="flex items-center justify-center">
-  
             <div className="text-3xs sm:text-2xs md:text-xs opacity-90 text-center">
               {monthDisplay.startMonth}
             </div>
 
-            <div className="w-1 sm:w-1.5 md:w-2"/>
-            
-        
-            <div className="flex items-center justify-center">
-              -
-            </div>
-            
-         
-            <div className="w-1 sm:w-1.5 md:w-2"/>
-            
-    
+            <div className="w-1 sm:w-1.5 md:w-2" />
+
+            <div className="flex items-center justify-center">-</div>
+
+            <div className="w-1 sm:w-1.5 md:w-2" />
+
             <div className="text-3xs sm:text-2xs md:text-xs opacity-90 text-center">
               {monthDisplay.endMonth}
             </div>
@@ -313,7 +350,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         "backdrop-blur-sm rounded-xl shadow-sm hover:shadow-md transition-all duration-300",
         styles.card
       )}
-      onClick={handleClick}
+      onClick={(e: React.MouseEvent) => router.push(`/projects/${project.id}`)}
       role="button"
       tabIndex={0}
       aria-label={`ดูรายละเอียด ${projectData.displayName}`}
@@ -322,7 +359,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       <div className="flex flex-col h-full relative">
         {/* Main Content */}
         <div className="flex p-2 sm:p-3 md:p-4 items-start gap-2 sm:gap-3 md:gap-4 relative z-10 flex-grow">
-          
           {/* Date Display */}
           <div
             className={combine(
@@ -335,11 +371,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
           >
             {/* Enhanced month display with proper spacing */}
             {renderMonthDisplay}
-            
+
             <ProjectCardDateDisplay
               isMultiDayProject={projectData.isMultiDayProject}
-              startDateTime={projectData.startDate ? new Date(projectData.startDate) : undefined}
-              endDateTime={projectData.endDate ? new Date(projectData.endDate) : undefined}
+              startDateTime={
+                projectData.startDate
+                  ? new Date(projectData.startDate)
+                  : undefined
+              }
+              endDateTime={
+                projectData.endDate ? new Date(projectData.endDate) : undefined
+              }
               dayStart={projectData.displayDay}
               dayEnd={projectData.displayEndDay}
               day={projectData.displayDay}
@@ -348,7 +390,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
           {/* Content Section */}
           <div className="flex-grow">
-            
             {/* Project Title */}
             <h3
               className={combine(
