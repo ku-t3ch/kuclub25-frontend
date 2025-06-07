@@ -37,7 +37,7 @@ const DateInfoCard = React.memo<DateInfoCardProps>(({ icon, label, date, time })
   return (
     <div className="flex items-start">
       <div className={combine(
-        "w-9  xs:w-10 h-9 xs:h-10 rounded-full flex items-center justify-center mr-3 xs:mr-4 shadow-lg flex-shrink-0",
+        "w-9 xs:w-10 h-9 xs:h-10 rounded-full flex items-center justify-center mr-3 xs:mr-4 shadow-lg flex-shrink-0",
         themeValues.iconBg
       )}>
         {icon}
@@ -56,10 +56,7 @@ const DateInfoCard = React.memo<DateInfoCardProps>(({ icon, label, date, time })
           {date}
         </div>
         {time && (
-          <div className={combine(
-            "mt-1  text-xs xs:text-sm ",
-           
-          )}>
+          <div className="mt-1 text-xs xs:text-sm">
             <div className={combine(
               "flex items-center",
               themeValues.secondaryText
@@ -152,7 +149,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
           {dateTimeInfo?.isMultiDay ? "ระยะเวลากิจกรรม" : "วันที่จัดกิจกรรม"}
         </h3>
 
-        <div className="space-y-4 xs:space-y-5 sm:space-y-6 ">
+        <div className="space-y-4 xs:space-y-5 sm:space-y-6">
           {!dateTimeInfo?.isMultiDay ? (
             <DateInfoCard 
               icon={icons.calendar}
@@ -243,7 +240,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
       )}
 
       {/* Activity formats */}
-      {projectData.formats.length > 0 && (
+      {projectData.formats && projectData.formats.length > 0 && (
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}

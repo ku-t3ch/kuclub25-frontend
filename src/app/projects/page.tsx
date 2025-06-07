@@ -346,8 +346,16 @@ export default function ProjectsPage() {
 
   // Handle project click
   const handleProjectClick = useCallback((project: any) => {
-    console.log("Project clicked:", project);
-    // Implement navigation or modal logic here
+    if (!project?.id) return;
+
+    const projectId = project.id || project.projectid || project.project_id;
+    if (!projectId) {
+      console.error("Project ID not found:", project);
+      return;
+    }
+
+    // Navigate to project details page
+    window.location.href = `/projects/${projectId}`;
   }, []);
 
   // Reset selection when projects or filters change

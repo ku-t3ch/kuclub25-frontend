@@ -39,18 +39,11 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
 }) => {
   const { getValueForTheme, combine } = useThemeUtils();
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log('SelectedDateProjects rendered with:', {
-      selectedDate,
-      projectsCount: projectsOnSelectedDate?.length || 0,
-      projects: projectsOnSelectedDate
-    });
-  }, [selectedDate, projectsOnSelectedDate]);
+
 
   // Early return if no data
   if (!selectedDate || !projectsOnSelectedDate || projectsOnSelectedDate.length === 0) {
-    console.log('SelectedDateProjects: No data to display');
+  
     return null;
   }
 
@@ -77,8 +70,6 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
   const validProjects = projectsOnSelectedDate
     .map(extractProject)
     .filter(Boolean);
-
-  console.log('Valid projects after filtering:', validProjects.length);
 
   if (validProjects.length === 0) {
     return (
@@ -172,7 +163,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
             {/* Close button */}
             <button
               onClick={() => {
-                console.log('Closing selected date projects');
+     
                 setSelectedDate(null);
               }}
               className={combine(
@@ -214,9 +205,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
               <ProjectCard
                 project={validProjects[0]}
                 onClick={(project) => {
-                  console.log('Single project clicked:', project);
-                  // Add your navigation logic here
-                  // Example: router.push(`/projects/${project.id}`);
+             
                 }}
               />
             </motion.div>
@@ -243,9 +232,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                     <ProjectCard
                       project={project}
                       onClick={(clickedProject) => {
-                        console.log('Multiple project clicked:', clickedProject);
-                        // Add your navigation logic here
-                        // Example: router.push(`/projects/${clickedProject.id}`);
+
                       }}
                     />
                   </motion.div>
@@ -274,9 +261,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
               
               <button
                 onClick={() => {
-                  console.log('View all projects for date:', selectedDate);
-                  // Add your navigation logic here
-                  // Example: router.push(`/projects?date=${selectedDate.toISOString().split('T')[0]}`);
+
                 }}
                 className={combine(
                   "text-xs px-3 py-1.5 rounded-lg transition-all duration-200",
