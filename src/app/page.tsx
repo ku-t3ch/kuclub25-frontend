@@ -151,7 +151,7 @@ export default function Home() {
 
       <div className="h-8 md:h-12" />
 
-      <CategorySection
+      {/* <CategorySection
         categories={categories}
         activeCategory={activeCategory}
         totalClubCount={
@@ -159,7 +159,7 @@ export default function Home() {
         }
         loading={loading}
         onCategoryChange={handleCategoryChange}
-      />
+      /> */}
 
       <OrganizationSection
         organizations={organizations}
