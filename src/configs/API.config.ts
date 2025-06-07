@@ -16,7 +16,7 @@ export const API_CONFIG = {
     ORGANIZATIONS: {
       LIST: '/organizations',
       DETAIL: (id: number) => `/organizations/${id}`,
-    //   CATEGORIES: '/organizations/categories',
+
     },
     PROJECTS: {
       LIST: '/projects',

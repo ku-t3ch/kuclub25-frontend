@@ -11,6 +11,7 @@ export interface Organization {
   views: number;
   org_nickname: string;
   org_type_name?: string;
+  details?: string;
   campus_name?: string;
 }
 
