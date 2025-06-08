@@ -10,6 +10,7 @@ import HeroSection from "../components/home/heroSection";
 import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
 import UpcomingProjectSection from "../components/home/upcomingProjectSection";
+import { Vortex } from "../components/ui/vortex";
 
 export default function Home() {
   const { resolvedTheme } = useTheme();
@@ -124,33 +125,43 @@ export default function Home() {
     }, 300);
   }, []);
 
-  const handleProjectClick = useCallback((project: any) => {
-    try {
-      const projectId = project.id || project.projectid || project.project_id;
-      
-      if (!projectId) {
-        console.error('Project ID not found:', project);
-        return;
+  const handleProjectClick = useCallback(
+    (project: any) => {
+      try {
+        const projectId = project.id || project.projectid || project.project_id;
+
+        if (!projectId) {
+          console.error("Project ID not found:", project);
+          return;
+        }
+        router.push(`/projects/${projectId}`);
+      } catch (error) {
+        console.error("Error navigating to project:", error);
       }
-      router.push(`/projects/${projectId}`);
-    } catch (error) {
-      console.error('Error navigating to project:', error);
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   // Loading state is true if either types or organizations are loading or if searching
   const loading = typesLoading || orgsLoading;
 
   return (
-    <div
-      className={combine(
-        "min-h-screen pt-16 md:pt-20",
-        getValueForTheme(
-          "bg-gradient-to-b from-[#051D35] to-[#091428]",
-          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-        )
-      )}
-    >
+    <div className={combine("min-h-screen pt-16 md:pt-20")}>
+        <Vortex
+        backgroundColor="transparent"
+        rangeY={800}
+        particleCount={100}
+        baseHue={120}
+        particleOpacity={0.2}
+        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
+        containerClassName={combine(
+          "fixed inset-0 z-0 ",
+          getValueForTheme(
+            "bg-gradient-to-b from-[#000000] to-[#123067]",
+            "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+          )
+        )}
+      />
       <HeroSection
         title="ค้นพบชมรมที่ใช่สำหรับคุณ"
         description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
