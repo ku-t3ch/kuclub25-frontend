@@ -7,6 +7,7 @@ interface UpcomingProjectSectionProps {
   projects: Project[];
   loading?: boolean;
   title?: string;
+  description?: string; // Add description prop
   maxProjects?: number;
   onProjectClick?: (project: Project) => void;
   showViewAllButton?: boolean;
@@ -17,6 +18,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
   projects,
   loading = false,
   title = "โครงการที่กำลังจะเกิดขึ้น",
+  description, // Add description parameter
   maxProjects = 6,
   onProjectClick,
   showViewAllButton = true,
@@ -99,9 +101,16 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h2 className={`text-2xl font-bold ${getValueForTheme('text-white', 'text-gray-900')}`}>
-          {title}
-        </h2>
+        <div>
+          <h2 className={`text-2xl font-bold ${getValueForTheme('text-white', 'text-gray-900')}`}>
+            {title}
+          </h2>
+          {description && (
+            <p className={`text-sm mt-2 ${getValueForTheme('text-gray-300', 'text-gray-600')}`}>
+              {description}
+            </p>
+          )}
+        </div>
         
         {showViewAllButton && upcomingProjects.length > 0 && (
           <button
@@ -134,7 +143,6 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
               key={project.id}
               project={project}
               onClick={onProjectClick}
-              showCountdown={true} // Enable countdown for upcoming projects
             />
           ))}
         </div>

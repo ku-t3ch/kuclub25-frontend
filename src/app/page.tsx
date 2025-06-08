@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"; // Correct import for App Router
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
+
 import { useAllProjects } from "../hooks/useProject";
 import HeroSection from "../components/home/heroSection";
 import { Vortex } from "../components/ui/vortex";
@@ -157,6 +158,7 @@ export default function Home() {
         totalClubCount={
           searchQuery ? filteredOrganizations.length : totalClubCount
         }
+        categoryCountMap={categoryCountMap}
         loading={loading}
         onCategoryChange={handleCategoryChange}
       />
@@ -177,6 +179,8 @@ export default function Home() {
         loading={projectsLoading}
         onProjectClick={handleProjectClick}
         maxProjects={6}
+        title="โครงการที่กำลังจะเกิดขึ้น"
+        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
       />
     </div>
   );
