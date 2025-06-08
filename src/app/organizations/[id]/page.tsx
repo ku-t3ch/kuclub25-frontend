@@ -19,10 +19,10 @@ const OrganizationSidebarSection = React.lazy(() =>
   import("../../../components/organization/[id]/sidebarSection")
 );
 const LoadingPage = React.lazy(() => 
-  import("../../../components/organization/[id]/loading")
+  import("../../../components/ui/loading/loadingOrganizationID")
 );
 const ErrorPage = React.lazy(() => 
-  import("../../../components/organization/[id]/error")
+  import("../../../components/ui/error/errorOrganizationID")
 );
 
 // Constants moved outside component to prevent recreation
