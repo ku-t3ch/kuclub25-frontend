@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"; // Correct import for App Router
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
+
 import { useAllProjects } from "../hooks/useProject";
 import HeroSection from "../components/home/heroSection";
 import CategorySection from "../components/home/categorySection";
@@ -46,6 +47,18 @@ export default function Home() {
 
   const totalClubCount = useMemo(() => {
     return organizations.length;
+  }, [organizations]);
+
+  // Add categoryCountMap calculation
+  const categoryCountMap = useMemo(() => {
+    const countMap = new Map<string | undefined, number>();
+
+    organizations.forEach((org) => {
+      const typeName = org.org_type_name;
+      countMap.set(typeName, (countMap.get(typeName) || 0) + 1);
+    });
+
+    return countMap;
   }, [organizations]);
 
   const searchOrganizations = useCallback(
@@ -151,15 +164,16 @@ export default function Home() {
 
       <div className="h-8 md:h-12" />
 
-      {/* <CategorySection
+      <CategorySection
         categories={categories}
         activeCategory={activeCategory}
         totalClubCount={
           searchQuery ? filteredOrganizations.length : totalClubCount
         }
+        categoryCountMap={categoryCountMap}
         loading={loading}
         onCategoryChange={handleCategoryChange}
-      /> */}
+      />
 
       <OrganizationSection
         organizations={organizations}
@@ -177,6 +191,8 @@ export default function Home() {
         loading={projectsLoading}
         onProjectClick={handleProjectClick}
         maxProjects={6}
+        title="โครงการที่กำลังจะเกิดขึ้น"
+        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
       />
     </div>
   );
