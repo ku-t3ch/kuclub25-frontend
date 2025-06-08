@@ -384,7 +384,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                 projectData.endDate ? new Date(projectData.endDate) : undefined
               }
               dayStart={projectData.displayDay}
-              dayEnd={projectData.displayEndDay}
+              // dayEnd={projectData.displayEndDay}
               day={projectData.displayDay}
             />
           </div>

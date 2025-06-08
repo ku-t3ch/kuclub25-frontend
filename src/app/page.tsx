@@ -127,7 +127,6 @@ export default function Home() {
     }
   }, [router]);
 
-  // Loading state is true if either types or organizations are loading or if searching
   const loading = typesLoading || orgsLoading;
 
   return (
