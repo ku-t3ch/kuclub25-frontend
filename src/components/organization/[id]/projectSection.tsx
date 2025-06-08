@@ -81,7 +81,7 @@ const EmptyState = React.memo<{
       <div
         className={combine(
           "w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 rounded-full flex items-center justify-center",
-          getValueForTheme("bg-white/10", "bg-gray-100")
+          getValueForTheme("bg-white/10", "bg-[#006C67]/10")
         )}
       >
         <svg
@@ -148,8 +148,8 @@ const TabButton = React.memo<{
         className={combine(
           "ml-1 sm:ml-2 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full text-xs",
           isActive
-            ? getValueForTheme("bg-blue-500/30", "bg-primary/20")
-            : getValueForTheme("bg-white/10", "bg-gray-200")
+            ? getValueForTheme("bg-blue-500/30", "bg-[#006C67]/20")
+            : getValueForTheme("bg-white/10", "bg-[#006C67]/10")
         )}
       >
         {tab.count}
@@ -172,24 +172,24 @@ const OrganizationProjectSection: React.FC<OrganizationProjectSectionProps> = ({
   const themeValues = useMemo(() => ({
     cardBg: getValueForTheme(
       "bg-white/5 border-white/10 shadow-blue-900/5",
-      "bg-white border-gray-200 shadow-gray-200/20"
+      "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    secondaryText: getValueForTheme("text-white/70", "text-gray-600"),
-    accentBlue: getValueForTheme("text-blue-300", "text-primary"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
+    accentBlue: getValueForTheme("text-blue-300", "text-[#006C67]"),
     titleGradient: getValueForTheme(
       "bg-gradient-to-r from-white to-blue-100",
-      "bg-gradient-to-r from-gray-800 to-primary"
+      "bg-gradient-to-r from-[#006C67] to-[#006C67]/80"
     ),
     tabActive: getValueForTheme(
       "bg-blue-500/20 text-blue-300 border-blue-500/30",
-      "bg-primary/10 text-primary border-primary/20"
+      "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
     ),
     tabInactive: getValueForTheme(
       "bg-white/5 text-white/60 border-white/10 hover:bg-white/10",
-      "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+      "bg-white text-[#006C67]/60 border border-[#006C67]/20 hover:bg-[#006C67]/5"
     ),
-    spinnerBorder: getValueForTheme("border-blue-400", "border-primary"),
+    spinnerBorder: getValueForTheme("border-blue-400", "border-[#006C67]"),
     hoverShadow: getValueForTheme(
       "0 15px 20px -5px rgba(0, 0, 0, 0.3)",
       "0 15px 20px -5px rgba(0, 108, 103, 0.1)"
@@ -251,7 +251,7 @@ const OrganizationProjectSection: React.FC<OrganizationProjectSectionProps> = ({
         {/* Title */}
         <h2
           className={combine(
-            "text-xl sm:text-2xl md:text-3xl font-light bg-clip-text text-transparent flex items-center gap-2 md:gap-3",
+            "text-xl sm:text-2xl md:text-3xl font-medium bg-clip-text text-transparent flex items-center gap-2 md:gap-3",
             themeValues.titleGradient
           )}
         >

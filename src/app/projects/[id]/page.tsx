@@ -25,11 +25,11 @@ const LoadingSpinner = React.memo(() => {
       <div className="text-center">
         <div className={combine(
           "w-12 h-12 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4",
-          getValueForTheme("border-blue-400", "border-primary")
+          getValueForTheme("border-blue-400", "border-[#006C67]")
         )} />
         <p className={combine(
           "text-lg",
-          getValueForTheme("text-white/70", "text-gray-600")
+          getValueForTheme("text-white/70", "text-[#006C67]/70")
         )}>
           กำลังโหลดข้อมูลโครงการ...
         </p>
@@ -71,10 +71,16 @@ const ErrorMessage = React.memo<{
               d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         </div>
-        <h1 className={combine("text-2xl font-bold mb-4", getValueForTheme("text-white", "text-gray-800"))}>
+        <h1 className={combine(
+          "text-2xl font-bold mb-4", 
+          getValueForTheme("text-white", "text-[#006C67]")
+        )}>
           ไม่พบข้อมูลโครงการ
         </h1>
-        <p className={combine("mb-6", getValueForTheme("text-white/70", "text-gray-600"))}>
+        <p className={combine(
+          "mb-6", 
+          getValueForTheme("text-white/70", "text-[#006C67]/70")
+        )}>
           {error || "ไม่สามารถโหลดข้อมูลโครงการได้"}
         </p>
         <motion.button
@@ -85,7 +91,7 @@ const ErrorMessage = React.memo<{
             "px-6 py-3 rounded-lg font-medium transition-all duration-300 text-white shadow-lg",
             getValueForTheme(
               "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
-              "bg-gradient-to-r from-primary to-teal-700 hover:from-teal-700 hover:to-teal-800"
+              "bg-gradient-to-r from-[#006C67] to-[#006C67]/90 hover:from-[#006C67]/90 hover:to-[#006C67]/80"
             )
           )}
         >
@@ -121,7 +127,7 @@ const DetailProjectPage = () => {
   const themeValues = useMemo(() => ({
     containerBg: getValueForTheme(
       "bg-gradient-to-b from-[#051D35] to-[#0A1A2F] text-white",
-      "bg-gradient-to-b from-white to-gray-50 text-gray-800"
+      "bg-gradient-to-b from-white to-gray-50 text-[#006C67]"
     ),
   }), [getValueForTheme]);
 
@@ -324,7 +330,7 @@ const DetailProjectPage = () => {
         "relative h-px mx-auto w-[90%] xs:w-[80%] sm:w-[70%] my-4 xs:my-6 sm:my-8",
         getValueForTheme(
           "bg-gradient-to-r from-transparent via-white/20 to-transparent",
-          "bg-gradient-to-r from-transparent via-gray-300 to-transparent"
+          "bg-gradient-to-r from-transparent via-[#006C67]/30 to-transparent"
         )
       )}></div>
     </div>

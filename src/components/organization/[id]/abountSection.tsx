@@ -44,7 +44,7 @@ const CategoryItem = React.memo<{
   <div
     className={combine(
       "p-4 rounded-xl transition-colors duration-200",
-      getValueForTheme("bg-white/5 hover:bg-white/10", "bg-gray-50 hover:bg-gray-100")
+      getValueForTheme("bg-white/5 hover:bg-white/10", "bg-[#006C67]/5 hover:bg-[#006C67]/10")
     )}
   >
     <h4
@@ -76,18 +76,18 @@ const OrganizationAboutSection: React.FC<OrganizationAboutSectionProps> = ({
   const themeStyles = useMemo(() => ({
     cardBg: getValueForTheme(
       "bg-white/5 border-white/10 shadow-blue-900/5",
-      "bg-white border-gray-200 shadow-gray-200/20"
+      "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    secondaryText: getValueForTheme("text-white/70", "text-gray-600"),
-    accentBlue: getValueForTheme("text-blue-300", "text-primary"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
+    accentBlue: getValueForTheme("text-blue-300", "text-[#006C67]"),
     titleGradient: getValueForTheme(
       "bg-gradient-to-r from-white to-blue-100",
-      "bg-gradient-to-r from-gray-800 to-primary"
+      "bg-gradient-to-r from-[#006C67] to-[#006C67]/80"
     ),
     detailsCard: getValueForTheme(
       "bg-white/5 border-blue-400/50",
-      "bg-gray-50 border-primary/50"
+      "bg-[#006C67]/5 border border-[#006C67]/30"
     )
   }), [getValueForTheme]);
 
@@ -138,7 +138,7 @@ const OrganizationAboutSection: React.FC<OrganizationAboutSectionProps> = ({
       {/* Header */}
       <h2
         className={combine(
-          "text-2xl md:text-3xl font-bold bg-clip-text text-transparent inline-flex items-center gap-3 mb-6",
+          "text-2xl md:text-3xl font-medium bg-clip-text text-transparent inline-flex items-center gap-3 mb-6",
           themeStyles.titleGradient
         )}
       >
@@ -182,7 +182,7 @@ const OrganizationAboutSection: React.FC<OrganizationAboutSectionProps> = ({
             </h3>
             <div
               className={combine(
-                "p-4 rounded-xl border transition-colors duration-200",
+                "p-4 rounded-xl transition-colors duration-200",
                 themeStyles.detailsCard
               )}
             >
