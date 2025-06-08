@@ -26,12 +26,12 @@ const DateInfoCard = React.memo<DateInfoCardProps>(({ icon, label, date, time })
   const themeValues = {
     iconBg: getValueForTheme(
       "bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 shadow-blue-900/10",
-      "bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 shadow-teal-900/5"
+      "bg-gradient-to-br from-[#006C67]/10 to-[#006C67]/15 border border-[#006C67]/20 shadow-[#006C67]/5"
     ),
-    accentColor: getValueForTheme("text-blue-300", "text-teal-700"),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    accentBg: getValueForTheme("bg-blue-500/10 border-blue-500/20", "bg-teal-50 border-teal-200"),
-    secondaryText: getValueForTheme("text-white/70", "text-gray-600"),
+    accentColor: getValueForTheme("text-blue-300", "text-[#006C67]"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    accentBg: getValueForTheme("bg-blue-500/10 border-blue-500/20", "bg-[#006C67]/10 border-[#006C67]/20"),
+    secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
   };
 
   return (
@@ -88,20 +88,20 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
   const themeValues = {
     cardBg: getValueForTheme(
       "bg-white/5 border-white/10 shadow-blue-900/5",
-      "bg-white border-gray-200 shadow-gray-200/20"
+      "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    secondaryText: getValueForTheme("text-white/70", "text-gray-600"),
-    accentBlueBg: getValueForTheme("bg-blue-500/10 border-blue-500/20", "bg-teal-50 border-teal-200"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
+    accentBlueBg: getValueForTheme("bg-blue-500/10 border-blue-500/20", "bg-[#006C67]/10 border-[#006C67]/20"),
     buttonPrimary: getValueForTheme(
       "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-900/20 hover:shadow-blue-900/30",
-      "bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 shadow-teal-600/20 hover:shadow-teal-600/30"
+      "bg-gradient-to-r from-[#006C67] to-[#006C67]/90 hover:from-[#006C67]/90 hover:to-[#006C67]/80 shadow-[#006C67]/20 hover:shadow-[#006C67]/30"
     ),
   };
 
   const icons = {
     calendar: (
-      <svg className={`w-4 h-4 ${getValueForTheme("text-blue-400", "text-teal-600")}`} 
+      <svg className={`w-4 h-4 ${getValueForTheme("text-blue-400", "text-[#006C67]")}`} 
            fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -115,7 +115,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
       </svg>
     ),
     clock: (
-      <svg className={`w-4 h-4 mr-2 ${getValueForTheme("text-blue-400", "text-teal-600")}`}
+      <svg className={`w-4 h-4 mr-2 ${getValueForTheme("text-blue-400", "text-[#006C67]")}`}
            fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -229,7 +229,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
                 "inline-block px-3 py-1 rounded-full text-xs font-medium",
                 getValueForTheme(
                   "bg-blue-500/20 text-blue-300",
-                  "bg-primary/10 text-primary"
+                  "bg-[#006C67]/10 text-[#006C67]"
                 )
               )}>
                 {organization.org_type_name}
