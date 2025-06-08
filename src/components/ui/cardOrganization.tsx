@@ -59,7 +59,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
   const handleImageError = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     const target = e.target as HTMLImageElement;
     target.onerror = null;
-    target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPuC5hOC4oeC5iOC4oeC4teC4o+C4ueC4m+C4oOC4suC4nTwvdGV4dD48L3N2Zz4=";
+    target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPuC5hOC4oeC5iOC4oeC4-teC4o+C4ueC4m+C4oOC4suC4nTwvdGV4dD48L3N2Zz4=";
   }, []);
 
   return (
@@ -145,13 +145,13 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-1.5 xs:p-2 sm:p-3 md:p-4 flex-1 flex flex-col justify-between">
+      <div className="p-2 xs:p-2 sm:p-3 md:p-4 flex-1 flex flex-col justify-between">
         <div>
           {/* Title and View Count */}
-          <div className="flex justify-between items-start mb-0.5 xs:mb-1 sm:mb-1.5">
+          <div className="flex justify-between items-start mb-1 xs:mb-1 sm:mb-1.5">
             <h3 className={combine(
               "font-semibold line-clamp-1 transition-colors duration-300",
-              "text-[0.7rem] xs:text-2xs sm:text-base md:text-lg",
+              "text-sm xs:text-2xs sm:text-base md:text-lg",
               getValueForTheme(
                 "text-white group-hover:text-blue-100",
                 "text-gray-800 group-hover:text-[#006C67]"
@@ -162,12 +162,12 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
 
             {view >= 0 && (
               <span className={combine(
-                "flex items-center ml-0.5 xs:ml-1 sm:ml-1.5 md:ml-2",
-                "text-[0.5rem] xs:text-3xs sm:text-2xs md:text-xs",
+                "flex items-center ml-1 xs:ml-1 sm:ml-1.5 md:ml-2",
+                "text-xs xs:text-3xs sm:text-2xs md:text-xs",
                 getValueForTheme("text-white/50", "text-gray-500")
               )}>
                 <svg
-                  className="w-1.5 xs:w-2 sm:w-2.5 md:w-3 h-1.5 xs:h-2 sm:h-2.5 md:h-3 mr-0.5 xs:mr-0.5 sm:mr-0.75 md:mr-1"
+                  className="w-2.5 xs:w-2 sm:w-2.5 md:w-3 h-2.5 xs:h-2 sm:h-2.5 md:h-3 mr-1 xs:mr-0.5 sm:mr-0.75 md:mr-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -194,8 +194,8 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
           {/* Secondary Name */}
           {secondaryName && secondaryName !== displayName && (
             <div className={combine(
-              "line-clamp-1 mb-0.5 xs:mb-1 sm:mb-1.5",
-              "text-[0.5rem] xs:text-2xs sm:text-2xs md:text-xs",
+              "line-clamp-1 mb-1 xs:mb-1 sm:mb-1.5",
+              "text-sm xs:text-2xs sm:text-2xs md:text-xs",
               getValueForTheme("text-white/60", "text-gray-500")
             )}>
               {secondaryName}
@@ -218,9 +218,9 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
         <Link href={`/organizations/${id}`} className="block">
           <motion.button
             className={combine(
-              "w-full relative overflow-hidden rounded-xl transition-all duration-300",
+              "w-full relative overflow-hidden rounded-lg transition-all duration-300",
               "group/btn flex justify-center items-center shadow-inner",
-              "py-1 xs:py-1.5 sm:py-2 md:py-2.5",
+              "py-2 xs:py-1.5 sm:py-2 md:py-2.5",
               getValueForTheme(
                 "text-white/90 bg-gradient-to-r from-blue-600/30 to-indigo-600/30 hover:from-blue-600/50 hover:to-indigo-600/50 hover:text-white border border-blue-500/20 hover:border-blue-400/40 shadow-white/5",
                 "text-[#006C67]/90 bg-gradient-to-r from-[#006C67]/10 to-teal-600/10 hover:from-[#006C67]/20 hover:to-teal-600/20 hover:text-[#006C67] border border-[#006C67]/20 hover:border-[#006C67]/30 shadow-[#006C67]/5"
@@ -230,11 +230,11 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
             whileTap={{ scale: 0.98 }}
             type="button"
           >
-            <span className="relative z-10 flex items-center justify-center text-inherit font-medium tracking-wide text-[0.55rem] xs:text-3xs sm:text-2xs md:text-sm">
+            <span className="relative z-10 flex items-center justify-center text-inherit font-medium tracking-wide text-xs xs:text-2xs sm:text-xs md:text-sm">
               รายละเอียด
               <motion.svg
                 className={combine(
-                  "w-2 xs:w-2.5 sm:w-3 md:w-4 h-2 xs:h-2.5 sm:h-3 md:h-4 ml-0.5 xs:ml-1 sm:ml-1.5 md:ml-2",
+                  "w-3 xs:w-2.5 sm:w-3 md:w-4 h-3 xs:h-2.5 sm:h-3 md:h-4 ml-1.5 xs:ml-1 sm:ml-1.5 md:ml-2",
                   getValueForTheme(
                     "text-blue-300 group-hover/btn:text-blue-200",
                     "text-[#006C67]/70 group-hover/btn:text-[#006C67]"
@@ -268,7 +268,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
               initial={{ scale: 0, borderRadius: "100%" }}
               whileHover={{ 
                 scale: 1, 
-                borderRadius: "0.75rem",
+                borderRadius: "0.5rem",
                 transition: { duration: 0.4, ease: "easeOut" }
               }}
             />

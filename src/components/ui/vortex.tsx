@@ -16,6 +16,7 @@ interface VortexProps {
   baseRadius?: number;
   rangeRadius?: number;
   backgroundColor?: string;
+  particleOpacity?: number; 
 }
 
 export const Vortex = (props: VortexProps) => {
@@ -39,6 +40,7 @@ export const Vortex = (props: VortexProps) => {
   const yOff = 0.00125;
   const zOff = 0.0005;
   const backgroundColor = props.backgroundColor || "#000000";
+  const particleOpacity = props.particleOpacity || 1.0;
 
   let tick = 0;
   const noise3D = createNoise3D();
@@ -159,7 +161,7 @@ export const Vortex = (props: VortexProps) => {
     ctx.save();
     ctx.lineCap = "round";
     ctx.lineWidth = radius;
-    ctx.strokeStyle = `hsla(${hue},100%,60%,${fadeInOut(life, ttl)})`;
+    ctx.strokeStyle = `hsla(${hue},100%,60%,${fadeInOut(life, ttl) * particleOpacity})`;
     ctx.beginPath();
     ctx.moveTo(x, y);
     ctx.lineTo(x2, y2);

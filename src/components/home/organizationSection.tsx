@@ -24,7 +24,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
   onCategoryChange
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
-  const [showAll, setShowAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
 
   // Check if mobile
@@ -41,30 +41,45 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
     [categories, activeCategory]
   );
 
-  // Display logic with different limits for mobile/desktop
-  const { displayedOrganizations, hasMore, limit } = useMemo(() => {
-    const limit = isMobile ? 8 : 12;
-    if (showAll) {
-      return {
-        displayedOrganizations: filteredOrganizations,
-        hasMore: false,
-        limit
-      };
-    }
-    return {
-      displayedOrganizations: filteredOrganizations.slice(0, limit),
-      hasMore: filteredOrganizations.length > limit,
-      limit
-    };
-  }, [filteredOrganizations, showAll, isMobile]);
+  // Pagination logic
+  const itemsPerPage = isMobile ? 8 : 12;
+  const totalPages = Math.ceil(filteredOrganizations.length / itemsPerPage);
+  
+  const displayedOrganizations = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredOrganizations.slice(startIndex, endIndex);
+  }, [filteredOrganizations, currentPage, itemsPerPage]);
 
   const hasResults = !loading && filteredOrganizations.length > 0;
   const isEmpty = !loading && filteredOrganizations.length === 0;
 
-  // Reset showAll when category changes
+  // Reset to first page when category changes
   useEffect(() => {
-    setShowAll(false);
+    setCurrentPage(1);
   }, [activeCategory]);
+
+  // Pagination helpers
+  const getVisiblePages = () => {
+    const delta = isMobile ? 1 : 2; // Show fewer pages on mobile
+    const start = Math.max(1, currentPage - delta);
+    const end = Math.min(totalPages, currentPage + delta);
+    
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of results
+    const resultsSection = document.querySelector('[data-results-section]');
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   // Animation variants (simplified)
   const containerVariants = {
@@ -83,65 +98,15 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
       <div className="relative px-4 xs:px-5 sm:px-6 lg:px-8 py-2 z-10">
         <div className="max-w-7xl mx-auto">
 
-          {/* Results Header */}
-          {hasResults && (
-            <motion.div
-              className="mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className={combine(
-                    "text-2xl md:text-3xl font-bold mb-2",
-                    getValueForTheme("text-white", "text-gray-900")
-                  )}>
-                    {activeCategory === undefined ? "ชมรมทั้งหมด" : activeCategoryName}
-                  </h2>
-                  <p className={combine(
-                    "text-sm md:text-base",
-                    getValueForTheme("text-gray-300", "text-gray-600")
-                  )}>
-                    พบ <span className={combine(
-                      "font-semibold",
-                      getValueForTheme("text-blue-300", "text-[#006C67]")
-                    )}>
-                      {filteredOrganizations.length}
-                    </span> ชมรม
-                    {activeCategory !== undefined && (
-                      <> ในหมวดหมู่ <span className="font-medium">{activeCategoryName}</span></>
-                    )}
-                  </p>
-                </div>
-
-                {/* Grid view button */}
-                <button
-                  className={combine(
-                    "hidden sm:block p-2 rounded-lg transition-colors duration-200",
-                    getValueForTheme(
-                      "bg-white/10 hover:bg-white/20 text-white",
-                      "bg-gray-100 hover:bg-gray-200 text-gray-600"
-                    )
-                  )}
-                  aria-label="Grid view"
-                >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                </button>
-              </div>
-            </motion.div>
-          )}
-
           {/* Organizations Grid */}
           {hasResults && (
             <>
               <motion.div
-                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
+                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-4 md:gap-6"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
+                key={currentPage} // Force re-animation on page change
               >
                 {displayedOrganizations.map((organization) => (
                   <motion.div key={organization.id} variants={itemVariants} layout>
@@ -150,29 +115,149 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                 ))}
               </motion.div>
 
-              {/* Show More Button */}
-              {hasMore && (
+              {/* Pagination */}
+              {totalPages > 1 && (
                 <motion.div
-                  className="text-center mt-6 sm:mt-8"
+                  className="flex flex-col items-center mt-8 sm:mt-12 space-y-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <motion.button
-                    onClick={() => setShowAll(true)}
-                    className={combine(
-                      "px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base font-medium transition-all duration-200",
-                      "border-2 border-dashed",
-                      getValueForTheme(
-                        "border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-blue-200",
-                        "border-[#006C67]/30 bg-[#006C67]/10 hover:bg-[#006C67]/20 text-[#006C67] hover:text-[#005550]"
-                      )
+
+                  {/* Pagination Controls */}
+                  <div className="flex items-center space-x-1 sm:space-x-2">
+                    {/* Previous Button */}
+                    <motion.button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={combine(
+                        "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                        "flex items-center space-x-1",
+                        currentPage === 1
+                          ? getValueForTheme(
+                              "text-gray-500 cursor-not-allowed",
+                              "text-gray-400 cursor-not-allowed"
+                            )
+                          : getValueForTheme(
+                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
+                            )
+                      )}
+                      whileHover={currentPage > 1 ? { scale: 1.05 } : {}}
+                      whileTap={currentPage > 1 ? { scale: 0.95 } : {}}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      <span className="hidden sm:inline">ก่อนหน้า</span>
+                    </motion.button>
+
+                    {/* First Page */}
+                    {!getVisiblePages().includes(1) && (
+                      <>
+                        <motion.button
+                          onClick={() => handlePageChange(1)}
+                          className={combine(
+                            "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                            getValueForTheme(
+                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
+                            )
+                          )}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          1
+                        </motion.button>
+                        {!getVisiblePages().includes(2) && (
+                          <span className={combine(
+                            "px-2 text-sm",
+                            getValueForTheme("text-gray-500", "text-gray-400")
+                          )}>
+                            ...
+                          </span>
+                        )}
+                      </>
                     )}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    ดูชมรมทั้งหมด ({filteredOrganizations.length - limit} เพิ่มเติม)
-                  </motion.button>
+
+                    {/* Visible Pages */}
+                    {getVisiblePages().map((page) => (
+                      <motion.button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={combine(
+                          "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                          page === currentPage
+                            ? getValueForTheme(
+                                "bg-blue-600 text-white shadow-lg",
+                                "bg-[#006C67] text-white shadow-lg"
+                              )
+                            : getValueForTheme(
+                                "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                                "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
+                              )
+                        )}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {page}
+                      </motion.button>
+                    ))}
+
+                    {/* Last Page */}
+                    {!getVisiblePages().includes(totalPages) && (
+                      <>
+                        {!getVisiblePages().includes(totalPages - 1) && (
+                          <span className={combine(
+                            "px-2 text-sm",
+                            getValueForTheme("text-gray-500", "text-gray-400")
+                          )}>
+                            ...
+                          </span>
+                        )}
+                        <motion.button
+                          onClick={() => handlePageChange(totalPages)}
+                          className={combine(
+                            "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                            getValueForTheme(
+                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
+                            )
+                          )}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {totalPages}
+                        </motion.button>
+                      </>
+                    )}
+
+                    {/* Next Button */}
+                    <motion.button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={combine(
+                        "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                        "flex items-center space-x-1",
+                        currentPage === totalPages
+                          ? getValueForTheme(
+                              "text-gray-500 cursor-not-allowed",
+                              "text-gray-400 cursor-not-allowed"
+                            )
+                          : getValueForTheme(
+                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
+                            )
+                      )}
+                      whileHover={currentPage < totalPages ? { scale: 1.05 } : {}}
+                      whileTap={currentPage < totalPages ? { scale: 0.95 } : {}}
+                    >
+                      <span className="hidden sm:inline">ถัดไป</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.button>
+                  </div>
                 </motion.div>
               )}
             </>
@@ -180,7 +265,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
 
           {/* Loading Skeletons */}
           {loading && (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-4 md:gap-6">
               {Array.from({ length: 8 }, (_, i) => (
                 <div key={i} className={combine(
                   "animate-pulse rounded-2xl h-64 sm:h-80",

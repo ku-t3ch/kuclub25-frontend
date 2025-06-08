@@ -185,19 +185,19 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         {/* Mobile Category Filter - Dropdown */}
         <div className="md:hidden mb-1">
           <h3 className={combine(
-            "text-lg font-semibold mb-3",
+            "text-lg font-bold mb-3 text-left",
             getValueForTheme("text-white", "text-gray-900")
           )}>
-            เลือกประเภท
+            เลือกประเภทองค์กร
           </h3>
 
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative max-w-xs mx-auto" ref={dropdownRef}>
             {/* Dropdown Button */}
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className={combine(
                 "w-full flex items-center justify-between",
-                "px-4 py-3 rounded-xl text-sm font-medium",
+                "px-3 py-2.5 rounded-lg text-sm font-medium",
                 "transition-all duration-200",
                 getValueForTheme(
                   "bg-gray-800/40 border border-gray-700/30 text-gray-300 hover:bg-gray-700/30",
@@ -209,10 +209,10 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
               aria-haspopup="true"
             >
               <div className="flex items-center gap-2">
-                <span>{activeCategoryName}</span>
+                <span className="truncate">{activeCategoryName}</span>
                 {categoryCountMap.get(activeCategory) !== undefined && (
                   <span className={combine(
-                    "px-2 py-0.5 rounded-full text-xs",
+                    "px-1.5 py-0.5 rounded-full text-xs flex-shrink-0",
                     getValueForTheme(
                       "bg-gray-600/20 text-gray-300",
                       "bg-gray-200 text-gray-600"
@@ -224,7 +224,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
               </div>
               <svg
                 className={combine(
-                  "w-4 h-4 transition-transform duration-200",
+                  "w-4 h-4 transition-transform duration-200 flex-shrink-0",
                   isDropdownOpen ? "rotate-180" : "",
                   getValueForTheme("text-gray-400", "text-gray-500")
                 )}
@@ -240,20 +240,20 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             {isDropdownOpen && (
               <div className={combine(
                 "absolute top-full left-0 right-0 mt-2 z-50",
-                "rounded-xl border shadow-lg overflow-hidden",
+                "rounded-lg border shadow-lg overflow-hidden",
                 "animate-in fade-in-0 zoom-in-95 duration-100",
                 getValueForTheme(
                   "bg-gray-800 border-gray-700",
                   "bg-white border-gray-200"
                 )
               )}>
-                <div className="max-h-60 overflow-y-auto">
+                <div className="max-h-48 overflow-y-auto">
                   {!loading && categories.map((category, index) => (
                     <button
                       key={category.id || 'all'}
                       onClick={() => handleCategorySelect(category.id)}
                       className={combine(
-                        "w-full flex items-center justify-between px-4 py-3 text-sm text-left",
+                        "w-full flex items-center justify-between px-3 py-2.5 text-sm text-left",
                         "transition-colors duration-150",
                         activeCategory === category.id
                           ? getValueForTheme(
@@ -271,11 +271,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                       )}
                       type="button"
                     >
-                      <span className="font-medium">{category.name}</span>
-                      <div className="flex items-center gap-2">
+                      <span className="font-medium truncate">{category.name}</span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         {activeCategory === category.id && categoryCountMap.get(category.id) !== undefined && (
                           <span className={combine(
-                            "px-2 py-0.5 rounded-full text-xs",
+                            "px-1.5 py-0.5 rounded-full text-xs",
                             getValueForTheme(
                               "bg-blue-500/20 text-blue-200",
                               "bg-[#006C67]/20 text-[#006C67]"
@@ -302,12 +302,12 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         {/* Desktop Category Filter */}
         <div className="hidden md:block">
 
-          <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="flex items-center justify-start gap-4 mb-8">
             <h3 className={combine(
               "text-3xl font-semibold",
               getValueForTheme("text-white", "text-gray-900")
             )}>
-              เลือกประเภท
+              เลือกประเภทองค์กร
             </h3>
             {loading && (
               <div className={combine(

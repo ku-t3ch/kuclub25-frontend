@@ -149,10 +149,11 @@ export default function Home() {
         backgroundColor="transparent"
         rangeY={800}
         particleCount={100}
-        baseHue={100}
+        baseHue={120}
+        particleOpacity={0.2}
         className="flex flex-col items-center justify-start w-full min-h-screen px-4"
         containerClassName={combine(
-          "fixed inset-0 z-0",
+          "fixed inset-0 z-0 ",
           getValueForTheme(
             "bg-gradient-to-b from-[#000000] to-[#123067]",
             "bg-gradient-to-b from-[#f0fdfa] to-[#ccfbf1] ]"
@@ -161,7 +162,7 @@ export default function Home() {
       />
 
       <div className=" pt-16 md:pt-20">
-        <div className="flex flex-col items-center justify-center w-full px-4">
+        <div className="flex flex-col items-center justify-center w-full px-4 pt-9">
           <HeroSection
             title="ค้นพบชมรมที่ใช่สำหรับคุณ"
             description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
@@ -198,8 +199,6 @@ export default function Home() {
           loading={projectsLoading}
           onProjectClick={handleProjectClick}
           maxProjects={6}
-          title="โครงการที่กำลังจะเกิดขึ้น"
-          description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
         />
       </div>
     </div>

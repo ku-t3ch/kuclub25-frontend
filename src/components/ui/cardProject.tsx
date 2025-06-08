@@ -305,7 +305,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     if (!monthDisplay.isRange) {
       // Single month display
       return (
-        <div className="text-white/90 text-3xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
+        <div className="text-white/90 text-xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-1 sm:mb-1">
           {monthDisplay.text}
         </div>
       );
@@ -314,7 +314,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     // Range display for cross-month projects with proper spacing
     if (monthDisplay.startMonth && monthDisplay.endMonth) {
       return (
-        <div className="text-white/90 font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
+        <div className="text-white/90 font-medium uppercase tracking-wide mb-1 sm:mb-1">
           <div className="flex items-center justify-center">
             <div className="text-3xs sm:text-2xs md:text-xs opacity-90 text-center">
               {monthDisplay.startMonth}
@@ -336,8 +336,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
     // Fallback to text display with enhanced spacing
     return (
-      <div className="text-white/90 font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
-        <div className="text-3xs sm:text-2xs md:text-xs leading-tight text-center whitespace-nowrap">
+      <div className="text-white/90 font-medium uppercase tracking-wide mb-1 sm:mb-1">
+        <div className="text-xs sm:text-2xs md:text-xs leading-tight text-center whitespace-nowrap">
           {monthDisplay.text}
         </div>
       </div>
@@ -384,7 +384,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                 projectData.endDate ? new Date(projectData.endDate) : undefined
               }
               dayStart={projectData.displayDay}
-              // dayEnd={projectData.displayEndDay}
               day={projectData.displayDay}
             />
           </div>
@@ -395,7 +394,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             <h3
               className={combine(
                 "font-medium mb-0 line-clamp-2 leading-tight transition-colors duration-300 py-1",
-                "text-sm sm:text-base md:text-lg",
+                "text-base sm:text-base md:text-lg",
                 styles.title
               )}
             >
@@ -406,12 +405,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             {projectData.orgName && (
               <div
                 className={combine(
-                  "mb-1 sm:mb-1.5 md:mb-2 text-3xs sm:text-2xs md:text-xs font-medium flex items-center",
+                  "mb-2 sm:mb-1.5 md:mb-2 text-sm sm:text-2xs md:text-xs font-medium flex items-center",
                   styles.orgIcon
                 )}
               >
                 <svg
-                  className="w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0"
+                  className="w-3 sm:w-2.5 md:w-3 h-3 sm:h-2.5 md:h-3 mr-2 sm:mr-1.5 md:mr-2 flex-shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -429,12 +428,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
             {/* Activity Tags */}
             {activityTags.length > 0 && (
-              <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-1.5 sm:mb-2 md:mb-3">
+              <div className="flex flex-wrap gap-2 sm:gap-1.5 md:gap-2 mb-2 sm:mb-2 md:mb-3">
                 {activityTags.map((tag, index) => (
                   <div
                     key={`${tag.key}-${index}`}
                     className={combine(
-                      "inline-flex items-center px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-0.75 md:py-1 rounded-full text-3xs sm:text-2xs md:text-xs font-medium",
+                      "inline-flex items-center px-2.5 sm:px-2 md:px-2.5 py-1 sm:py-0.75 md:py-1 rounded-full text-sm sm:text-2xs md:text-xs font-medium",
                       getTagColors(tag.typeColor),
                       "transition-all duration-300 hover:shadow-sm"
                     )}
@@ -446,37 +445,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             )}
 
             {/* Project Details */}
-            <div className="flex flex-col space-y-1 sm:space-y-1.5 text-3xs sm:text-2xs md:text-xs mt-1 sm:mt-1.5 md:mt-2">
-              {/* Date */}
-              <div
-                className={combine(
-                  "flex items-center transition-colors duration-300",
-                  styles.details
-                )}
-              >
-                <span
-                  className={combine(
-                    "flex items-center justify-center w-3 sm:w-3.5 md:w-4 h-3 sm:h-3.5 md:h-4",
-                    "rounded-full mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0",
-                    styles.iconBg
-                  )}
-                >
-                  <svg
-                    className="w-1.5 sm:w-2 md:w-2.5 h-1.5 sm:h-2 md:h-2.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </span>
-                <span className="break-words">{dateRange}</span>
-              </div>
+            <div className="flex flex-col space-y-1.5 sm:space-y-1.5 text-sm sm:text-2xs md:text-xs mt-2 sm:mt-1.5 md:mt-2">
+              
 
               {/* Location */}
               <div
@@ -487,13 +457,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
               >
                 <span
                   className={combine(
-                    "flex items-center justify-center w-3 sm:w-3.5 md:w-4 h-3 sm:h-3.5 md:h-4",
-                    "rounded-full mr-1 sm:mr-1.5 md:mr-2 flex-shrink-0 mt-0.5",
+                    "flex items-center justify-center w-4 sm:w-3.5 md:w-4 h-4 sm:h-3.5 md:h-4",
+                    "rounded-full mr-2 sm:mr-1.5 md:mr-2 flex-shrink-0 mt-0.5",
                     styles.iconBg
                   )}
                 >
                   <svg
-                    className="w-1.5 sm:w-2 md:w-2.5 h-1.5 sm:h-2 md:h-2.5"
+                    className="w-2.5 sm:w-2 md:w-2.5 h-2.5 sm:h-2 md:h-2.5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -524,8 +494,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         <button
           onClick={handleButtonClick}
           className={combine(
-            "w-full mt-auto py-1 sm:py-1.5 md:py-2 px-2 sm:px-3 md:px-4",
-            "transition-all duration-300 text-3xs sm:text-2xs md:text-xs font-medium",
+            "w-full mt-auto py-2 sm:py-1.5 md:py-2 px-3 sm:px-3 md:px-4",
+            "transition-all duration-300 text-sm sm:text-2xs md:text-xs font-medium",
             "border-t rounded-b-xl",
             styles.button,
             styles.buttonBorder
@@ -539,10 +509,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             )}
           >
             <span>ดูรายละเอียด</span>
-            <div className="ml-1 sm:ml-1.5 md:ml-2 flex items-center">
+            <div className="ml-2 sm:ml-1.5 md:ml-2 flex items-center">
               <svg
                 className={combine(
-                  "w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3",
+                  "w-3 sm:w-2.5 md:w-3 h-3 sm:h-2.5 md:h-3",
                   styles.buttonIcon
                 )}
                 fill="none"
