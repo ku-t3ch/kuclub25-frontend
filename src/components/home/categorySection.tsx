@@ -79,8 +79,8 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
     );
   }, [combine, getValueForTheme]);
 
-  // Show count badge when category is active and count is defined (including 0)
-  const shouldShowCount = isActive && count !== undefined;
+  // Show count badge only for "all" category (id === undefined) when count > 0
+  const shouldShowCount = category.id === undefined && count && count > 0;
 
   if (isMobile) {
     return (
@@ -138,7 +138,6 @@ interface CategoryFilterProps {
   categories: Array<{ id: string | undefined; name: string }>; // id เป็น type name
   activeCategory: string | undefined; // activeCategory เป็น type name
   totalClubCount: number;
-  categoryCountMap: Map<string | undefined, number>; // Add this prop for category counts
   loading: boolean;
   onCategoryChange: (typeName: string | undefined) => void; // parameter เป็น type name
 }
@@ -148,165 +147,44 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories,
   activeCategory,
   totalClubCount,
-  categoryCountMap,
   loading,
   onCategoryChange
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Get active category name for display
-  const activeCategoryName = useMemo(() => {
-    const active = categories.find(cat => cat.id === activeCategory);
-    return active?.name || "ทั้งหมด";
-  }, [categories, activeCategory]);
-
-  const handleCategorySelect = (categoryId: string | undefined) => {
-    onCategoryChange(categoryId);
-    setIsDropdownOpen(false);
-  };
 
   return (
-    <section className="relative px-4 xs:px-5 sm:px-6 lg:px-8 pb-4">
+    <section className="relative px-4 xs:px-5 sm:px-6 lg:px-8 pb-8">
       <div className="max-w-7xl mx-auto">
-        {/* Mobile Category Filter - Dropdown */}
-        <div className="md:hidden mb-1">
+        {/* Mobile Category Filter */}
+        <div className="md:hidden mb-6">
           <h3 className={combine(
             "text-lg font-semibold mb-3",
             getValueForTheme("text-white", "text-gray-900")
           )}>
-            เลือกประเภท
+            หมวดหมู่ชมรม
           </h3>
-          
-          <div className="relative" ref={dropdownRef}>
-            {/* Dropdown Button */}
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={combine(
-                "w-full flex items-center justify-between",
-                "px-4 py-3 rounded-xl text-sm font-medium",
-                "transition-all duration-200",
-                getValueForTheme(
-                  "bg-gray-800/40 border border-gray-700/30 text-gray-300 hover:bg-gray-700/30",
-                  "bg-gray-50/70 border border-gray-100 text-gray-600 hover:bg-gray-100/80"
-                )
-              )}
-              type="button"
-              aria-expanded={isDropdownOpen}
-              aria-haspopup="true"
-            >
-              <div className="flex items-center gap-2">
-                <span>{activeCategoryName}</span>
-                {categoryCountMap.get(activeCategory) !== undefined && (
-                  <span className={combine(
-                    "px-2 py-0.5 rounded-full text-xs",
-                    getValueForTheme(
-                      "bg-gray-600/20 text-gray-300",
-                      "bg-gray-200 text-gray-600"
-                    )
-                  )}>
-                    {categoryCountMap.get(activeCategory)}
-                  </span>
-                )}
-              </div>
-              <svg 
-                className={combine(
-                  "w-4 h-4 transition-transform duration-200",
-                  isDropdownOpen ? "rotate-180" : "",
-                  getValueForTheme("text-gray-400", "text-gray-500")
-                )}
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Dropdown Menu */}
-            {isDropdownOpen && (
-              <div className={combine(
-                "absolute top-full left-0 right-0 mt-2 z-50",
-                "rounded-xl border shadow-lg overflow-hidden",
-                "animate-in fade-in-0 zoom-in-95 duration-100",
-                getValueForTheme(
-                  "bg-gray-800 border-gray-700",
-                  "bg-white border-gray-200"
-                )
-              )}>
-                <div className="max-h-60 overflow-y-auto">
-                  {!loading && categories.map((category, index) => (
-                    <button
-                      key={category.id || 'all'}
-                      onClick={() => handleCategorySelect(category.id)}
-                      className={combine(
-                        "w-full flex items-center justify-between px-4 py-3 text-sm text-left",
-                        "transition-colors duration-150",
-                        activeCategory === category.id
-                          ? getValueForTheme(
-                              "bg-blue-600/15 text-blue-200",
-                              "bg-[#006C67]/10 text-[#006C67]"
-                            )
-                          : getValueForTheme(
-                              "text-gray-300 hover:bg-gray-700/30 hover:text-white",
-                              "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
-                            ),
-                        index !== categories.length - 1 ? getValueForTheme(
-                          "border-b border-gray-700/30",
-                          "border-b border-gray-100"
-                        ) : ""
-                      )}
-                      type="button"
-                    >
-                      <span className="font-medium">{category.name}</span>
-                      <div className="flex items-center gap-2">
-                        {activeCategory === category.id && categoryCountMap.get(category.id) !== undefined && (
-                          <span className={combine(
-                            "px-2 py-0.5 rounded-full text-xs",
-                            getValueForTheme(
-                              "bg-blue-500/20 text-blue-200",
-                              "bg-[#006C67]/20 text-[#006C67]"
-                            )
-                          )}>
-                            {categoryCountMap.get(category.id)}
-                          </span>
-                        )}
-                        {activeCategory === category.id && (
-                          <div className={combine(
-                            "w-1.5 h-1.5 rounded-full",
-                            getValueForTheme("bg-blue-400", "bg-[#006C67]")
-                          )} />
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="grid grid-cols-2 gap-2.5">
+            {!loading && categories.map((category) => (
+              <MemoizedCategoryItem
+                key={category.id || 'all'}
+                category={category}
+                isActive={activeCategory === category.id}
+                count={category.id === undefined ? totalClubCount : undefined}
+                onClick={() => onCategoryChange(category.id)}
+                isMobile={true}
+              />
+            ))}
           </div>
         </div>
 
         {/* Desktop Category Filter */}
         <div className="hidden md:block">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-6">
             <h3 className={combine(
               "text-xl font-semibold",
               getValueForTheme("text-white", "text-gray-900")
             )}>
-              เลือกประเภท
+              หมวดหมู่ชมรม
             </h3>
             {loading && (
               <div className={combine(
@@ -324,7 +202,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                     key={category.id || 'all'}
                     category={category}
                     isActive={activeCategory === category.id}
-                    count={categoryCountMap.get(category.id)}
+                    count={category.id === undefined ? totalClubCount : undefined}
                     onClick={() => onCategoryChange(category.id)}
                     isMobile={false}
                   />
@@ -347,6 +225,23 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 )}
               />
             ))}
+          </div>
+        )}
+
+        {/* Active Category Display */}
+        {!loading && (
+          <div className="mt-6">
+            <p className={combine(
+              "text-sm",
+              getValueForTheme("text-gray-300", "text-gray-600")
+            )}>
+              แสดงผลสำหรับ: <span className="font-medium">
+                {activeCategory || "ทั้งหมด"}
+              </span>
+              {activeCategory === undefined && totalClubCount > 0 && (
+                <span className="ml-1">({totalClubCount} ชมรม)</span>
+              )}
+            </p>
           </div>
         )}
       </div>

@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation"; // Correct import for App Router
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
-
 import { useAllProjects } from "../hooks/useProject";
 import HeroSection from "../components/home/heroSection";
-import { Vortex } from "../components/ui/vortex";
-
 import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
 import UpcomingProjectSection from "../components/home/upcomingProjectSection";
+
 
 export default function Home() {
   const { resolvedTheme } = useTheme();
@@ -137,7 +135,7 @@ export default function Home() {
       className={combine(
         "min-h-screen pt-16 md:pt-20",
         getValueForTheme(
-          "bg-gradient-to-b from-[#000000] to-[#123067]",
+          "bg-gradient-to-b from-[#051D35] to-[#091428]",
           "bg-gradient-to-b from-white via-gray-50 to-gray-100"
         )
       )}
@@ -158,7 +156,6 @@ export default function Home() {
         totalClubCount={
           searchQuery ? filteredOrganizations.length : totalClubCount
         }
-        categoryCountMap={categoryCountMap}
         loading={loading}
         onCategoryChange={handleCategoryChange}
       />
@@ -179,8 +176,6 @@ export default function Home() {
         loading={projectsLoading}
         onProjectClick={handleProjectClick}
         maxProjects={6}
-        title="โครงการที่กำลังจะเกิดขึ้น"
-        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
       />
     </div>
   );
