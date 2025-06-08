@@ -271,32 +271,44 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     [handleClick]
   );
 
-  // Activity Tag Colors
+  // Activity Tag Colors - Fixed to properly respond to theme changes
   const getTagColors = useCallback(
     (typeColor: string) => {
-      const theme = getValueForTheme("dark", "light");
       const colorMap = {
-        purple:
-          theme === "dark"
-            ? "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30"
-            : "bg-[#006C67]/10 text-[#006C67] ring-1 ring-[#006C67]/20",
-        emerald:
-          theme === "dark"
-            ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30"
-            : "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200",
-        orange:
-          theme === "dark"
-            ? "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30"
-            : "bg-orange-50 text-orange-600 ring-1 ring-orange-200",
-        default:
-          theme === "dark"
-            ? "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30"
-            : "bg-[#006C67]/10 text-[#006C67] ring-1 ring-[#006C67]/20",
+        purple: getValueForTheme(
+          "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30",
+          "bg-purple-50 text-purple-600 ring-1 ring-purple-200"
+        ),
+        emerald: getValueForTheme(
+          "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30",
+          "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
+        ),
+        orange: getValueForTheme(
+          "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30",
+          "bg-orange-50 text-orange-600 ring-1 ring-orange-200"
+        ),
+        default: getValueForTheme(
+          "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30",
+          "bg-[#006C67]/10 text-[#006C67] ring-1 ring-[#006C67]/20"
+        ),
       };
       return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
     },
-    [getValueForTheme]
+    [getValueForTheme] // Now properly depends on getValueForTheme
   );
+
+  // Memoize tag colors for performance
+  const activityTagColors = useMemo(() => {
+    const colorCache = new Map<string, string>();
+    
+    activityTags.forEach(tag => {
+      if (!colorCache.has(tag.typeColor)) {
+        colorCache.set(tag.typeColor, getTagColors(tag.typeColor));
+      }
+    });
+    
+    return colorCache;
+  }, [activityTags, getTagColors]);
 
   // Enhanced month display component
   const renderMonthDisplay = useMemo(() => {
@@ -426,7 +438,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
               </div>
             )}
 
-            {/* Activity Tags */}
+            {/* Activity Tags - Updated to use memoized colors */}
             {activityTags.length > 0 && (
               <div className="flex flex-wrap gap-2 sm:gap-1.5 md:gap-2 mb-2 sm:mb-2 md:mb-3">
                 {activityTags.map((tag, index) => (
@@ -434,7 +446,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                     key={`${tag.key}-${index}`}
                     className={combine(
                       "inline-flex items-center px-2.5 sm:px-2 md:px-2.5 py-1 sm:py-0.75 md:py-1 rounded-full text-sm sm:text-2xs md:text-xs font-medium",
-                      getTagColors(tag.typeColor),
+                      activityTagColors.get(tag.typeColor) || getTagColors(tag.typeColor),
                       "transition-all duration-300 hover:shadow-sm"
                     )}
                   >
