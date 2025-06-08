@@ -76,7 +76,7 @@ const ProjectList = memo<ProjectListProps>(({
           "border shadow-sm",
           getValueForTheme(
             "bg-white/5 border-white/10 shadow-blue-900/20",
-            "bg-gray-50/80 border-gray-200 shadow-gray-200/50"
+            "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
           )
         )}
       >
@@ -97,13 +97,13 @@ const ProjectList = memo<ProjectListProps>(({
             "border-2 border-dashed",
             getValueForTheme(
               "border-white/20 bg-white/5",
-              "border-gray-300 bg-white"
+              "border-[#006C67]/30 bg-[#006C67]/5"
             )
           )}>
             <svg
               className={combine(
                 "h-10 w-10",
-                getValueForTheme("text-white/30", "text-gray-400")
+                getValueForTheme("text-white/30", "text-[#006C67]/40")
               )}
               fill="none"
               stroke="currentColor"
@@ -129,7 +129,7 @@ const ProjectList = memo<ProjectListProps>(({
           <h3
             className={combine(
               "text-lg md:text-xl font-medium mb-3",
-              getValueForTheme("text-white/70", "text-gray-700")
+              getValueForTheme("text-white/70", "text-[#006C67]/80")
             )}
           >
             ไม่พบโครงการในเดือนนี้
@@ -137,7 +137,7 @@ const ProjectList = memo<ProjectListProps>(({
           <p
             className={combine(
               "text-sm md:text-base mb-4",
-              getValueForTheme("text-white/50", "text-gray-500")
+              getValueForTheme("text-white/50", "text-[#006C67]/60")
             )}
           >
             ลองเลือกเดือนอื่น หรือดูในมุมมองปฏิทิน
@@ -160,7 +160,7 @@ const ProjectList = memo<ProjectListProps>(({
                   "border transition-all duration-300",
                   getValueForTheme(
                     "bg-white/5 border-white/10 text-white/60 hover:bg-white/10",
-                    "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                    "bg-white border border-[#006C67]/20 text-[#006C67]/60 hover:bg-[#006C67]/5"
                   )
                 )}
               >
@@ -190,13 +190,13 @@ const ProjectList = memo<ProjectListProps>(({
           "flex items-center justify-between pb-3 border-b",
           getValueForTheme(
             "border-white/10",
-            "border-gray-200"
+            "border-[#006C67]/20"
           )
         )}
       >
         <h2 className={combine(
           "text-lg md:text-xl font-semibold",
-          getValueForTheme("text-white", "text-gray-900")
+          getValueForTheme("text-white", "text-[#006C67]")
         )}>
           โครงการทั้งหมด
         </h2>
@@ -204,7 +204,7 @@ const ProjectList = memo<ProjectListProps>(({
           "px-3 py-1 rounded-full text-sm font-medium",
           getValueForTheme(
             "bg-blue-500/20 text-blue-300 border border-blue-400/30",
-            "bg-primary/10 text-primary border border-primary/20"
+            "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
           )
         )}>
           {filteredProjectsByMonth.length} โครงการ
@@ -243,7 +243,7 @@ const ProjectList = memo<ProjectListProps>(({
             "inline-flex items-center px-4 py-2 rounded-full text-sm",
             getValueForTheme(
               "bg-white/5 text-white/60 border border-white/10",
-              "bg-gray-50 text-gray-500 border border-gray-200"
+              "bg-white text-[#006C67]/60 border border-[#006C67]/20"
             )
           )}>
             <svg 

@@ -34,16 +34,16 @@ const ActivityTag = React.memo<ActivityTagComponentProps>(({ type, hours, resolv
   const ACTIVITY_LABELS = {
     social_activities: 'กิจกรรมสังคม',
     university_activities: 'กิจกรรมมหาวิทยาลัย',
-    competency_development_activities: 'กิจกรรมพัฒนาสมรรถนะ'
+    competency_development_activities: 'กิจกรรมเสริมสมรรถนะ'
   };
 
   const ACTIVITY_COLORS = {
     social_activities: {
-      light: 'bg-blue-50 text-blue-700 border border-blue-200',
+      light: 'bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20',
       dark: 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
     },
     university_activities: {
-      light: 'bg-green-50 text-green-700 border border-green-200',
+      light: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
       dark: 'bg-green-500/20 text-green-300 border border-green-500/30'
     },
     competency_development_activities: {
@@ -84,7 +84,7 @@ const BackButton = React.memo<BackButtonProps>(({ onClick }) => {
         "flex items-center gap-2 mb-6 px-4 py-2 rounded-lg transition-all duration-300",
         getValueForTheme(
           "text-white/70 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10",
-          "text-gray-600 hover:text-primary bg-gray-50 border border-gray-200 hover:bg-gray-100"
+          "text-[#006C67]/70 hover:text-[#006C67] bg-white border border-[#006C67]/20 hover:bg-[#006C67]/5"
         )
       )}
     >
@@ -109,18 +109,20 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(({
   const { combine, getValueForTheme } = useThemeUtils();
 
   const themeValues = {
-    headerBackdrop: getValueForTheme("bg-blue-500/5", "bg-teal-500/5"),
+    headerBackdrop: getValueForTheme("bg-blue-500/5", "bg-[#006C67]/5"),
     dateCardBg: getValueForTheme(
       "bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/30 shadow-blue-900/20",
-      "bg-gradient-to-br from-teal-50 to-teal-100 border border-teal-200 shadow-gray-200/50"
+      "bg-[#006C67]/100 border border-[#006C67]/20 shadow-[#006C67]/10 "
     ),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    accentBlue: getValueForTheme("text-blue-300", "text-teal-700"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    accentBlue: getValueForTheme("text-blue-300", "text-white"),
+    iconColor: getValueForTheme("text-blue-400", "text-[#006C67]/80"),
+    pillBg: getValueForTheme("bg-white/5 text-white/70", "bg-white text-[#006C67]/70 border border-[#006C67]/20"),
   };
 
   const icons = {
     calendar: (
-      <svg className={`w-3.5 xs:w-4 h-3.5 xs:h-4 mr-1.5 xs:mr-2 ${getValueForTheme("text-blue-400", "text-teal-600")}`} 
+      <svg className={`w-3.5 xs:w-4 h-3.5 xs:h-4 mr-1.5 xs:mr-2 ${themeValues.iconColor}`} 
            fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -132,7 +134,7 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(({
     return (
       <div className={combine(
         "flex items-center px-3 py-1.5 xs:py-2 backdrop-blur-sm rounded-full",
-        getValueForTheme("bg-white/5 text-white/70", "bg-white text-gray-600 border border-gray-200")
+        themeValues.pillBg
       )}>
         {icon}
         {content}
@@ -218,7 +220,7 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(({
               {/* Date Range Pill */}
               {projectData.startDate && renderInfoPill(
                 icons.calendar,
-                <span className={combine("ml-0.5", themeValues.accentBlue)}>
+                <span className={combine("ml-0.5", themeValues.iconColor)}>
                   {dateTimeInfo?.isMultiDay ? 
                     `${dateTimeInfo.startDate} - ${dateTimeInfo.endDate}` : 
                     dateTimeInfo?.startDate
@@ -229,10 +231,7 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(({
               {/* Location Pill */}
               {projectData.location && renderInfoPill(
                 <svg
-                  className={combine(
-                    "w-3.5 xs:w-4 h-3.5 xs:h-4 mr-1.5 xs:mr-2",
-                    getValueForTheme("text-blue-400", "text-teal-600")
-                  )}
+                  className={combine("w-3.5 xs:w-4 h-3.5 xs:h-4 mr-1.5 xs:mr-2", themeValues.iconColor)}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -256,10 +255,7 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(({
               {/* Organizer Pill */}
               {organizationInfo.name && renderInfoPill(
                 <svg
-                  className={combine(
-                    "w-3.5 xs:w-4 h-3.5 xs:h-4 mr-1.5 xs:mr-2",
-                    getValueForTheme("text-blue-400", "text-teal-600")
-                  )}
+                  className={combine("w-3.5 xs:w-4 h-3.5 xs:h-4 mr-1.5 xs:mr-2", themeValues.iconColor)}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -278,13 +274,13 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(({
                       onClick={() => onViewOrganization(organizationInfo.id!)}
                       className={getValueForTheme(
                         "text-blue-400 hover:text-blue-300 transition-colors cursor-pointer", 
-                        "text-teal-600 hover:text-teal-800 transition-colors cursor-pointer"
+                        "text-[#006C67] hover:text-[#006C67]/80 transition-colors cursor-pointer"
                       )}
                     >
                       {organizationInfo.name}
                     </span>
                   ) : (
-                    <span className={getValueForTheme("text-white/70", "text-gray-600")}>
+                    <span className={getValueForTheme("text-white/70", "text-[#006C67]/70")}>
                       {organizationInfo.name}
                     </span>
                   )}

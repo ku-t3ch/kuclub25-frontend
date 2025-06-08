@@ -39,11 +39,8 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
 }) => {
   const { getValueForTheme, combine } = useThemeUtils();
 
-
-
   // Early return if no data
   if (!selectedDate || !projectsOnSelectedDate || projectsOnSelectedDate.length === 0) {
-  
     return null;
   }
 
@@ -84,12 +81,12 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
           "backdrop-blur-sm rounded-xl overflow-hidden border shadow-lg p-8 text-center",
           getValueForTheme(
             "bg-white/5 border-white/10 shadow-blue-900/20",
-            "bg-white border-gray-100 shadow-gray-200/50"
+            "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
           )
         )}>
           <p className={combine(
             "text-sm",
-            getValueForTheme("text-white/60", "text-gray-500")
+            getValueForTheme("text-white/60", "text-[#006C67]/60")
           )}>
             ไม่มีข้อมูลโครงการที่ถูกต้องสำหรับวันที่เลือก
           </p>
@@ -110,7 +107,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
         "backdrop-blur-sm rounded-xl overflow-hidden border shadow-lg",
         getValueForTheme(
           "bg-white/5 border-white/10 shadow-blue-900/20",
-          "bg-white border-gray-100 shadow-gray-200/50"
+          "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
         )
       )}>
         {/* Header */}
@@ -118,7 +115,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
           "flex items-center justify-between py-4 px-5 border-b",
           getValueForTheme(
             "border-white/10 bg-gradient-to-r from-white/5 to-white/3",
-            "border-gray-100 bg-gradient-to-r from-gray-50 to-white"
+            "border-[#006C67]/20 bg-gradient-to-r from-[#006C67]/5 to-white"
           )
         )}>
           <div className="flex items-center">
@@ -127,7 +124,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                 "w-1 h-6 rounded-full mr-3",
                 getValueForTheme(
                   "bg-gradient-to-b from-blue-400 to-blue-600",
-                  "bg-gradient-to-b from-primary to-teal-600"
+                  "bg-gradient-to-b from-[#006C67] to-[#006C67]/80"
                 )
               )}
               aria-hidden="true"
@@ -135,13 +132,13 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
             <div>
               <h2 className={combine(
                 "text-sm font-medium",
-                getValueForTheme("text-white/90", "text-gray-700")
+                getValueForTheme("text-white/90", "text-[#006C67]/70")
               )}>
                 โครงการวันที่
               </h2>
               <p className={combine(
                 "text-lg font-semibold",
-                getValueForTheme("text-white", "text-gray-900")
+                getValueForTheme("text-white", "text-[#006C67]")
               )}>
                 {moment(selectedDate).format("DD MMMM YYYY")}
               </p>
@@ -154,7 +151,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
               "px-3 py-1 rounded-full text-sm font-medium",
               getValueForTheme(
                 "bg-blue-500/20 text-blue-300 border border-blue-400/30",
-                "bg-primary/10 text-primary border border-primary/20"
+                "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
               )
             )}>
               {validProjects.length} โครงการ
@@ -163,7 +160,6 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
             {/* Close button */}
             <button
               onClick={() => {
-     
                 setSelectedDate(null);
               }}
               className={combine(
@@ -171,7 +167,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                 "flex items-center justify-center",
                 getValueForTheme(
                   "text-white/60 hover:text-white hover:bg-white/10",
-                  "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  "text-[#006C67]/60 hover:text-[#006C67] hover:bg-[#006C67]/5"
                 )
               )}
               aria-label="ปิดรายการโครงการ"
@@ -205,7 +201,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
               <ProjectCard
                 project={validProjects[0]}
                 onClick={(project) => {
-             
+                  // Handle project click
                 }}
               />
             </motion.div>
@@ -232,7 +228,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                     <ProjectCard
                       project={project}
                       onClick={(clickedProject) => {
-
+                        // Handle project click
                       }}
                     />
                   </motion.div>
@@ -248,27 +244,27 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
             "px-5 py-3 border-t",
             getValueForTheme(
               "border-white/10 bg-white/3",
-              "border-gray-100 bg-gray-50/50"
+              "border-[#006C67]/20 bg-[#006C67]/5"
             )
           )}>
             <div className="flex items-center justify-between">
               <span className={combine(
                 "text-xs",
-                getValueForTheme("text-white/60", "text-gray-500")
+                getValueForTheme("text-white/60", "text-[#006C67]/60")
               )}>
                 แสดง {validProjects.length} โครงการ
               </span>
               
               <button
                 onClick={() => {
-
+                  // Handle view all click
                 }}
                 className={combine(
                   "text-xs px-3 py-1.5 rounded-lg transition-all duration-200",
                   "font-medium",
                   getValueForTheme(
                     "text-blue-300 hover:text-blue-200 hover:bg-blue-500/10",
-                    "text-primary hover:text-primary/80 hover:bg-primary/5"
+                    "text-[#006C67] hover:text-[#006C67]/80 hover:bg-[#006C67]/5"
                   )
                 )}
               >

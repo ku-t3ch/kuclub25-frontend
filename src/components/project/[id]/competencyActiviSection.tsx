@@ -44,7 +44,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
       <div className={combine(
         "p-4 rounded-lg text-center italic",
         "text-sm sm:text-base",
-        getValueForTheme("text-white/50", "text-gray-500")
+        getValueForTheme("text-white/50", "text-[#006C67]/60")
       )}>
         ไม่มีข้อมูลกิจกรรม
       </div>
@@ -101,7 +101,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
     "p-3 sm:p-4 rounded-xl transition-colors duration-200",
     getValueForTheme(
       "bg-white/5 border border-white/10 hover:bg-white/8",
-      "bg-white border border-green-200 hover:bg-green-50/50 shadow-sm"
+      "bg-white border border-[#006C67]/20 hover:bg-[#006C67]/5 shadow-sm"
     )
   );
 
@@ -109,7 +109,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
     "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0",
     getValueForTheme(
       "bg-blue-500/15 text-blue-300/90",
-      "bg-teal-500/15 text-teal-600"
+      "bg-[#006C67]/15 text-[#006C67]"
     )
   );
 
@@ -117,7 +117,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
     "px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap",
     getValueForTheme(
       "bg-blue-500/15 text-blue-300/90",
-      "bg-teal-500/15 text-teal-600"
+      "bg-[#006C67]/15 text-[#006C67]"
     )
   );
 
@@ -137,7 +137,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
             </div>
             <span className={combine(
               "text-sm sm:text-base font-medium truncate",
-              getValueForTheme("text-white/90", "text-gray-700")
+              getValueForTheme("text-white/90", "text-[#006C67]/90")
             )}>
               รวมทั้งหมด
             </span>
@@ -152,11 +152,11 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
       <motion.div variants={itemVariants} className="flex items-center gap-2">
         <span className={combine(
           "h-4 w-1 rounded-full",
-          getValueForTheme("bg-blue-400", "bg-teal-600")
+          getValueForTheme("bg-blue-400", "bg-[#006C67]")
         )} />
         <h3 className={combine(
           "text-sm sm:text-base font-medium",
-          getValueForTheme("text-white/90", "text-gray-700")
+          getValueForTheme("text-white/90", "text-[#006C67]/90")
         )}>
           ประเภทกิจกรรม
         </h3>
@@ -173,7 +173,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
               </div>
               <span className={combine(
                 "text-sm sm:text-base line-clamp-2",
-                getValueForTheme("text-white/90", "text-gray-700")
+                getValueForTheme("text-white/90", "text-[#006C67]/90")
               )}>
                 {ACTIVITY_LABELS.university_activities}
               </span>
@@ -193,7 +193,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
               </div>
               <span className={combine(
                 "text-sm sm:text-base line-clamp-2",
-                getValueForTheme("text-white/90", "text-gray-700")
+                getValueForTheme("text-white/90", "text-[#006C67]/90")
               )}>
                 {ACTIVITY_LABELS.social_activities}
               </span>
@@ -212,7 +212,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
               "p-3 sm:p-4 rounded-xl space-y-3 sm:space-y-4",
               getValueForTheme(
                 "bg-white/5 border border-white/10",
-                "bg-white border border-green-200 shadow-sm"
+                "bg-white border border-[#006C67]/20 shadow-sm"
               )
             )}>
               {/* Competency Header */}
@@ -223,7 +223,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
                   </div>
                   <h4 className={combine(
                     "text-sm sm:text-base font-medium line-clamp-2",
-                    getValueForTheme("text-white/90", "text-gray-700")
+                    getValueForTheme("text-white/90", "text-[#006C67]/90")
                   )}>
                     {ACTIVITY_LABELS.competency_development_activities}
                   </h4>
@@ -252,25 +252,25 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
                           "flex items-center justify-between gap-3 p-2.5 sm:p-3 rounded-lg",
                           getValueForTheme(
                             "bg-white/5 border border-white/10",
-                            "bg-gray-50/50 border border-gray-200"
+                            "bg-[#006C67]/5 border border-[#006C67]/20"
                           )
                         )}
                       >
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span className={combine(
                             "h-2 w-2 rounded-full flex-shrink-0",
-                            getValueForTheme("bg-blue-400", "bg-teal-600")
+                            getValueForTheme("bg-blue-400", "bg-[#006C67]")
                           )} />
                           <span className={combine(
                             "text-xs sm:text-sm line-clamp-2",
-                            getValueForTheme("text-white/85", "text-gray-600")
+                            getValueForTheme("text-white/85", "text-[#006C67]/80")
                           )}>
                             {name}
                           </span>
                         </div>
                         <span className={combine(
                           "text-xs sm:text-sm font-medium whitespace-nowrap",
-                          getValueForTheme("text-white/70", "text-gray-500")
+                          getValueForTheme("text-white/70", "text-[#006C67]/70")
                         )}>
                           {hours} ชั่วโมง
                         </span>

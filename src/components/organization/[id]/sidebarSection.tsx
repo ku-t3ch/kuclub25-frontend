@@ -110,14 +110,14 @@ const OrganizationSidebarSection: React.FC<OrganizationSidebarSectionProps> = ({
   const themeStyles = useMemo(() => ({
     cardBg: getValueForTheme(
       "bg-white/5 border-white/10 shadow-blue-900/5",
-      "bg-white border-gray-200 shadow-gray-200/20"
+      "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    secondaryText: getValueForTheme("text-white/70", "text-gray-600"),
-    accentBlue: getValueForTheme("text-blue-300", "text-primary"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
+    accentBlue: getValueForTheme("text-blue-300", "text-[#006C67]"),
     titleGradient: getValueForTheme(
       "bg-gradient-to-r from-white to-blue-100",
-      "bg-gradient-to-r from-gray-800 to-primary"
+      "bg-gradient-to-r from-[#006C67] to-[#006C67]/80"
     ),
     facebookLink: getValueForTheme(
       "bg-blue-500/10 hover:bg-blue-500/20 text-blue-300",

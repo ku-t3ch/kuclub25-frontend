@@ -36,12 +36,12 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
                       "shadow-md",
                       getValueForTheme(
                         "bg-blue-500 text-white",
-                        "bg-blue-500 text-white"
+                        "bg-[#006C67] text-white"
                       )
                     )
                   : getValueForTheme(
                       "bg-white/10 text-white/90 hover:bg-white/20",
-                      "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      "bg-white border border-[#006C67]/20 text-[#006C67] hover:bg-[#006C67]/5"
                     )
               }`}
             >
@@ -62,7 +62,7 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
                           "",
                           getValueForTheme(
                             "bg-white/10 text-white/90 hover:bg-white/20",
-                            "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            "bg-white border border-[#006C67]/20 text-[#006C67] hover:bg-[#006C67]/5"
                           )
                         )
                   }`}
@@ -84,7 +84,13 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
         </div>
         
         {/* Fade gradient indicators to show there's more content on mobile */}
-        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-black/10 to-transparent pointer-events-none sm:hidden"></div>
+        <div className={combine(
+          "absolute right-0 top-0 bottom-0 w-8 pointer-events-none sm:hidden",
+          getValueForTheme(
+            "bg-gradient-to-l from-black/10 to-transparent",
+            "bg-gradient-to-l from-white/80 to-transparent"
+          )
+        )}></div>
       </div>
     </motion.div>
   );

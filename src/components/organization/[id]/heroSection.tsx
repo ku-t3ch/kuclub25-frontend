@@ -72,32 +72,32 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
 
   // Memoized theme values to prevent recalculation
   const themeStyles = useMemo(() => ({
-    backgroundBlob1: getValueForTheme("bg-blue-600/10", "bg-primary/10"),
-    backgroundBlob2: getValueForTheme("bg-purple-600/10", "bg-teal-600/10"),
+    backgroundBlob1: getValueForTheme("bg-blue-600/10", "bg-[#006C67]/10"),
+    backgroundBlob2: getValueForTheme("bg-purple-600/10", "bg-[#006C67]/15"),
     backButton: getValueForTheme(
       "text-white/70 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10",
-      "text-gray-600 hover:text-primary bg-gray-50 border border-gray-200 hover:bg-gray-100"
+      "text-[#006C67]/70 hover:text-[#006C67] bg-white border border-[#006C67]/20 hover:bg-[#006C67]/5"
     ),
     imageContainer: getValueForTheme(
       "shadow-blue-900/20 border border-white/10 group-hover:border-white/20",
-      "shadow-gray-200/50 border border-gray-200 group-hover:border-primary/20"
+      "shadow-[#006C67]/20 border border-[#006C67]/20 group-hover:border-[#006C67]/40"
     ),
     placeholder: getValueForTheme(
       "bg-gray-700 text-gray-400",
-      "bg-gray-200 text-gray-500"
+      "bg-[#006C67]/10 text-[#006C67]/50"
     ),
     titleGradient: getValueForTheme(
       "bg-gradient-to-r from-white via-blue-100 to-purple-100",
-      "bg-gradient-to-r from-gray-800 via-primary to-teal-600"
+      "bg-gradient-to-r from-[#006C67] via-[#006C67]/90 to-[#006C67]/80"
     ),
-    alternativeText: getValueForTheme("text-white/70", "text-gray-600"),
+    alternativeText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
     orgTypeTag: getValueForTheme(
       "bg-blue-500/30 border border-blue-500/40",
-      "bg-primary/50 border border-primary/40"
+      "bg-[#006C67]/20 border border-[#006C67]/30"
     ),
     campusTag: getValueForTheme(
       "bg-purple-500/30 border border-purple-500/40",
-      "bg-purple-600/50 border border-purple-600/40"
+      "bg-[#006C67]/30 border border-[#006C67]/40"
     )
   }), [getValueForTheme]);
 

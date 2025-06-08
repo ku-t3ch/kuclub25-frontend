@@ -77,7 +77,7 @@ const TimeSlot = React.memo<{
         "p-3 rounded-md border-l-2 mt-4",
         getValueForTheme(
           "bg-white/5 border-l-blue-400/50",
-          "bg-gray-50 border-l-primary/50"
+          "bg-gray-50 border-l-[#006C67]/50"
         )
       )}
     >
@@ -85,12 +85,12 @@ const TimeSlot = React.memo<{
       <div className="flex items-center gap-2 mb-2 ">
         <div className={combine(
           "w-2 h-2 rounded-full",
-          getValueForTheme("bg-blue-400", "bg-primary")
+          getValueForTheme("bg-blue-400", "bg-[#006C67]")
         )} />
         
         <div className={combine(
           "text-sm font-medium",
-          getValueForTheme("text-blue-300", "text-primary")
+          getValueForTheme("text-blue-300", "text-[#006C67]")
         )}>
           {timeDisplay}
         </div>
@@ -98,7 +98,7 @@ const TimeSlot = React.memo<{
         <div className={combine(
           "text-xs px-2 py-0.5 rounded-full ml-auto",
           getValueForTheme(
-            "bg-gray-700/30 text-gray-300",
+            "bg-white/10 text-white/70",
             "bg-gray-100 text-gray-600"
           )
         )}>
@@ -110,7 +110,7 @@ const TimeSlot = React.memo<{
       {timeSlot.description && (
         <p className={combine(
           "text-sm leading-relaxed pl-4",
-          getValueForTheme("text-white/80", "text-gray-600")
+          getValueForTheme("text-white/80", "text-[#006C67]/70")
         )}>
           {timeSlot.description}
         </p>
@@ -262,7 +262,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
         "rounded-lg border overflow-hidden",
         getValueForTheme(
           "bg-white/5 border-white/10",
-          "bg-gray-50 border-gray-200"
+          "bg-gray-50 border border-[#006C67]/20"
         )
       )}
     >
@@ -270,10 +270,10 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
       <div
         className={combine(
           "p-4 transition-all duration-200",
-          hasMultipleSlots ? "cursor-pointer hover:bg-white/10" : "",
+          hasMultipleSlots ? "cursor-pointer" : "",
           getValueForTheme(
             hasMultipleSlots ? "hover:bg-white/5" : "",
-            hasMultipleSlots ? "hover:bg-gray-100" : ""
+            hasMultipleSlots ? "hover:bg-[#006C67]/5" : ""
           )
         )}
         onClick={handleToggle}
@@ -291,7 +291,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             <div className="flex items-center gap-3 mb-2">
               <h4 className={combine(
                 "font-semibold text-base",
-                getValueForTheme("text-white", "text-gray-800")
+                getValueForTheme("text-white", "text-[#006C67]")
               )}>
                 {formatDateForDisplay(date)}
               </h4>
@@ -301,7 +301,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
                 <ClockIcon />
                 <span className={combine(
                   "text-sm font-medium",
-                  getValueForTheme("text-blue-300", "text-primary")
+                  getValueForTheme("text-blue-300", "text-[#006C67]")
                 )}>
                   {timeDisplay}
                 </span>
@@ -312,7 +312,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             {dayDescription && (
               <p className={combine(
                 "text-sm font-medium mb-2",
-                getValueForTheme("text-blue-200", "text-primary/80")
+                getValueForTheme("text-blue-200", "text-[#006C67]/80")
               )}>
                 {dayDescription}
               </p>
@@ -335,7 +335,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
                 {!isExpanded && firstTimeSlot.description && firstTimeSlot.description !== dayDescription && (
                   <span className={combine(
                     "text-sm text-ellipsis overflow-hidden",
-                    getValueForTheme("text-white/70", "text-gray-600")
+                    getValueForTheme("text-white/70", "text-[#006C67]/60")
                   )}>
                     {truncateDescription(firstTimeSlot.description)}
                   </span>
@@ -347,7 +347,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             {!hasMultipleSlots && firstTimeSlot.description && firstTimeSlot.description !== dayDescription && (
               <p className={combine(
                 "text-sm leading-relaxed mt-2",
-                getValueForTheme("text-white/80", "text-gray-600")
+                getValueForTheme("text-white/80", "text-[#006C67]/70")
               )}>
                 {firstTimeSlot.description}
               </p>
@@ -361,7 +361,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
                 "text-xs px-2 py-1 rounded-full",
                 getValueForTheme(
                   "bg-blue-500/20 text-blue-300",
-                  "bg-primary/10 text-primary"
+                  "bg-[#006C67]/10 text-[#006C67]"
                 )
               )}>
                 วันที่ {index + 1}
@@ -374,7 +374,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
                   "p-1 rounded-full transition-colors",
                   getValueForTheme(
                     "text-white/60 hover:text-white hover:bg-white/10",
-                    "text-gray-400 hover:text-gray-600 hover:bg-gray-200"
+                    "text-[#006C67]/60 hover:text-[#006C67] hover:bg-[#006C67]/10"
                   )
                 )}
               >
@@ -389,7 +389,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
               "text-xs px-2 py-1 rounded-full flex-shrink-0",
               getValueForTheme(
                 "bg-blue-500/20 text-blue-300",
-                "bg-primary/10 text-primary"
+                "bg-[#006C67]/10 text-[#006C67]"
               )
             )}>
               วันที่ {index + 1}
@@ -412,8 +412,8 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             <div className={combine(
               "px-4 pb-4 border-t space-y-3 ",
               getValueForTheme(
-                "border-white/10 bg-white/5",
-                "border-gray-200 bg-white"
+                "border-white/10 bg-white/3",
+                "border-[#006C67]/20 bg-white"
               )
             )}>
               {timeSlots.map((timeSlot, slotIndex) => (
@@ -476,11 +476,19 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
   const themeValues = useMemo(() => ({
     cardBg: getValueForTheme(
       "bg-white/5 border-white/10 shadow-blue-900/5",
-      "bg-white border-gray-200 shadow-gray-200/20"
+      "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
-    primaryText: getValueForTheme("text-white", "text-gray-800"),
-    secondaryText: getValueForTheme("text-white/70", "text-gray-600"),
-    accentBlue: getValueForTheme("text-blue-300", "text-teal-700"),
+    primaryText: getValueForTheme("text-white", "text-[#006C67]"),
+    secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
+    accentBlue: getValueForTheme("text-blue-300", "text-[#006C67]"),
+    bulletPoint: getValueForTheme("bg-blue-300", "bg-[#006C67]"),
+    locationCardBg: getValueForTheme(
+      "bg-white/5 border-white/10",
+      "bg-gray-50 border border-[#006C67]/20"
+    ),
+    locationTitle: getValueForTheme("text-blue-300", "text-[#006C67]"),
+    locationText: getValueForTheme("text-white/80", "text-[#006C67]/70"),
+    contentText: getValueForTheme("text-white/80", "text-[#006C67]/80"),
   }), [getValueForTheme]);
 
   // Memoized render function
@@ -504,18 +512,20 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
           "text-2xl font-bold mb-6 flex items-center gap-3",
           themeValues.primaryText
         )}>
-          {icon}
+          <span className={themeValues.accentBlue}>
+            {icon}
+          </span>
           {title}
         </h2>
         <div className={combine(
           "leading-relaxed font-light text-sm xs:text-base",
-          getValueForTheme("text-white/80", "text-gray-700")
+          themeValues.contentText
         )}>
           {content}
         </div>
       </motion.section>
     );
-  }, [combine, themeValues, getValueForTheme]);
+  }, [combine, themeValues]);
 
   // Memoized data parsing
   const scheduleData = useMemo(() => {
@@ -562,7 +572,7 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
             >
               <span className={combine(
                 "flex-shrink-0 w-2 h-2 rounded-full mt-2",
-                themeValues.accentBlue.replace('text-', 'bg-')
+                themeValues.bulletPoint
               )} />
               {objective}
             </motion.li>
@@ -588,22 +598,21 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
           {scheduleData.location && (
             <div className={combine(
               "p-4 rounded-lg border flex items-start gap-3",
-              getValueForTheme(
-                "bg-white/5 border-white/10",
-                "bg-gray-50 border-gray-200"
-              )
+              themeValues.locationCardBg
             )}>
-              {ICONS.location}
+              <span className={themeValues.accentBlue}>
+                {ICONS.location}
+              </span>
               <div className="flex-1">
                 <p className={combine(
                   "text-sm font-medium mb-1",
-                  getValueForTheme("text-blue-300", "text-primary")
+                  themeValues.locationTitle
                 )}>
                   สถานที่จัดกิจกรรม
                 </p>
                 <p className={combine(
                   "text-sm leading-relaxed",
-                  getValueForTheme("text-white/80", "text-gray-600")
+                  themeValues.locationText
                 )}>
                   {scheduleData.location}
                 </p>
@@ -643,7 +652,7 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
             >
               <span className={combine(
                 "flex-shrink-0 w-2 h-2 rounded-full mt-2",
-                themeValues.accentBlue.replace('text-', 'bg-')
+                themeValues.bulletPoint
               )} />
               {outcome}
             </motion.li>
