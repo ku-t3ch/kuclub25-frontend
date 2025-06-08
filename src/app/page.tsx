@@ -13,7 +13,6 @@ import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
 import UpcomingProjectSection from "../components/home/upcomingProjectSection";
 
-
 export default function Home() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
