@@ -72,20 +72,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   }), [getValueForTheme]);
 
   return (
-    <div className="relative w-full h-[70vh] overflow-hidden">
-      <Vortex
-        backgroundColor="transparent"
-        rangeY={800}
-        particleCount={500}
-        baseHue={120}
-        className="flex flex-col items-center justify-center w-full h-[530px] px-4"
-      >
+    <div className="relative w-full  overflow-hidden bg-transparent">
         <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl">
           {/* Title */}
           <motion.h1
             className={combine(
               "text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3",
               "bg-clip-text text-transparent bg-gradient-to-r",
+              "whitespace-nowrap", // ✅ เพิ่มเพื่อป้องกันขึ้นบรรทัดใหม่
               themeValues.headingGradient,
               "py-2 xs:py-3 sm:py-4 md:py-5"
             )}
@@ -258,7 +252,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             )}
           </AnimatePresence>
         </div>
-      </Vortex>
+      
     </div>
   );
 };

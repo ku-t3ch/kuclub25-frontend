@@ -229,7 +229,7 @@ export const Vortex = (props: VortexProps) => {
   return (
     <div
       ref={containerRef}
-      className={cn("relative w-full", props.containerClassName)}
+      className={cn("relative w-full h-full", props.containerClassName)}
     >
       <motion.div
         initial={{ opacity: 0 }}

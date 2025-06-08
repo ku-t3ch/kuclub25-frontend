@@ -99,7 +99,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-transparent">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className={`text-2xl font-bold ${getValueForTheme('text-white', 'text-gray-900')}`}>

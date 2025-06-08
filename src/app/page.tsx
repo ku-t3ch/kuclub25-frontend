@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"; // Correct import for App Router
 import { useTheme } from "../contexts/ThemeContext";
 import { useOrganizationTypes } from "../hooks/useOrganizationType";
 import { useOrganizations } from "../hooks/useOrganization";
-
 import { useAllProjects } from "../hooks/useProject";
 import HeroSection from "../components/home/heroSection";
 import CategorySection from "../components/home/categorySection";
@@ -145,55 +144,64 @@ export default function Home() {
   const loading = typesLoading || orgsLoading;
 
   return (
-    <div
-      className={combine(
-        "min-h-screen pt-16 md:pt-20",
-        getValueForTheme(
-          "bg-gradient-to-b from-[#051D35] to-[#091428]",
-          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-        )
-      )}
-    >
-      <HeroSection
-        title="ค้นพบชมรมที่ใช่สำหรับคุณ"
-        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
-        onSearch={handleSearch}
-        initialQuery={searchQuery}
-        isLoading={isSearching}
+    <div className="min-h-screen">
+      <Vortex
+        backgroundColor="transparent"
+        rangeY={800}
+        particleCount={100}
+        baseHue={100}
+        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
+        containerClassName={combine(
+          "fixed inset-0 z-0",
+          getValueForTheme(
+            "bg-gradient-to-b from-[#000000] to-[#123067]",
+            "bg-gradient-to-b from-[#f0fdfa] to-[#ccfbf1] ]"
+          )
+        )}
       />
 
-      <div className="h-8 md:h-12" />
+      <div className=" pt-16 md:pt-20">
+        <div className="flex flex-col items-center justify-center w-full px-4">
+          <HeroSection
+            title="ค้นพบชมรมที่ใช่สำหรับคุณ"
+            description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
+            onSearch={handleSearch}
+            initialQuery={searchQuery}
+            isLoading={isSearching}
+          />
+        </div>
 
-      <CategorySection
-        categories={categories}
-        activeCategory={activeCategory}
-        totalClubCount={
-          searchQuery ? filteredOrganizations.length : totalClubCount
-        }
-        categoryCountMap={categoryCountMap}
-        loading={loading}
-        onCategoryChange={handleCategoryChange}
-      />
+        <CategorySection
+          categories={categories}
+          activeCategory={activeCategory}
+          totalClubCount={
+            searchQuery ? filteredOrganizations.length : totalClubCount
+          }
+          categoryCountMap={categoryCountMap}
+          loading={loading}
+          onCategoryChange={handleCategoryChange}
+        />
 
-      <OrganizationSection
-        organizations={organizations}
-        filteredOrganizations={filteredOrganizations}
-        activeCategory={activeCategory}
-        categories={categories}
-        loading={loading || isSearching}
-        onCategoryChange={handleCategoryChange}
-      />
+        <OrganizationSection
+          organizations={organizations}
+          filteredOrganizations={filteredOrganizations}
+          activeCategory={activeCategory}
+          categories={categories}
+          loading={loading || isSearching}
+          onCategoryChange={handleCategoryChange}
+        />
 
-      {/* Add spacing between sections */}
-      <div className="h-16" />
-      <UpcomingProjectSection
-        projects={projects}
-        loading={projectsLoading}
-        onProjectClick={handleProjectClick}
-        maxProjects={6}
-        title="โครงการที่กำลังจะเกิดขึ้น"
-        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
-      />
+        {/* Add spacing between sections */}
+        <div className="h-16" />
+        <UpcomingProjectSection
+          projects={projects}
+          loading={projectsLoading}
+          onProjectClick={handleProjectClick}
+          maxProjects={6}
+          title="โครงการที่กำลังจะเกิดขึ้น"
+          description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
+        />
+      </div>
     </div>
   );
 }

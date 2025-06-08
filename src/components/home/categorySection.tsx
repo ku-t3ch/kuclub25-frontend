@@ -12,12 +12,12 @@ interface CategoryItemProps {
   isMobile?: boolean;
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = ({ 
-  category, 
-  isActive, 
-  count, 
-  onClick, 
-  isMobile = false 
+const CategoryItem: React.FC<CategoryItemProps> = ({
+  category,
+  isActive,
+  count,
+  onClick,
+  isMobile = false
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
@@ -27,13 +27,13 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
       "transition-all duration-200 px-3 py-4 rounded-xl text-sm relative overflow-hidden",
       isActive
         ? getValueForTheme(
-            "bg-blue-600/15 border border-blue-500/30 text-blue-200",
-            "bg-[#006C67]/10 border border-[#006C67]/20 text-[#006C67]"
-          )
+          "bg-blue-600/15 border border-blue-500/30 text-blue-200",
+          "bg-[#006C67]/10 border border-[#006C67]/20 text-[#006C67]"
+        )
         : getValueForTheme(
-            "bg-gray-800/40 border border-gray-700/30 hover:bg-gray-700/30 text-gray-300 hover:text-white",
-            "bg-gray-50/70 border border-gray-100 hover:bg-gray-100/80 text-gray-600 hover:text-gray-800"
-          )
+          "bg-gray-800/40 border border-gray-700/30 hover:bg-gray-700/30 text-gray-300 hover:text-white",
+          "bg-gray-50/70 border border-gray-100 hover:bg-gray-100/80 text-gray-600 hover:text-gray-800"
+        )
     );
   }, [isActive, combine, getValueForTheme]);
 
@@ -44,31 +44,31 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
       "text-2xs xs:text-xs sm:text-sm font-medium",
       isActive
         ? getValueForTheme(
-            "bg-blue-500/20 text-blue-300 border border-blue-500/30",
-            "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
-          )
+          "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+          "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
+        )
         : getValueForTheme(
-            "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10",
-            "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border border-gray-200"
-          )
+          "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10",
+          "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border border-gray-200"
+        )
     );
   }, [isActive, combine, getValueForTheme]);
 
   const countBadgeClasses = useMemo(() => {
-    const baseClasses = isMobile 
+    const baseClasses = isMobile
       ? "px-2 py-0.5 rounded-full text-xs font-medium"
       : "ml-1 xs:ml-1.5 sm:ml-2 px-1 xs:px-1.5 sm:px-2 py-0.5 rounded-full text-[0.6rem] xs:text-2xs sm:text-xs";
-    
+
     const colorClasses = isActive
       ? getValueForTheme(
-          isMobile ? "bg-blue-500/20 text-blue-200" : "bg-blue-600/30 text-blue-200", 
-          "bg-[#006C67]/20 text-[#006C67]"
-        )
+        isMobile ? "bg-blue-500/20 text-blue-200" : "bg-blue-600/30 text-blue-200",
+        "bg-[#006C67]/20 text-[#006C67]"
+      )
       : getValueForTheme(
-          isMobile ? "bg-gray-600/20 text-gray-300" : "bg-gray-600/20 text-gray-400", 
-          isMobile ? "bg-gray-200 text-gray-600" : "bg-gray-200 text-gray-500"
-        );
-    
+        isMobile ? "bg-gray-600/20 text-gray-300" : "bg-gray-600/20 text-gray-400",
+        isMobile ? "bg-gray-200 text-gray-600" : "bg-gray-200 text-gray-500"
+      );
+
     return combine(baseClasses, colorClasses);
   }, [isActive, isMobile, combine, getValueForTheme]);
 
@@ -190,7 +190,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           )}>
             เลือกประเภท
           </h3>
-          
+
           <div className="relative" ref={dropdownRef}>
             {/* Dropdown Button */}
             <button
@@ -222,14 +222,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   </span>
                 )}
               </div>
-              <svg 
+              <svg
                 className={combine(
                   "w-4 h-4 transition-transform duration-200",
                   isDropdownOpen ? "rotate-180" : "",
                   getValueForTheme("text-gray-400", "text-gray-500")
                 )}
-                fill="none" 
-                stroke="currentColor" 
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -257,13 +257,13 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                         "transition-colors duration-150",
                         activeCategory === category.id
                           ? getValueForTheme(
-                              "bg-blue-600/15 text-blue-200",
-                              "bg-[#006C67]/10 text-[#006C67]"
-                            )
+                            "bg-blue-600/15 text-blue-200",
+                            "bg-[#006C67]/10 text-[#006C67]"
+                          )
                           : getValueForTheme(
-                              "text-gray-300 hover:bg-gray-700/30 hover:text-white",
-                              "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
-                            ),
+                            "text-gray-300 hover:bg-gray-700/30 hover:text-white",
+                            "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                          ),
                         index !== categories.length - 1 ? getValueForTheme(
                           "border-b border-gray-700/30",
                           "border-b border-gray-100"
@@ -301,9 +301,10 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
         {/* Desktop Category Filter */}
         <div className="hidden md:block">
-          <div className="flex items-center gap-4 mb-4">
+
+          <div className="flex items-center justify-center gap-4 mb-8">
             <h3 className={combine(
-              "text-xl font-semibold",
+              "text-3xl font-semibold",
               getValueForTheme("text-white", "text-gray-900")
             )}>
               เลือกประเภท
@@ -315,7 +316,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
               )} />
             )}
           </div>
-          
+
           <div className="relative">
             <div className="overflow-x-auto scrollbar-hide -mx-4 xs:-mx-5 sm:-mx-6 px-4 xs:px-5 sm:px-6">
               <div className="flex flex-nowrap gap-1.5 xs:gap-2 sm:gap-2.5 pb-2">
