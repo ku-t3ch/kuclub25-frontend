@@ -136,7 +136,7 @@ export default function Home() {
       className={combine(
         "min-h-screen pt-16 md:pt-20",
         getValueForTheme(
-          "bg-gradient-to-b from-[#051D35] to-[#091428]",
+          "bg-gradient-to-b from-[#000000] to-[#123067]",
           "bg-gradient-to-b from-white via-gray-50 to-gray-100"
         )
       )}
