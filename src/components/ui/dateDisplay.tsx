@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useThemeUtils } from "../../hooks/useThemeUtils";
 
 interface ProjectCardDateDisplayProps {
   isMultiDayProject: boolean;
@@ -17,6 +18,8 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
   dayEnd,
   day,
 }) => {
+  const { getValueForTheme, combine } = useThemeUtils();
+
   // Helper function to format month names
   const formatMonthName = (date: Date, format: "short" | "long" = "short") => {
     try {
@@ -171,17 +174,25 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
 
   // Memoized render based on date type
   const renderDateDisplay = useMemo(() => {
+    const textColorClass = getValueForTheme("text-white", "text-white");
+    
     switch (dateInfo.type) {
       case "single":
         return (
-          <div className="text-white text-sm xs:text-base sm:text-xl md:text-2xl font-medium leading-tight">
+          <div className={combine(
+            "text-sm xs:text-base sm:text-xl md:text-2xl font-medium leading-tight",
+            textColorClass
+          )}>
             {dateInfo.displayDay}
           </div>
         );
 
       case "sameMonth":
         return (
-          <div className="text-white font-light flex items-center justify-center">
+          <div className={combine(
+            "font-light flex items-center justify-center",
+            textColorClass
+          )}>
             <span className="text-xs xs:text-sm sm:text-base md:text-lg font-medium">
               {dateInfo.startDay}
             </span>
@@ -196,7 +207,10 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
 
       case "differentMonthSameYear":
         return (
-          <div className="text-white font-light flex items-center justify-center space-y-0.5">
+          <div className={combine(
+            "font-light flex items-center justify-center space-y-0.5",
+            textColorClass
+          )}>
             {/* Start Date */}
             <div className="text-xs xs:text-sm sm:text-base md:text-lg leading-tight text-center">
               <span className="font-medium">{dateInfo.startDay}</span>
@@ -216,7 +230,10 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
 
       case "differentYear":
         return (
-          <div className="text-white font-light flex flex-col items-center justify-center space-y-0.5">
+          <div className={combine(
+            "font-light flex flex-col items-center justify-center space-y-0.5",
+            textColorClass
+          )}>
             {/* Start Date with Year */}
             <div className="text-[0.5rem] xs:text-[0.55rem] sm:text-[0.6rem] md:text-xs leading-tight text-center">
               <div>
@@ -248,7 +265,10 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
 
       case "legacy":
         return (
-          <div className="text-white font-light flex items-center justify-center">
+          <div className={combine(
+            "font-light flex items-center justify-center",
+            textColorClass
+          )}>
             <span className="text-xs xs:text-sm sm:text-base md:text-lg font-medium">
               {dateInfo.startDay}
             </span>
@@ -264,12 +284,15 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
       default:
         // Fallback for unexpected cases
         return (
-          <div className="text-white text-sm xs:text-base sm:text-xl md:text-2xl font-medium">
+          <div className={combine(
+            "text-sm xs:text-base sm:text-xl md:text-2xl font-medium",
+            textColorClass
+          )}>
             ?
           </div>
         );
     }
-  }, [dateInfo]);
+  }, [dateInfo, getValueForTheme, combine]);
 
   // Add tooltip for cross-month/year dates
   const getTooltipText = useMemo(() => {
@@ -288,9 +311,23 @@ const ProjectCardDateDisplay: React.FC<ProjectCardDateDisplayProps> = ({
 
       {/* Tooltip for detailed date range */}
       {getTooltipText && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+        <div className={combine(
+          "absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1",
+          "text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100",
+          "transition-opacity duration-200 pointer-events-none z-10",
+          getValueForTheme(
+            "bg-black/80 text-white",
+            "bg-[#006C67]/90 text-white"
+          )
+        )}>
           {getTooltipText}
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-black/80"></div>
+          <div className={combine(
+            "absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent",
+            getValueForTheme(
+              "border-t-black/80",
+              "border-t-[#006C67]/90"
+            )
+          )}></div>
         </div>
       )}
     </div>

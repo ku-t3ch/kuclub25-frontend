@@ -26,6 +26,7 @@ const ALLOWED_ACTIVITY_TYPES = [
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   const { getValueForTheme, combine } = useThemeUtils();
   const router = useRouter();
+
   // Extract and process project data
   const projectData = useMemo(() => {
     const startDate = project.date_start_the_project || project.date_start;
@@ -206,44 +207,44 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     () => ({
       card: getValueForTheme(
         "bg-gradient-to-b from-white/5 to-white/3 border border-white/10 hover:border-blue-400/30",
-        "bg-white border border-gray-100 hover:border-primary/20"
+        "bg-white border border-[#006C67]/20 hover:border-[#006C67]/40 shadow-sm"
       ),
-      orgIcon: getValueForTheme("text-blue-300/90", "text-primary/80"),
+      orgIcon: getValueForTheme("text-blue-300/90", "text-[#006C67]/80"),
       title: getValueForTheme(
         "text-white group-hover:text-blue-100",
-        "text-gray-800 group-hover:text-primary"
+        "text-[#006C67] group-hover:text-[#006C67]/80"
       ),
       dateBg: getValueForTheme(
         "bg-gradient-to-br from-blue-500/70 to-indigo-600/70 border border-blue-400/20",
-        "bg-gradient-to-br from-primary/80 to-teal-600/70 border border-primary/20"
+        "bg-[#006C67]/70 border border-[#006C67]/20"
       ),
       dateHover: getValueForTheme(
         "group-hover:from-blue-500/80 group-hover:to-indigo-600/80",
-        "group-hover:from-primary/90 group-hover:to-teal-500/80"
+        "group-hover:from-[#006C67]/90 group-hover:to-[#006C67]/80"
       ),
       details: getValueForTheme(
         "text-white/70 group-hover:text-blue-200/90",
-        "text-gray-500 group-hover:text-primary/80"
+        "text-[#006C67]/60 group-hover:text-[#006C67]/80"
       ),
       iconBg: getValueForTheme(
         "bg-blue-500/10 text-blue-400/80",
-        "bg-primary/5 text-primary/60"
+        "bg-[#006C67]/10 text-[#006C67]/60"
       ),
       button: getValueForTheme(
         "bg-gradient-to-r from-blue-800/20 to-indigo-800/20 hover:from-blue-700/30 hover:to-indigo-700/30",
-        "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-primary/5 hover:to-primary/10"
+        "bg-gradient-to-r from-[#006C67]/5 to-[#006C67]/10 hover:from-[#006C67]/10 hover:to-[#006C67]/15"
       ),
       buttonBorder: getValueForTheme(
         "border-white/5 hover:border-blue-400/10",
-        "border-gray-100 hover:border-primary/10"
+        "border-[#006C67]/20 hover:border-[#006C67]/30"
       ),
       buttonText: getValueForTheme(
         "text-white/70 hover:text-white/90",
-        "text-gray-500 hover:text-primary"
+        "text-[#006C67]/70 hover:text-[#006C67]"
       ),
       buttonIcon: getValueForTheme(
         "text-blue-300/70 group-hover:text-blue-200",
-        "text-primary/50 group-hover:text-primary"
+        "text-[#006C67]/50 group-hover:text-[#006C67]"
       ),
     }),
     [getValueForTheme]
@@ -278,7 +279,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         purple:
           theme === "dark"
             ? "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30"
-            : "bg-purple-50 text-blue-600 ring-1 ring-blue-200",
+            : "bg-[#006C67]/10 text-[#006C67] ring-1 ring-[#006C67]/20",
         emerald:
           theme === "dark"
             ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30"
@@ -290,7 +291,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         default:
           theme === "dark"
             ? "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30"
-            : "bg-gray-50 text-gray-600 ring-1 ring-gray-200",
+            : "bg-[#006C67]/10 text-[#006C67] ring-1 ring-[#006C67]/20",
       };
       return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
     },
@@ -302,7 +303,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     const { monthDisplay } = projectData;
 
     if (!monthDisplay.isRange) {
-      // Single month display - ใช้ขนาดเดียวกับ test case อื่น
+      // Single month display
       return (
         <div className="text-white/90 text-3xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
           {monthDisplay.text}
@@ -333,7 +334,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
       );
     }
 
-    // Fallback to text display with enhanced spacing - ปรับขนาดให้เท่ากับ test case อื่น
+    // Fallback to text display with enhanced spacing
     return (
       <div className="text-white/90 font-medium uppercase tracking-wide mb-0.5 sm:mb-1">
         <div className="text-3xs sm:text-2xs md:text-xs leading-tight text-center whitespace-nowrap">
