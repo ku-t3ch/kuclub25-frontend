@@ -31,7 +31,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
           "bg-[#006C67]/10 border border-[#006C67]/20 text-[#006C67]"
         )
         : getValueForTheme(
-          "bg-gray-800/40 border border-gray-700/30 hover:bg-gray-700/30 text-gray-300 hover:text-white",
+          "bg-white/5 border border-white/10 hover:bg-white/10 text-white/70 hover:text-white",
           "bg-gray-50/70 border border-gray-100 hover:bg-gray-100/80 text-gray-600 hover:text-gray-800"
         )
     );
@@ -48,7 +48,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
           "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
         )
         : getValueForTheme(
-          "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/10",
+          "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10",
           "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border border-gray-200"
         )
     );
@@ -65,7 +65,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
         "bg-[#006C67]/20 text-[#006C67]"
       )
       : getValueForTheme(
-        isMobile ? "bg-gray-600/20 text-gray-300" : "bg-gray-600/20 text-gray-400",
+        isMobile ? "bg-white/10 text-white/70" : "bg-white/10 text-white/60",
         isMobile ? "bg-gray-200 text-gray-600" : "bg-gray-200 text-gray-500"
       );
 
@@ -186,7 +186,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         <div className="md:hidden mb-1">
           <h3 className={combine(
             "text-lg font-bold mb-3 text-left",
-            getValueForTheme("text-white", "text-gray-900")
+            getValueForTheme("text-white", "text-[#006C67]")
           )}>
             เลือกประเภทองค์กร
           </h3>
@@ -200,7 +200,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 "px-3 py-2.5 rounded-lg text-sm font-medium",
                 "transition-all duration-200",
                 getValueForTheme(
-                  "bg-gray-800/40 border border-gray-700/30 text-gray-300 hover:bg-gray-700/30",
+                  "bg-white/5 border border-white/10 text-white/70 hover:bg-white/10",
                   "bg-gray-50/70 border border-gray-100 text-gray-600 hover:bg-gray-100/80"
                 )
               )}
@@ -214,8 +214,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                   <span className={combine(
                     "px-1.5 py-0.5 rounded-full text-xs flex-shrink-0",
                     getValueForTheme(
-                      "bg-gray-600/20 text-gray-300",
-                      "bg-gray-200 text-gray-600"
+                      "bg-blue-500/20 text-blue-300",
+                      "bg-[#006C67]/10 text-[#006C67]"
                     )
                   )}>
                     {categoryCountMap.get(activeCategory)}
@@ -226,7 +226,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 className={combine(
                   "w-4 h-4 transition-transform duration-200 flex-shrink-0",
                   isDropdownOpen ? "rotate-180" : "",
-                  getValueForTheme("text-gray-400", "text-gray-500")
+                  getValueForTheme("text-white/50", "text-gray-500")
                 )}
                 fill="none"
                 stroke="currentColor"
@@ -243,7 +243,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 "rounded-lg border shadow-lg overflow-hidden",
                 "animate-in fade-in-0 zoom-in-95 duration-100",
                 getValueForTheme(
-                  "bg-gray-800 border-gray-700",
+                  "bg-gray-900/95 border-white/10 backdrop-blur-sm",
                   "bg-white border-gray-200"
                 )
               )}>
@@ -261,11 +261,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                             "bg-[#006C67]/10 text-[#006C67]"
                           )
                           : getValueForTheme(
-                            "text-gray-300 hover:bg-gray-700/30 hover:text-white",
+                            "text-white/70 hover:bg-white/5 hover:text-white",
                             "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                           ),
                         index !== categories.length - 1 ? getValueForTheme(
-                          "border-b border-gray-700/30",
+                          "border-b border-white/10",
                           "border-b border-gray-100"
                         ) : ""
                       )}
@@ -305,14 +305,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
           <div className="flex items-center justify-start gap-4 mb-8">
             <h3 className={combine(
               "text-3xl font-semibold",
-              getValueForTheme("text-white", "text-gray-900")
+              getValueForTheme("text-white", "text-[#006C67]")
             )}>
               เลือกประเภทองค์กร
             </h3>
             {loading && (
               <div className={combine(
                 "animate-pulse h-8 w-20 rounded-full",
-                getValueForTheme("bg-gray-700", "bg-gray-200")
+                getValueForTheme("bg-white/10", "bg-gray-200")
               )} />
             )}
           </div>
@@ -343,7 +343,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 key={index}
                 className={combine(
                   "animate-pulse h-8 rounded-full",
-                  getValueForTheme("bg-gray-700", "bg-gray-200"),
+                  getValueForTheme("bg-white/10", "bg-gray-200"),
                   index === 0 ? "w-16" : "w-20"
                 )}
               />
