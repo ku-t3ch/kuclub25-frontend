@@ -13,8 +13,8 @@ const Footer: React.FC = () => {
             className={combine(
                 "pt-10 xs:pt-12 sm:pt-16 pb-6 xs:pb-7 sm:pb-8 border-t",
                 getValueForTheme(
-                    "bg-ku-primary border-white/10", 
-                    "bg-white border-gray-200"
+                    "bg-gradient-to-b from-[#051D35] to-[#0A1A2F] border-white/10", 
+                    "bg-white border-[#006C67]/20"
                 )
             )}
         >
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
                                     "font-medium text-sm xs:text-base sm:text-lg",
                                     getValueForTheme(
                                         "text-white", 
-                                        "text-ku-primary"
+                                        "text-[#006C67]"
                                     )
                                 )}
                             >
@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
                                     "text-xs xs:text-sm sm:text-base",
                                     getValueForTheme(
                                         "text-white/70", 
-                                        "text-gray-600"
+                                        "text-[#006C67]/70"
                                     )
                                 )}
                             >
@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
                             "text-xs xs:text-sm text-center md:text-right",
                             getValueForTheme(
                                 "text-white/60", 
-                                "text-gray-500"
+                                "text-[#006C67]/60"
                             )
                         )}
                     >
