@@ -45,7 +45,6 @@ const ACTIVITY_TYPES: ActivityType[] = [
   },
 ] as const;
 
-// Optimized animation variants
 const pageVariants = {
   initial: { opacity: 0 },
   animate: {
