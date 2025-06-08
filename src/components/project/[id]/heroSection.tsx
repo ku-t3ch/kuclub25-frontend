@@ -34,7 +34,7 @@ const ActivityTag = React.memo<ActivityTagComponentProps>(({ type, hours, resolv
   const ACTIVITY_LABELS = {
     social_activities: 'กิจกรรมสังคม',
     university_activities: 'กิจกรรมมหาวิทยาลัย',
-    competency_development_activities: 'กิจกรรมพัฒนาสมรรถนะ'
+    competency_development_activities: 'กิจกรรมเสริมสร้างสมรรถนะ'
   };
 
   const ACTIVITY_COLORS = {

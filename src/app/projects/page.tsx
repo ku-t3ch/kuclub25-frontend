@@ -40,7 +40,7 @@ const ACTIVITY_TYPES: ActivityType[] = [
   },
   {
     id: "competency_development_activities",
-    label: "พัฒนาความสามารถ",
+    label: "กิจกรรมพัฒนาเสริมสร้างสมรรถนะ",
     color: "#8B5CF6",
   },
 ] as const;
@@ -91,26 +91,26 @@ export default function ProjectsPage() {
     () => ({
       containerBg: getValueForTheme(
         "bg-gradient-to-b from-[#051D35] via-[#051D35] to-[#000000] dark-theme",
-        "bg-gradient-to-b from-white via-gray-50 to-gray-100 light-theme"
+        "bg-gradient-to-b from-white via-white to-gray-50 light-theme"
       ),
       titleText: getValueForTheme(
         "text-white text-opacity-90",
-        "text-primary text-opacity-90"
+        "text-[#006C67] text-opacity-90"
       ),
-      loadingSpinner: getValueForTheme("border-blue-400", "border-primary"),
-      loadingBorder: getValueForTheme("border-white/10", "border-gray-200"),
-      loadingText: getValueForTheme("text-white/60", "text-gray-500"),
+      loadingSpinner: getValueForTheme("border-blue-400", "border-[#006C67]"),
+      loadingBorder: getValueForTheme("border-white/10", "border-[#006C67]/20"),
+      loadingText: getValueForTheme("text-white/60", "text-[#006C67]/70"),
       backgroundGradient1: getValueForTheme(
         "bg-blue-500 opacity-30",
-        "bg-primary opacity-10"
+        "bg-[#006C67] opacity-10"
       ),
       backgroundGradient2: getValueForTheme(
         "bg-purple-500 opacity-20",
-        "bg-teal-500 opacity-10"
+        "bg-[#006C67] opacity-5"
       ),
       meshOverlay: getValueForTheme(
         "bg-gradient-to-b from-transparent via-[#051D35]/50 to-[#051D35]/80",
-        "bg-gradient-to-b from-transparent via-white/50 to-white/80"
+        "bg-gradient-to-b from-transparent via-white/30 to-white/60"
       ),
     }),
     [getValueForTheme]

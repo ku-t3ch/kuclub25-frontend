@@ -31,7 +31,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
         "flex justify-between items-center mb-4 backdrop-blur-sm rounded-lg py-2 px-3 shadow-sm",
         getValueForTheme(
           "bg-white/5 border border-white/10",
-          "bg-white border border-gray-100"
+          "bg-white border border-[#006C67]/20"
         )
       )}
     >
@@ -41,7 +41,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
           "p-1.5 rounded-full transition-colors",
           getValueForTheme(
             "text-white/60 hover:bg-white/5 hover:text-white",
-            "text-gray-400 hover:bg-gray-50 hover:text-primary"
+            "text-[#006C67]/60 hover:bg-[#006C67]/5 hover:text-[#006C67]"
           )
         )}
       >
@@ -64,7 +64,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
       <h2
         className={getValueForTheme(
           "text-base sm:text-lg font-light text-white",
-          "text-base sm:text-lg font-light text-gray-700"
+          "text-base sm:text-lg font-light text-[#006C67]"
         )}
       >
         {THAI_MONTHS_FULL[selectedMonth]}{" "}
@@ -77,7 +77,7 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({
           "p-1.5 rounded-full transition-colors",
           getValueForTheme(
             "text-white/60 hover:bg-white/5 hover:text-white",
-            "text-gray-400 hover:bg-gray-50 hover:text-primary"
+            "text-[#006C67]/60 hover:bg-[#006C67]/5 hover:text-[#006C67]"
           )
         )}
       >

@@ -19,7 +19,7 @@ const ViewToggle: React.FC<ViewToggleProps> = ({ viewMode, setViewMode }) => {
         "flex p-1 rounded-md shadow-sm self-start sm:self-auto",
         getValueForTheme(
           "bg-white/5 border border-white/10",
-          "bg-gray-50 border border-gray-200"
+          "bg-white border border-[#006C67]/20"
         )
       )}
     >
@@ -29,9 +29,9 @@ const ViewToggle: React.FC<ViewToggleProps> = ({ viewMode, setViewMode }) => {
           viewMode === "calendar"
             ? getValueForTheme(
                 "bg-white/10 text-white",
-                "bg-white text-primary shadow-sm"
+                "bg-[#006C67] text-white shadow-sm"
               )
-            : getValueForTheme("text-white/60", "text-gray-500")
+            : getValueForTheme("text-white/60", "text-[#006C67]/60")
         )}
         onClick={() => setViewMode("calendar")}
       >
@@ -43,9 +43,9 @@ const ViewToggle: React.FC<ViewToggleProps> = ({ viewMode, setViewMode }) => {
           viewMode === "list"
             ? getValueForTheme(
                 "bg-white/10 text-white",
-                "bg-white text-primary shadow-sm"
+                "bg-[#006C67] text-white shadow-sm"
               )
-            : getValueForTheme("text-white/60", "text-gray-500")
+            : getValueForTheme("text-white/60", "text-[#006C67]/60")
         )}
         onClick={() => setViewMode("list")}
       >
