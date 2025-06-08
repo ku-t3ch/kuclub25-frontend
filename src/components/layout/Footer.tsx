@@ -11,10 +11,10 @@ const Footer: React.FC = () => {
     return (
         <footer 
             className={combine(
-                "pt-10 xs:pt-12 sm:pt-16 pb-6 xs:pb-7 sm:pb-8 border-t",
+                "pt-10 xs:pt-12 sm:pt-16 pb-6 xs:pb-7 sm:pb-8 border-t relative z-10",
                 getValueForTheme(
                     "bg-gradient-to-b from-[#051D35] to-[#0A1A2F] border-white/10", 
-                    "bg-white border-[#006C67]/20"
+                    "bg-gradient-to-b from-gray-50 to-white border-gray-200"
                 )
             )}
         >
@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
                             alt="KU Logo"
                             className={combine(
                                 "h-8 xs:h-9 sm:h-10 w-auto mr-3 xs:mr-3.5 sm:mr-4 opacity-80 hover:opacity-100 transition-opacity",
-                                getValueForTheme("brightness-100", "brightness-90")
+                                getValueForTheme("brightness-100", "brightness-100")
                             )}
                             width={40}
                             height={40}
