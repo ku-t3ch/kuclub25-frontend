@@ -1,3 +1,16 @@
+export interface Campus {
+  id: string;
+  name: string;
+  code?: string;
+  description?: string;
+}
+
+export interface CampusResponse {
+  success: boolean;
+  data: Campus[];
+  message?: string;
+}
+
 export interface Organization {
   org_type_id: string;
   id: string;
@@ -13,6 +26,7 @@ export interface Organization {
   org_type_name?: string;
   details?: string;
   campus_name?: string;
+  campus_id?: string;
 }
 
 export interface OrganizationAllReturn {
@@ -38,7 +52,8 @@ export interface OrganizationDetailResponse {
 export interface OrganizationFilters {
   search?: string;
   orgTypeName?: string;
-  campusId?: number;
+  campusId?: string; // Changed from number to string to match Campus.id
+  campusName?: string; // Add this for filtering by campus name
   limit?: number;
   offset?: number;
   sortBy?: "name" | "views" | "latest";

@@ -11,6 +11,9 @@ interface UpcomingProjectSectionProps {
   onProjectClick?: (project: Project) => void;
   showViewAllButton?: boolean;
   onViewAll?: () => void;
+  // เพิ่ม props สำหรับการกรองตาม campus
+  activeCampus?: string;
+  campuses?: Array<{ id: string; name: string }>;
 }
 
 const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
@@ -21,6 +24,8 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
   onProjectClick,
   showViewAllButton = true,
   onViewAll,
+  activeCampus,
+  campuses = []
 }) => {
   const { resolvedTheme } = useTheme();
 
@@ -28,18 +33,36 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
     return resolvedTheme === "dark" ? darkValue : lightValue;
   };
 
-  // Filter and sort upcoming projects
+  // Helper function สำหรับการเทียบ campus name
+  const isCampusMatch = (projectCampusName: string | null | undefined, selectedCampusName: string): boolean => {
+    if (!projectCampusName || !selectedCampusName) return false;
+    return projectCampusName === selectedCampusName;
+  };
+
+  // Filter and sort upcoming projects พร้อมกรองตาม campus
   const upcomingProjects = useMemo(() => {
     const now = new Date();
 
-    return projects
+    let filteredProjects = projects
       .filter((project) => {
         const startDate = project.date_start_the_project || project.date_start;
         if (!startDate) return false;
 
         const start = new Date(startDate);
         return start >= now; // Only future projects
-      })
+      });
+
+    // Apply campus filter if specified
+    if (activeCampus !== undefined && campuses.length > 0) {
+      const selectedCampus = campuses.find(campus => campus.id === activeCampus);
+      if (selectedCampus) {
+        filteredProjects = filteredProjects.filter((project) => {
+          return isCampusMatch(project.campus_name, selectedCampus.name);
+        });
+      }
+    }
+
+    return filteredProjects
       .sort((a, b) => {
         const dateA = a.date_start_the_project || a.date_start;
         const dateB = b.date_start_the_project || b.date_start;
@@ -50,7 +73,18 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
         return new Date(dateA).getTime() - new Date(dateB).getTime();
       })
       .slice(0, maxProjects);
-  }, [projects, maxProjects]);
+  }, [projects, maxProjects, activeCampus, campuses]);
+
+  // Update title เพื่อแสดง campus ที่เลือก
+  const displayTitle = useMemo(() => {
+    if (activeCampus && campuses.length > 0) {
+      const selectedCampus = campuses.find(campus => campus.id === activeCampus);
+      if (selectedCampus) {
+        return `${title} - ${selectedCampus.name}`;
+      }
+    }
+    return title;
+  }, [title, activeCampus, campuses]);
 
   if (loading) {
     return (
@@ -63,7 +97,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
                 "text-[#006C67]"
               )}`}
             >
-              {title}
+              {displayTitle}
             </h2>
           </div>
 
@@ -163,8 +197,10 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
               "text-[#006C67]"
             )} leading-tight`}
           >
-            {title}
+            {displayTitle}
           </h2>
+
+       
 
           {/* Optional View All Button */}
           {showViewAllButton && upcomingProjects.length > 0 && onViewAll && (
@@ -216,11 +252,16 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
                 "text-[#006C67]"
               )}`}
             >
-              ไม่มีโครงการที่กำลังจะเกิดขึ้น
+              {activeCampus ? 
+                `ไม่มีโครงการที่กำลังจะเกิดขึ้นในวิทยาเขตนี้` : 
+                `ไม่มีโครงการที่กำลังจะเกิดขึ้น`
+              }
             </h3>
             <p className="text-sm sm:text-base leading-relaxed max-w-md mx-auto">
-              โครงการทั้งหมดได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่
-              กรุณาตรวจสอบอีกครั้งในภายหลัง
+              {activeCampus ? 
+                `โครงการทั้งหมดในวิทยาเขตนี้ได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่ กรุณาลองเปลี่ยนวิทยาเขตหรือตรวจสอบอีกครั้งในภายหลัง` :
+                `โครงการทั้งหมดได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่ กรุณาตรวจสอบอีกครั้งในภายหลัง`
+              }
             </p>
           </div>
         ) : (
