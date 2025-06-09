@@ -82,7 +82,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     hoverShadow: getValueForTheme("hover:shadow-blue-600/30", "hover:shadow-[#006C67]/30"),
   }), [getValueForTheme]);
 
-  // Show nothing during SSR to prevent hydration mismatch
   if (!isMounted) {
     return (
       <div className="relative w-full overflow-hidden bg-transparent">

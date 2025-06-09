@@ -421,7 +421,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 "> 
                   <span className="truncate font-medium">{activeCategoryName}</span>
                   {activeCategoryCount !== undefined && (
                     <span className={countBadgeClasses}>{activeCategoryCount}</span>
@@ -434,7 +434,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
               {isDropdownOpen && (
                 <div className={dropdownContentClasses}>
-                  <div className="max-h-64 overflow-y-auto">
+                  <div className="max-h-64 overflow-y-auto relative z-10">
                     {!loading && dropdownOptions}
                   </div>
                 </div>
