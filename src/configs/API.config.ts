@@ -23,7 +23,7 @@ export const API_CONFIG = {
   CLIENT_SECRET: process.env.NEXT_PUBLIC_CLIENT_SECRET || "",
   TIMEOUT: 10000,
 
-  // Endpoints
+
   ENDPOINTS: {
     AUTH: {
       GET_TOKEN: "/auth/get-token",
@@ -40,6 +40,7 @@ export const API_CONFIG = {
       LIST: "/projects",
       DETAIL: (id: string) => `/projects/${id}`,
     },
+   
   },
 
   // Headers

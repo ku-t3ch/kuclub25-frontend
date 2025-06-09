@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import CardOrganization from "../ui/cardOrganization";
 import { Organization } from "../../types/organization";
-import { Vortex } from "@/components/ui/vortex";
+
 
 interface OrganizationSectionProps {
   organizations: Organization[];
