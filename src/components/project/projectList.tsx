@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import { type ActivityType } from "../../utils/calendarUtils";
@@ -10,6 +10,8 @@ interface ProjectListProps {
   getActivityColor: (type: string) => string;
   ACTIVITY_TYPES: readonly ActivityType[];
   onProjectClick?: (project: Project) => void;
+  selectedCampus?: string;
+  currentDate: Date;
 }
 
 // Animation variants for staggered animations
@@ -60,12 +62,81 @@ const ProjectList = memo<ProjectListProps>(({
   filteredProjectsByMonth, 
   getActivityColor, 
   ACTIVITY_TYPES,
-  onProjectClick 
+  onProjectClick,
+  selectedCampus,
+  currentDate
 }) => {
   const { getValueForTheme, combine } = useThemeUtils();
 
+  // Additional filtering by campus and date validation
+  const finalFilteredProjects = useMemo(() => {
+    if (!filteredProjectsByMonth || filteredProjectsByMonth.length === 0) return [];
+
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    return filteredProjectsByMonth.filter(project => {
+      // Campus filter
+      if (selectedCampus && selectedCampus !== "") {
+        const projectCampus = project.campus_name;
+        if (projectCampus !== selectedCampus) {
+          return false;
+        }
+      }
+
+      // Date validation - check if project belongs to current month/year
+      if (project.date_start) {
+        try {
+          const projectStartDate = new Date(project.date_start);
+          const projectYear = projectStartDate.getFullYear();
+          const projectMonth = projectStartDate.getMonth();
+
+          // Project must be in the current viewing month/year
+          if (projectYear !== currentYear || projectMonth !== currentMonth) {
+            return false;
+          }
+        } catch (error) {
+          console.error("Error parsing project date:", error);
+          return false;
+        }
+      } else {
+        // Exclude projects without start date
+        return false;
+      }
+
+      return true;
+    });
+  }, [filteredProjectsByMonth, selectedCampus, currentDate]);
+
+  // Generate empty state message based on filters
+  const getEmptyStateMessage = () => {
+    if (selectedCampus) {
+      return {
+        title: `ไม่พบโครงการในเดือนนี้ที่ ${selectedCampus}`,
+        subtitle: `ลองเลือกวิทยาเขตอื่น หรือเปลี่ยนเดือน`,
+        suggestions: [
+          { icon: "🏫", text: "เปลี่ยนวิทยาเขต" },
+          { icon: "📅", text: "เปลี่ยนเดือน" },
+          { icon: "🔍", text: "ค้นหาโครงการ" }
+        ]
+      };
+    }
+
+    return {
+      title: "ไม่พบโครงการในเดือนนี้",
+      subtitle: "ลองเลือกเดือนอื่น หรือดูในมุมมองปฏิทิน",
+      suggestions: [
+        { icon: "📅", text: "เปลี่ยนเดือน" },
+        { icon: "🔍", text: "ค้นหาโครงการ" },
+        { icon: "📊", text: "ดูปฏิทิน" }
+      ]
+    };
+  };
+
+  const emptyState = getEmptyStateMessage();
+
   // Empty state when no projects found
-  if (!filteredProjectsByMonth || filteredProjectsByMonth.length === 0) {
+  if (!finalFilteredProjects || finalFilteredProjects.length === 0) {
     return (
       <motion.div
         variants={emptyStateVariants}
@@ -132,7 +203,7 @@ const ProjectList = memo<ProjectListProps>(({
               getValueForTheme("text-white/70", "text-[#006C67]/80")
             )}
           >
-            ไม่พบโครงการในเดือนนี้
+            {emptyState.title}
           </h3>
           <p
             className={combine(
@@ -140,16 +211,12 @@ const ProjectList = memo<ProjectListProps>(({
               getValueForTheme("text-white/50", "text-[#006C67]/60")
             )}
           >
-            ลองเลือกเดือนอื่น หรือดูในมุมมองปฏิทิน
+            {emptyState.subtitle}
           </p>
           
           {/* Suggestions */}
           <div className="flex flex-wrap justify-center gap-2 mt-6">
-            {[
-              { icon: "📅", text: "เปลี่ยนเดือน" },
-              { icon: "🔍", text: "ค้นหาโครงการ" },
-              { icon: "📊", text: "ดูปฏิทิน" }
-            ].map((suggestion, index) => (
+            {emptyState.suggestions.map((suggestion, index) => (
               <motion.div
                 key={suggestion.text}
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -194,12 +261,22 @@ const ProjectList = memo<ProjectListProps>(({
           )
         )}
       >
-        <h2 className={combine(
-          "text-lg md:text-xl font-semibold",
-          getValueForTheme("text-white", "text-[#006C67]")
-        )}>
-          โครงการทั้งหมด
-        </h2>
+        <div>
+          <h2 className={combine(
+            "text-lg md:text-xl font-semibold",
+            getValueForTheme("text-white", "text-[#006C67]")
+          )}>
+            โครงการทั้งหมด
+          </h2>
+          {selectedCampus && (
+            <p className={combine(
+              "text-sm mt-1",
+              getValueForTheme("text-white/70", "text-[#006C67]/70")
+            )}>
+              ที่ {selectedCampus}
+            </p>
+          )}
+        </div>
         <div className={combine(
           "px-3 py-1 rounded-full text-sm font-medium",
           getValueForTheme(
@@ -207,13 +284,13 @@ const ProjectList = memo<ProjectListProps>(({
             "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
           )
         )}>
-          {filteredProjectsByMonth.length} โครงการ
+          {finalFilteredProjects.length} โครงการ
         </div>
       </motion.div>
 
       {/* Projects grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {filteredProjectsByMonth.map((project, index) => (
+        {finalFilteredProjects.map((project, index) => (
           <motion.div 
             key={project.id || `project-${index}`} 
             variants={itemVariants}
@@ -232,7 +309,7 @@ const ProjectList = memo<ProjectListProps>(({
       </div>
 
       {/* Load more indicator (if needed) */}
-      {filteredProjectsByMonth.length > 0 && (
+      {finalFilteredProjects.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -259,7 +336,7 @@ const ProjectList = memo<ProjectListProps>(({
                 d="M5 13l4 4L19 7" 
               />
             </svg>
-            แสดงครบทุกโครงการแล้ว
+            แสดงครบทุกโครงการแล้ว ({finalFilteredProjects.length} โครงการ)
           </div>
         </motion.div>
       )}

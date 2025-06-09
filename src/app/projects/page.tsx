@@ -10,6 +10,7 @@ import React, {
 import { motion, AnimatePresence } from "framer-motion";
 import { useProjects } from "../../hooks/useProject";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
+import { useCampuses } from "../../hooks/useCampuses"; // เพิ่ม import
 import moment from "moment";
 import "moment/locale/th";
 import ActivityTypeFilter from "../../components/project/activityTypeFilter";
@@ -71,6 +72,7 @@ moment.locale("th");
 export default function ProjectsPage() {
   const { getValueForTheme, combine } = useThemeUtils();
   const { projects, isLoading, error } = useProjects();
+  const { campuses, loading: campusLoading } = useCampuses(); // เพิ่ม hook
 
   // State management
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -83,6 +85,9 @@ export default function ProjectsPage() {
   );
   const [currentDate, setCurrentDate] = useState(() => new Date());
   const [activeFilters, setActiveFilters] = useState<string[]>(["all"]);
+  const [selectedCampus, setSelectedCampus] = useState<string | undefined>(
+    undefined
+  ); // เพิ่ม state
 
   const projectsListRef = useRef<HTMLDivElement>(null);
 
@@ -104,18 +109,6 @@ export default function ProjectsPage() {
       loadingSpinner: getValueForTheme("border-blue-400", "border-[#006C67]"),
       loadingBorder: getValueForTheme("border-white/10", "border-[#006C67]/20"),
       loadingText: getValueForTheme("text-white/60", "text-[#006C67]/70"),
-      backgroundGradient1: getValueForTheme(
-        "bg-blue-500 opacity-30",
-        "bg-[#006C67] opacity-10"
-      ),
-      backgroundGradient2: getValueForTheme(
-        "bg-purple-500 opacity-20",
-        "bg-[#006C67] opacity-5"
-      ),
-      meshOverlay: getValueForTheme(
-        "bg-gradient-to-b from-transparent via-[#051D35]/50 to-[#051D35]/80",
-        "bg-gradient-to-b from-transparent via-white/30 to-white/60"
-      ),
     }),
     [getValueForTheme]
   );
@@ -126,8 +119,8 @@ export default function ProjectsPage() {
       if (!project) return null;
 
       try {
-        const startDate = project.date_start_the_project || project.date_start;
-        const endDate = project.date_end_the_project || project.date_end;
+        const startDate = project.date_start;
+        const endDate = project.date_end;
 
         if (startDate && endDate) {
           const date = new Date(isEndDate ? endDate : startDate);
@@ -168,10 +161,7 @@ export default function ProjectsPage() {
 
             return {
               id: project.id,
-              title:
-                project.project_name_th ||
-                project.project_name_en ||
-                "ไม่ระบุชื่อโครงการ",
+              title: project.name_th || project.name_en || "ไม่ระบุชื่อโครงการ",
               start,
               end,
               allDay: isMultiDay,
@@ -190,21 +180,35 @@ export default function ProjectsPage() {
     }
   }, [projects, createProjectDate]);
 
-  // Optimized filtered projects with useMemo
+  // Optimized filtered projects with useMemo - เพิ่ม campus filter
   const filteredProjects = useMemo(() => {
     if (!calendarProjects.length) return [];
-    if (activeFilters.includes("all")) return calendarProjects;
 
-    return calendarProjects.filter(
-      (project) =>
-        project?.originalProject &&
-        projectMatchesFilters(
-          project.originalProject,
-          activeFilters,
-          getActivityTypes
-        )
-    );
-  }, [calendarProjects, activeFilters]);
+    let filtered = calendarProjects;
+
+    // Filter by activity type
+    if (!activeFilters.includes("all")) {
+      filtered = filtered.filter(
+        (project) =>
+          project?.originalProject &&
+          projectMatchesFilters(
+            project.originalProject,
+            activeFilters,
+            getActivityTypes
+          )
+      );
+    }
+
+    // Filter by campus
+    if (selectedCampus && selectedCampus !== "") {
+      filtered = filtered.filter((project) => {
+        const campusName = project?.originalProject?.campus_name;
+        return campusName === selectedCampus;
+      });
+    }
+
+    return filtered;
+  }, [calendarProjects, activeFilters, selectedCampus]);
 
   // Optimized filtered projects by month
   const filteredProjectsByMonth = useMemo(() => {
@@ -213,8 +217,8 @@ export default function ProjectsPage() {
       .map((project) => project.originalProject)
       .filter(Boolean)
       .sort((a, b) => {
-        const dateA = a.date_start_the_project || a.date_start;
-        const dateB = b.date_start_the_project || b.date_start;
+        const dateA = a.date_start;
+        const dateB = b.date_start;
         if (!dateA) return 1;
         if (!dateB) return -1;
         return new Date(dateA).getTime() - new Date(dateB).getTime();
@@ -239,6 +243,17 @@ export default function ProjectsPage() {
         return [...newFilters, filter];
       }
     });
+  }, []);
+
+  // Campus filter handler
+  const handleCampusChange = useCallback((campusName: string | undefined) => {
+    setSelectedCampus(campusName);
+  }, []);
+
+  // Clear all filters
+  const clearAllFilters = useCallback(() => {
+    setActiveFilters(["all"]);
+    setSelectedCampus(undefined);
   }, []);
 
   // Month navigation
@@ -350,7 +365,7 @@ export default function ProjectsPage() {
   const handleProjectClick = useCallback((project: any) => {
     if (!project?.id) return;
 
-    const projectId = project.id || project.projectid || project.project_id;
+    const projectId = project.id;
     if (!projectId) {
       console.error("Project ID not found:", project);
       return;
@@ -398,8 +413,6 @@ export default function ProjectsPage() {
     [combine, themeValues]
   );
 
-
-
   // Error handling
   if (error) {
     return (
@@ -421,23 +434,16 @@ export default function ProjectsPage() {
         baseHue={120}
         particleOpacity={0.3}
         className="flex flex-col items-center justify-start w-full min-h-screen px-4"
-        containerClassName={combine(
-          "fixed inset-0 z-0",
-          themeValues.vortexBg
-        )}
+        containerClassName={combine("fixed inset-0 z-0", themeValues.vortexBg)}
       />
 
       <motion.div
-        className={combine(
-          "min-h-screen relative overflow-hidden",
-        )}
+        className={combine("min-h-screen relative overflow-hidden")}
         initial="initial"
         animate="animate"
         exit="exit"
         variants={pageVariants}
       >
-
-
         {/* Fixed spacing for navbar */}
         <div className="h-16 sm:h-20 md:h-24" />
 
@@ -447,7 +453,7 @@ export default function ProjectsPage() {
           transition={{ duration: 0.5 }}
           className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl relative z-10"
         >
-          {/* Header section - Fixed responsive layout */}
+          {/* Header section */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-6 sm:mb-8">
             <h1
               className={combine(
@@ -467,13 +473,126 @@ export default function ProjectsPage() {
             </div>
           </div>
 
-          {/* Activity Type Filter - Improved spacing */}
-          <div className="mb-6 sm:mb-8">
+          {/* Filters Section */}
+          <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+            {/* Campus Filter */}
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+              <label
+                className={combine(
+                  "text-sm font-medium flex-shrink-0",
+                  getValueForTheme("text-white/80", "text-gray-700")
+                )}
+              >
+                กรองตามวิทยาเขต:
+              </label>
+
+              <div className="flex flex-wrap gap-2 items-center">
+                <select
+                  value={selectedCampus || ""}
+                  onChange={(e) =>
+                    handleCampusChange(e.target.value || undefined)
+                  }
+                  disabled={campusLoading}
+                  className={combine(
+                    "px-3 py-2 rounded-lg border text-sm",
+                    "focus:outline-none focus:ring-2 focus:ring-[#006C67] focus:border-transparent",
+                    "disabled:opacity-50 disabled:cursor-not-allowed",
+                    getValueForTheme(
+                      "bg-white/10 border-white/20 text-white placeholder-white/50",
+                      "bg-white border-gray-300 text-gray-900"
+                    )
+                  )}
+                >
+                  <option
+                    value=""
+                    className={getValueForTheme(
+                      "bg-gray-800 text-white",
+                      "bg-white text-gray-900"
+                    )}
+                  >
+                    ทุกวิทยาเขต
+                  </option>
+                  {campuses.map((campus) => (
+                    <option
+                      key={campus.id}
+                      value={campus.name}
+                      className={getValueForTheme(
+                        "bg-gray-800 text-white",
+                        "bg-white text-gray-900"
+                      )}
+                    >
+                      {campus.name}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Clear filters button */}
+                {(selectedCampus || !activeFilters.includes("all")) && (
+                  <button
+                    onClick={clearAllFilters}
+                    className={combine(
+                      "px-3 py-2 rounded-lg text-sm font-medium",
+                      "transition-colors duration-200",
+                      getValueForTheme(
+                        "bg-red-500/20 text-red-300 hover:bg-red-500/30",
+                        "bg-red-50 text-red-600 hover:bg-red-100"
+                      )
+                    )}
+                  >
+                    ล้างตัวกรอง
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Activity Type Filter */}
             <ActivityTypeFilter
               activeFilters={activeFilters}
               toggleFilter={toggleFilter}
               ACTIVITY_TYPES={ACTIVITY_TYPES}
             />
+
+            {/* Filter Results Summary */}
+            <div
+              className={combine(
+                "px-4 py-3 rounded-lg border text-sm",
+                getValueForTheme(
+                  "bg-white/5 border-white/10 text-white/80",
+                  "bg-gray-50 border-gray-200 text-gray-700"
+                )
+              )}
+            >
+              <div className="flex items-center justify-between">
+                <span>
+                  พบโครงการ{" "}
+                  <span className="font-semibold text-[#006C67]">
+                    {filteredProjects.length.toLocaleString("th-TH")}
+                  </span>{" "}
+                  โครงการ
+                  {(selectedCampus || !activeFilters.includes("all")) && (
+                    <span className="ml-2 text-xs opacity-75">
+                      (จากทั้งหมด{" "}
+                      {calendarProjects.length.toLocaleString("th-TH")} โครงการ)
+                    </span>
+                  )}
+                </span>
+
+                {/* Active Filters Indicator */}
+                {(selectedCampus || !activeFilters.includes("all")) && (
+                  <span
+                    className={combine(
+                      "px-2 py-1 rounded-full text-xs font-medium",
+                      getValueForTheme(
+                        "bg-blue-500/20 text-blue-300",
+                        "bg-[#006C67]/10 text-[#006C67]"
+                      )
+                    )}
+                  >
+                    มีตัวกรองที่ใช้งาน
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Loading State */}
@@ -481,7 +600,7 @@ export default function ProjectsPage() {
             LoadingComponent
           ) : (
             <div className="space-y-6 sm:space-y-8">
-              {/* Month Selector - Better spacing */}
+              {/* Month Selector */}
               <div className="mb-6 sm:mb-8">
                 <MonthSelector
                   currentDate={currentDate}
@@ -491,7 +610,7 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              {/* Main Content - Improved container */}
+              {/* Main Content */}
               <AnimatePresence mode="wait">
                 {viewMode === "calendar" ? (
                   <motion.div
@@ -515,7 +634,7 @@ export default function ProjectsPage() {
                       ACTIVITY_TYPES={ACTIVITY_TYPES}
                     />
 
-                    {/* Selected Date Projects - Better spacing */}
+                    {/* Selected Date Projects */}
                     <AnimatePresence>
                       {selectedDate && projectsOnSelectedDate.length > 0 && (
                         <div className="mt-8">
@@ -548,6 +667,8 @@ export default function ProjectsPage() {
                       }
                       ACTIVITY_TYPES={ACTIVITY_TYPES}
                       onProjectClick={handleProjectClick}
+                      selectedCampus={selectedCampus} // เพิ่ม prop นี้
+                      currentDate={currentDate} // เพิ่ม prop นี้
                     />
                   </motion.div>
                 )}
