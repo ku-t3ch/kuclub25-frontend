@@ -6,7 +6,6 @@ import "moment/locale/th";
 import { motion } from "framer-motion";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import { getActivityTypes, type ActivityType } from "../../utils/calendarUtils";
-import { useProjects } from "../../hooks/useProject";
 import { ACTIVITY_TYPE_COLORS } from "../../constants/activity";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../styles/calendar.css";
@@ -21,8 +20,9 @@ interface CalendarViewSectionProps {
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
   setSelectedMonth: (month: number) => void;
+  filteredEvents: any[]; // รับ filteredEvents จาก parent แทนการ fetch เอง
   handleSelectSlot: (slotInfo: any) => void;
-  handleSelectProject: (project: any) => void;
+  handleSelectEvent: (project: any) => void;
   activeFilters: string[];
   projectMatchesFilters: (
     project: any,
@@ -42,10 +42,8 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     className={combine(
-      // Base loading container styles
       "glass-panel backdrop-blur-sm rounded-xl overflow-hidden border shadow-lg mb-6 sm:mb-8",
       "flex items-center justify-center",
-      // Theme-specific styles using calendar classes
       getValueForTheme(
         "calendar-wrapper-dark bg-white/5 border-white/10 shadow-blue-900/20",
         "calendar-wrapper-light bg-white border-gray-100 shadow-gray-200/50"
@@ -57,7 +55,7 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
       <div 
         className={combine(
           "animate-spin rounded-full h-8 w-8 border-b-2",
-          getValueForTheme("border-blue-500", "border-primary")
+          getValueForTheme("border-blue-500", "border-[#006C67]")
         )}
       />
       <p 
@@ -73,147 +71,38 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
 ));
 LoadingState.displayName = "LoadingState";
 
-// Memoized helper component for error state
-const ErrorState = memo(({ 
-  getValueForTheme, 
-  combine, 
-  onRetry 
-}: { 
-  getValueForTheme: (dark: string, light: string) => string;
-  combine: (...classes: string[]) => string;
-  onRetry: () => void;
-}) => (
-  <motion.div
-    key="calendar-error"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className={combine(
-      // Base error container styles
-      "glass-panel backdrop-blur-sm rounded-xl overflow-hidden border shadow-lg mb-6 sm:mb-8",
-      "flex items-center justify-center",
-      // Theme-specific styles using calendar classes
-      getValueForTheme(
-        "calendar-wrapper-dark bg-white/5 border-white/10 shadow-blue-900/20",
-        "calendar-wrapper-light bg-white border-gray-100 shadow-gray-200/50"
-      )
-    )}
-    style={{ height: "500px", minHeight: "45vh", maxHeight: "650px" }}
-  >
-    <div className="flex flex-col items-center space-y-4">
-      <div className="text-red-500 text-2xl">⚠️</div>
-      <p 
-        className={combine(
-          "transition-colors duration-300",
-          getValueForTheme("text-white/70", "text-gray-600")
-        )}
-      >
-        เกิดข้อผิดพลาดในการโหลดโครงการ
-      </p>
-      <button
-        onClick={onRetry}
-        className={combine(
-          // Base button styles
-          "px-4 py-2 rounded-lg transition-all duration-300 font-medium",
-          "hover:transform hover:scale-105",
-          // Theme-specific button styles using calendar patterns
-          getValueForTheme(
-            "bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 border border-blue-400/20",
-            "bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20"
-          )
-        )}
-      >
-        ลองใหม่
-      </button>
-    </div>
-  </motion.div>
-));
-ErrorState.displayName = "ErrorState";
-
 const CalendarViewSection = memo<CalendarViewSectionProps>(({
   currentDate,
   setCurrentDate,
   setSelectedMonth,
+  filteredEvents, // ใช้ filteredEvents ที่ส่งมาจาก parent
   handleSelectSlot,
-  handleSelectProject,
+  handleSelectEvent,
   activeFilters = ['all'],
   projectMatchesFilters,
   ACTIVITY_TYPES = [],
 }) => {
   const { getValueForTheme, combine } = useThemeUtils();
-  
-  // Use useProjects hook to fetch projects data
-  const { projects, loading, error, refetch } = useProjects();
 
   // Cache refs for DOM manipulation
   const clickHandlersRef = useRef(new Map<Element, EventListener>());
   const timeoutRef = useRef<NodeJS.Timeout>();
   const lastUpdateRef = useRef<string>('');
 
-  // Memoized filtered projects with better performance
-  const filteredProjects = useMemo(() => {
-    if (!Array.isArray(projects) || projects.length === 0) return [];
-    
-    return projects.filter(project => {
-      try {
-        // Apply filters
-        if (activeFilters.includes("all")) return true;
-        if (!projectMatchesFilters || typeof projectMatchesFilters !== 'function') return true;
-        
-        return projectMatchesFilters(project, activeFilters, getActivityTypes);
-      } catch (error) {
-        console.warn('Error filtering project:', error);
-        return true;
-      }
-    });
-  }, [projects, activeFilters, projectMatchesFilters, currentDate]);
-
-  // Optimized calendar projects conversion with memoization
+  // ใช้ filteredEvents ที่ส่งมาจาก parent แทนการ filter เอง
   const calendarProjects = useMemo(() => {
-    if (!Array.isArray(filteredProjects) || filteredProjects.length === 0) return [];
+    if (!Array.isArray(filteredEvents) || filteredEvents.length === 0) return [];
 
-    const results = [];
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-
-    for (let i = 0; i < filteredProjects.length; i++) {
-      const project = filteredProjects[i];
-      
-      try {
-        // Extract dates from project
-        const startDate = project.date_start_the_project || project.date_start || project.start;
-        const endDate = project.date_end_the_project || project.date_end || project.end;
-        
-        if (!startDate) continue;
-
-        const start = new Date(startDate);
-        const end = endDate ? new Date(endDate) : new Date(start);
-
-        // Validate dates
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) continue;
-
-        // Skip projects not in current month/year for better performance
-        if (start.getFullYear() !== currentYear && end.getFullYear() !== currentYear) continue;
-        if (start.getFullYear() === currentYear && start.getMonth() !== currentMonth && 
-            end.getFullYear() === currentYear && end.getMonth() !== currentMonth) continue;
-
-        const calendarProject = {
-          id: project.id,
-          title: project.project_name_th || project.project_name_en || project.name_th || project.name_en || "โครงการ",
-          start,
-          end,
-          allDay: true,
-          originalProject: project
-        };
-
-        results.push(calendarProject);
-      } catch (error) {
-        console.warn('Error converting project to calendar format:', error);
-        continue;
-      }
-    }
-
-    return results;
-  }, [filteredProjects, currentDate]);
+    return filteredEvents.map(event => ({
+      id: event.id,
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      allDay: event.allDay || true,
+      originalProject: event.originalProject,
+      activityType: event.activityType
+    }));
+  }, [filteredEvents]);
 
   // Optimized date-based project grouping
   const projectsByDate = useMemo(() => {
@@ -221,6 +110,8 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
     
     for (let i = 0; i < calendarProjects.length; i++) {
       const project = calendarProjects[i];
+      if (!project.start || !project.end) continue;
+      
       const startDate = new Date(project.start);
       const endDate = new Date(project.end);
       
@@ -266,7 +157,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
         const dateCells = document.querySelectorAll(".rbc-date-cell");
 
         dateCells.forEach((cell) => {
-          // Clear existing indicators more efficiently
+          // Clear existing indicators
           const existingIndicators = cell.querySelectorAll(".day-indicator-container, .project-count");
           existingIndicators.forEach((indicator) => indicator.remove());
 
@@ -285,20 +176,9 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
           // Skip days not in current month
           if (cell.classList.contains("rbc-off-range")) return;
 
-          // Use pre-computed date map for better performance
+          // Use pre-computed date map
           const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${dayNum}`;
-          let projectsOnDay = projectsByDate.get(dateKey) || [];
-
-          // Apply active filters if needed
-          if (!activeFilters.includes("all")) {
-            projectsOnDay = projectsOnDay.filter((project) =>
-              projectMatchesFilters(
-                project.originalProject,
-                activeFilters,
-                getActivityTypes
-              )
-            );
-          }
+          const projectsOnDay = projectsByDate.get(dateKey) || [];
 
           if (projectsOnDay.length > 0) {
             // Add appropriate classes
@@ -310,28 +190,28 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               )
             );
 
-            // Create dots container using CSS class
+            // Create dots container
             const dotsContainer = document.createElement("div");
             dotsContainer.className = "day-indicator-container";
 
-            // Get unique activity types more efficiently
+            // Get unique activity types
             const activityTypesSet = new Set<string>();
 
             for (let i = 0; i < projectsOnDay.length; i++) {
-              const types = getActivityTypes(projectsOnDay[i].originalProject);
-              for (let j = 0; j < types.length; j++) {
-                const type = types[j];
-                if (activeFilters.includes("all") || activeFilters.includes(type)) {
-                  activityTypesSet.add(type);
+              const project = projectsOnDay[i];
+              if (project.originalProject) {
+                const types = getActivityTypes(project.originalProject);
+                for (let j = 0; j < types.length; j++) {
+                  activityTypesSet.add(types[j]);
                 }
               }
             }
 
-            // Add project count using CSS class
+            // Add project count
             const projectCount = projectsOnDay.length;
             if (projectCount > 0) {
               const projectCountText = document.createElement("span");
-              projectCountText.className = "project-count"; // Using CSS class from calendar.css
+              projectCountText.className = "project-count";
               projectCountText.textContent = projectCount.toString();
               dotsContainer.appendChild(projectCountText);
             }
@@ -339,26 +219,22 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
             // Show max 3 unique activity types
             const uniqueActivityTypes = Array.from(activityTypesSet).slice(0, 3);
 
-            // Add dots for each type using CSS classes and activity colors
+            // Add dots for each type
             for (let i = 0; i < uniqueActivityTypes.length; i++) {
               const activityType = uniqueActivityTypes[i];
               const dot = document.createElement("div");
-
-              // Use CSS classes for day indicators
               dot.className = "day-indicator";
 
-              // Get color from activity.ts instead of hardcoded classes
+              // Get color from ACTIVITY_TYPE_COLORS
               const activityColor = ACTIVITY_TYPE_COLORS[activityType as keyof typeof ACTIVITY_TYPE_COLORS];
               
               if (activityColor) {
-                // Set the background color directly using the hex value from activity.ts
                 dot.style.backgroundColor = activityColor;
               } else {
-                // Fallback to gray for unknown activity types
-                dot.style.backgroundColor = '#9CA3AF'; // gray-400 equivalent
+                dot.style.backgroundColor = '#9CA3AF'; // gray-400 fallback
               }
 
-              // Optional: Add CSS class for additional styling while keeping the color from activity.ts
+              // Add CSS class for additional styling
               switch (activityType) {
                 case 'competency_development_activities':
                   dot.classList.add('activity-competency');
@@ -377,7 +253,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               dotsContainer.appendChild(dot);
             }
 
-            // Make cell clickable with cached event listener
+            // Make cell clickable
             const clickHandler = () => {
               const clickedDate = new Date(
                 currentDate.getFullYear(),
@@ -392,23 +268,14 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               });
             };
 
-            // Use CSS cursor class
             (cell as HTMLElement).classList.add('cursor-pointer');
             cell.addEventListener("click", clickHandler);
             clickHandlersRef.current.set(cell, clickHandler);
-
-            // Add mobile tap target if needed using CSS class
-            if (window.innerWidth < 768) {
-              const tapTarget = document.createElement("div");
-              tapTarget.className = "mobile-tap-target absolute top-0 left-0 right-0 bottom-0 z-4";
-              cell.appendChild(tapTarget);
-            }
 
             cell.appendChild(dotsContainer);
           }
         });
 
-        // Mark calendar as processed using CSS class
         calendarView.classList.add("processed");
       } catch (error) {
         console.error("Error updating calendar dots:", error);
@@ -419,8 +286,6 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
     currentDate,
     activeFilters,
     getValueForTheme,
-    ACTIVITY_TYPES,
-    projectMatchesFilters,
     handleSelectSlot,
     projectsByDate
   ]);
@@ -439,7 +304,6 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
   // Cleanup effect
   useEffect(() => {
     return () => {
-      // Clean up all event listeners when component unmounts
       clickHandlersRef.current.forEach((handler, cell) => {
         cell.removeEventListener("click", handler);
       });
@@ -457,24 +321,9 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
     setSelectedMonth(date.getMonth());
   }, [setCurrentDate, setSelectedMonth]);
 
-  // Memoized retry handler
-  const handleRetry = useCallback(() => {
-    refetch();
-  }, [refetch]);
-
-  // Early returns with memoized components
-  if (loading) {
+  // Show loading if no events
+  if (!filteredEvents || filteredEvents.length === 0) {
     return <LoadingState getValueForTheme={getValueForTheme} combine={combine} />;
-  }
-
-  if (error) {
-    return (
-      <ErrorState 
-        getValueForTheme={getValueForTheme} 
-        combine={combine} 
-        onRetry={handleRetry}
-      />
-    );
   }
 
   return (
@@ -485,10 +334,8 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.4 }}
       className={combine(
-        // Base calendar wrapper styles
         "glass-panel backdrop-blur-sm rounded-lg overflow-hidden border shadow-md mb-6 sm:mb-8",
         "transition-all duration-300 hover:shadow-lg",
-        // Theme-specific styles using calendar CSS classes
         getValueForTheme(
           "calendar-wrapper-dark bg-white/5 border-white/10 shadow-blue-900/5",
           "calendar-wrapper-light bg-white border-gray-100 shadow-gray-100/50"
@@ -507,7 +354,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
           style={{ height: "100%" }}
           messages={messages}
           onSelectSlot={handleSelectSlot}
-          onSelectEvent={handleSelectProject}
+          onSelectEvent={handleSelectEvent}
           selectable
           popup
           views={["month"]}
@@ -515,7 +362,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
           date={currentDate}
           onNavigate={handleNavigate}
           components={{
-            event: () => null, // Hide default event rendering, we'll use custom dots
+            event: () => null, // Hide default event rendering, use custom dots
           }}
         />
       </div>
