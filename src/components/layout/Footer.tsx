@@ -1,12 +1,18 @@
 "use client";
 
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import Image from "next/image";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import LOGO from "../../assets/logo.png";
+import LOGO_LIGHT from "../../assets/logo_light.png";
 
 const Footer: React.FC = () => {
-    const { combine, getValueForTheme } = useThemeUtils();
+    const { combine, getValueForTheme, resolvedTheme } = useThemeUtils();
+    
+    // Memoized logo selection based on theme
+    const currentLogo = useMemo(() => {
+        return resolvedTheme === "light" ? LOGO_LIGHT : LOGO;
+    }, [resolvedTheme]);
     
     return (
         <footer 
@@ -23,7 +29,7 @@ const Footer: React.FC = () => {
                     <div className="flex items-center mb-6 md:mb-0">
                         {/* KU Logo */}
                         <Image
-                            src={LOGO}
+                            src={currentLogo}
                             alt="KU Logo"
                             className={combine(
                                 "h-8 xs:h-9 sm:h-10 w-auto mr-3 xs:mr-3.5 sm:mr-4 opacity-80 hover:opacity-100 transition-opacity",
