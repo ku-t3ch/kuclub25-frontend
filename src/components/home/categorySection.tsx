@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { memo, useMemo, useState, useRef, useEffect } from 'react';
 import { useThemeUtils } from '../../hooks/useThemeUtils';
 
 interface CategoryItemProps {
-  category: { id: string | undefined; name: string }; // id ตอนนี้เป็น type name
+  category: { id: string | undefined; name: string };
   isActive: boolean;
   count?: number;
   onClick: () => void;
@@ -21,10 +20,10 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
-  // Memoize class names to prevent unnecessary recalculations
   const mobileClasses = useMemo(() => {
     return combine(
-      "transition-all duration-200 px-3 py-4 rounded-xl text-sm relative overflow-hidden",
+      "transition-all duration-200 px-3 py-3 rounded-lg text-sm relative overflow-hidden",
+      "touch-manipulation", // Better touch handling
       isActive
         ? getValueForTheme(
           "bg-blue-600/15 border border-blue-500/30 text-blue-200",
@@ -40,8 +39,8 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
   const desktopClasses = useMemo(() => {
     return combine(
       "whitespace-nowrap transition-all duration-200",
-      "px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 sm:py-2.5 rounded-full",
-      "text-2xs xs:text-xs sm:text-sm font-medium",
+      "px-3 xs:px-4 sm:px-5 py-2 xs:py-2 sm:py-2.5 rounded-full",
+      "text-xs xs:text-xs sm:text-sm font-medium",
       isActive
         ? getValueForTheme(
           "bg-blue-500/20 text-blue-300 border border-blue-500/30",
@@ -57,7 +56,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
   const countBadgeClasses = useMemo(() => {
     const baseClasses = isMobile
       ? "px-2 py-0.5 rounded-full text-xs font-medium"
-      : "ml-1 xs:ml-1.5 sm:ml-2 px-1 xs:px-1.5 sm:px-2 py-0.5 rounded-full text-[0.6rem] xs:text-2xs sm:text-xs";
+      : "ml-1.5 xs:ml-2 px-1.5 xs:px-2 py-0.5 rounded-full text-xs xs:text-xs";
 
     const colorClasses = isActive
       ? getValueForTheme(
@@ -72,14 +71,6 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
     return combine(baseClasses, colorClasses);
   }, [isActive, isMobile, combine, getValueForTheme]);
 
-  const activeIndicatorClasses = useMemo(() => {
-    return combine(
-      "absolute top-1 right-1 w-1.5 h-1.5 rounded-full",
-      getValueForTheme("bg-blue-400", "bg-[#006C67]")
-    );
-  }, [combine, getValueForTheme]);
-
-  // Show count badge when category is active and count is defined (including 0)
   const shouldShowCount = isActive && count !== undefined;
 
   if (isMobile) {
@@ -90,8 +81,8 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
         type="button"
         aria-pressed={isActive}
       >
-        <div className="flex flex-col items-center justify-center gap-1.5">
-          <span className="font-medium leading-tight">{category.name}</span>
+        <div className="flex flex-col items-center justify-center gap-1">
+          <span className="font-medium leading-tight text-center">{category.name}</span>
           {shouldShowCount && (
             <span className={countBadgeClasses}>
               {count}
@@ -99,7 +90,10 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
           )}
         </div>
         {isActive && (
-          <div className={activeIndicatorClasses} />
+          <div className={combine(
+            "absolute top-1 right-1 w-1.5 h-1.5 rounded-full",
+            getValueForTheme("bg-blue-400", "bg-[#006C67]")
+          )} />
         )}
       </button>
     );
@@ -122,28 +116,17 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
   );
 };
 
-// Memoized CategoryItem
-const MemoizedCategoryItem = memo(CategoryItem, (prevProps, nextProps) => {
-  return (
-    prevProps.category.id === nextProps.category.id &&
-    prevProps.category.name === nextProps.category.name &&
-    prevProps.isActive === nextProps.isActive &&
-    prevProps.count === nextProps.count &&
-    prevProps.isMobile === nextProps.isMobile
-  );
-});
+const MemoizedCategoryItem = memo(CategoryItem);
 
-// CategoryFilter Interface - filter ด้วย type name
 interface CategoryFilterProps {
-  categories: Array<{ id: string | undefined; name: string }>; // id เป็น type name
-  activeCategory: string | undefined; // activeCategory เป็น type name
+  categories: Array<{ id: string | undefined; name: string }>;
+  activeCategory: string | undefined;
   totalClubCount: number;
-  categoryCountMap: Map<string | undefined, number>; // Add this prop for category counts
+  categoryCountMap: Map<string | undefined, number>;
   loading: boolean;
-  onCategoryChange: (typeName: string | undefined) => void; // parameter เป็น type name
+  onCategoryChange: (typeName: string | undefined) => void;
 }
 
-// Main CategoryFilter Component
 const CategoryFilter: React.FC<CategoryFilterProps> = ({
   categories,
   activeCategory,
@@ -156,7 +139,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -168,7 +150,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Get active category name for display
   const activeCategoryName = useMemo(() => {
     const active = categories.find(cat => cat.id === activeCategory);
     return active?.name || "ทั้งหมด";
@@ -180,25 +161,24 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   };
 
   return (
-    <section className="relative px-4 xs:px-5 sm:px-6 lg:px-8 pb-4">
+    <section className="relative px-3 xs:px-4 sm:px-6 lg:px-8 pb-4">
       <div className="max-w-7xl mx-auto">
         {/* Mobile Category Filter - Dropdown */}
-        <div className="md:hidden mb-1">
+        <div className="md:hidden mb-4">
           <h3 className={combine(
-            "text-lg font-bold mb-3 text-left",
+            "text-base xs:text-lg font-bold mb-3 text-left",
             getValueForTheme("text-white", "text-[#006C67]")
           )}>
             เลือกประเภทองค์กร
           </h3>
 
-          <div className="relative max-w-xs mx-auto" ref={dropdownRef}>
-            {/* Dropdown Button */}
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className={combine(
                 "w-full flex items-center justify-between",
-                "px-3 py-2.5 rounded-lg text-sm font-medium",
-                "transition-all duration-200",
+                "px-3 py-3 rounded-lg text-sm font-medium",
+                "transition-all duration-200 touch-manipulation",
                 getValueForTheme(
                   "bg-white/5 border border-white/10 text-white/70 hover:bg-white/10",
                   "bg-gray-50/70 border border-gray-100 text-gray-600 hover:bg-gray-100/80"
@@ -212,7 +192,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 <span className="truncate">{activeCategoryName}</span>
                 {categoryCountMap.get(activeCategory) !== undefined && (
                   <span className={combine(
-                    "px-1.5 py-0.5 rounded-full text-xs flex-shrink-0",
+                    "px-2 py-0.5 rounded-full text-xs flex-shrink-0",
                     getValueForTheme(
                       "bg-blue-500/20 text-blue-300",
                       "bg-[#006C67]/10 text-[#006C67]"
@@ -236,7 +216,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
               </svg>
             </button>
 
-            {/* Dropdown Menu */}
             {isDropdownOpen && (
               <div className={combine(
                 "absolute top-full left-0 right-0 mt-2 z-50",
@@ -253,8 +232,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                       key={category.id || 'all'}
                       onClick={() => handleCategorySelect(category.id)}
                       className={combine(
-                        "w-full flex items-center justify-between px-3 py-2.5 text-sm text-left",
-                        "transition-colors duration-150",
+                        "w-full flex items-center justify-between px-3 py-3 text-sm text-left",
+                        "transition-colors duration-150 touch-manipulation",
                         activeCategory === category.id
                           ? getValueForTheme(
                             "bg-blue-600/15 text-blue-200",
@@ -273,13 +252,18 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                     >
                       <span className="font-medium truncate">{category.name}</span>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                        {activeCategory === category.id && categoryCountMap.get(category.id) !== undefined && (
+                        {categoryCountMap.get(category.id) !== undefined && (
                           <span className={combine(
-                            "px-1.5 py-0.5 rounded-full text-xs",
-                            getValueForTheme(
-                              "bg-blue-500/20 text-blue-200",
-                              "bg-[#006C67]/20 text-[#006C67]"
-                            )
+                            "px-2 py-0.5 rounded-full text-xs",
+                            activeCategory === category.id
+                              ? getValueForTheme(
+                                "bg-blue-500/20 text-blue-200",
+                                "bg-[#006C67]/20 text-[#006C67]"
+                              )
+                              : getValueForTheme(
+                                "bg-white/10 text-white/60",
+                                "bg-gray-200 text-gray-500"
+                              )
                           )}>
                             {categoryCountMap.get(category.id)}
                           </span>
@@ -301,25 +285,18 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
         {/* Desktop Category Filter */}
         <div className="hidden md:block">
-
-          <div className="flex items-center justify-start gap-4 mb-8">
+          <div className="flex items-center justify-start gap-4 mb-6">
             <h3 className={combine(
-              "text-3xl font-semibold",
+              "text-2xl lg:text-3xl font-semibold",
               getValueForTheme("text-white", "text-[#006C67]")
             )}>
               เลือกประเภทองค์กร
             </h3>
-            {loading && (
-              <div className={combine(
-                "animate-pulse h-8 w-20 rounded-full",
-                getValueForTheme("bg-white/10", "bg-gray-200")
-              )} />
-            )}
           </div>
 
           <div className="relative">
-            <div className="overflow-x-auto scrollbar-hide -mx-4 xs:-mx-5 sm:-mx-6 px-4 xs:px-5 sm:px-6">
-              <div className="flex flex-nowrap gap-1.5 xs:gap-2 sm:gap-2.5 pb-2">
+            <div className="overflow-x-auto scrollbar-hide -mx-4 sm:-mx-6 px-4 sm:px-6">
+              <div className="flex flex-nowrap gap-2 sm:gap-2.5 pb-2">
                 {!loading && categories.map((category) => (
                   <MemoizedCategoryItem
                     key={category.id || 'all'}
@@ -355,6 +332,5 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   );
 };
 
-// Export both components
 export { MemoizedCategoryItem as CategoryItem };
 export default memo(CategoryFilter);
