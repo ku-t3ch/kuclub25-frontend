@@ -306,6 +306,53 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 )}
               </AnimatePresence>
             </button>
+            {/* Search button */}
+            <button
+              type="submit"
+              disabled={isSearching || !searchQuery.trim()}
+              className={combine(
+                "absolute right-1 xs:right-1.5 sm:right-2 top-1 xs:top-1.5 sm:top-2",
+                "p-1.5 xs:p-1.5 sm:p-2 rounded-full bg-gradient-to-r",
+                themeValues.searchButton,
+                "hover:shadow-md transition duration-300",
+                themeValues.hoverShadow,
+                "disabled:opacity-50 disabled:cursor-not-allowed"
+              )}
+            >
+              <AnimatePresence mode="wait">
+                {isSearching ? (
+                  <motion.div
+                    key="loading"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-4 h-4 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6"
+                  >
+                    <div className="animate-spin rounded-full h-full w-full border-2 border-white border-t-transparent"></div>
+                  </motion.div>
+                ) : (
+                  <motion.svg
+                    key="search"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-4 h-4 xs:w-4 xs:h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </motion.svg>
+                )}
+              </AnimatePresence>
+            </button>
 
             {/* Search icon */}
             <div
@@ -328,7 +375,35 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 ></path>
               </svg>
             </div>
+            {/* Search icon */}
+            <div
+              className={combine(
+                "absolute left-2.5 xs:left-3 sm:left-3.5 md:left-4 top-2.5 xs:top-3 sm:top-3.5 md:top-4",
+                themeValues.searchIconColor
+              )}
+            >
+              <svg
+                className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
 
+            {/* Glow */}
+            <div
+              className={combine(
+                "absolute inset-0 -z-10 blur-md xs:blur-lg sm:blur-xl rounded-full opacity-0 group-focus-within:opacity-70 transition-opacity duration-300",
+                themeValues.glowEffect
+              )}
+            ></div>
             {/* Glow */}
             <div
               className={combine(
