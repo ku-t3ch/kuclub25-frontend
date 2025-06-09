@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
+import { useProjects } from "./useProject"; // เพิ่ม import
 import {
   Organization,
   OrganizationsResponse,
@@ -80,12 +81,14 @@ export const useOrganizationsWithFilters =
   (): UseOrganizationsWithFiltersReturn => {
     const { organizations, loading, error, refetch, clearError } =
       useOrganizations();
+    const { projects } = useProjects(); // ดึงข้อมูล projects
     const [filters, setFilters] = useState<OrganizationFilters>({});
 
     const filteredOrganizations = useMemo(() => {
       let result = [...organizations];
+      const now = new Date();
 
-      // Filter by org type name - ใช้ org_type_name แทน org_type_id
+      // Filter by org type name
       if (filters.orgTypeName !== undefined && filters.orgTypeName !== "") {
         result = result.filter((org) => {
           return org.org_type_name === filters.orgTypeName;
@@ -106,31 +109,84 @@ export const useOrganizationsWithFilters =
 
       // Sort
       if (filters.sortBy) {
-        result.sort((a, b) => {
-          let aValue: any, bValue: any;
+        switch (filters.sortBy) {
+          case "latest":
+            // เรียงตามกิจกรรมที่กำลังจะมาถึงเร็วที่สุด
+            result = result.sort((a, b) => {
+        
+              if (!projects || !projects.length) {
+                return parseInt(b.id) - parseInt(a.id);
+              }
 
-          switch (filters.sortBy) {
-            case "name":
-              aValue = a.orgnameth || a.orgnameen;
-              bValue = b.orgnameth || b.orgnameen;
-              break;
-            case "views":
-              aValue = a.views;
-              bValue = b.views;
-              break;
-            case "latest":
-              aValue = a.id;
-              bValue = b.id;
-              break;
-            default:
-              return 0;
-          }
+              const aProjects = projects.filter(
+                (project) =>
+                  project.organization_orgid === a.id &&
+                  project.date_start &&
+                  new Date(project.date_start) >= now
+              );
 
-          if (filters.sortOrder === "desc") {
-            return aValue < bValue ? 1 : -1;
-          }
-          return aValue > bValue ? 1 : -1;
-        });
+              const bProjects = projects.filter(
+                (project) =>
+                  project.organization_orgid === b.id &&
+                  project.date_start &&
+                  new Date(project.date_start) >= now
+              );
+
+             
+              if (aProjects.length === 0 && bProjects.length === 0) {
+                return parseInt(b.id) - parseInt(a.id);
+              }
+
+       
+              if (aProjects.length === 0) return 1;
+
+              if (bProjects.length === 0) return -1;
+
+       
+              try {
+                const nextProjectA = aProjects.sort(
+                  (p1, p2) => {
+                    const date1 = new Date(p1.date_start);
+                    const date2 = new Date(p2.date_start);
+                    return date1.getTime() - date2.getTime();
+                  }
+                )[0];
+
+                const nextProjectB = bProjects.sort(
+                  (p1, p2) => {
+                    const date1 = new Date(p1.date_start);
+                    const date2 = new Date(p2.date_start);
+                    return date1.getTime() - date2.getTime();
+                  }
+                )[0];
+
+                // ใช้ date_start โดยตรงในการเปรียบเทียบ
+                const dateTimeA = new Date(nextProjectA.date_start);
+                const dateTimeB = new Date(nextProjectB.date_start);
+
+                return dateTimeA.getTime() - dateTimeB.getTime();
+              } catch (error) {
+                console.error("Error sorting projects:", error);
+                return 0;
+              }
+            });
+            break;
+
+          case "name":
+            result = result.sort((a, b) =>
+              (a.orgnameen || "").localeCompare(b.orgnameen || "") ||
+              (a.orgnameth || "").localeCompare(b.orgnameth || "") ||
+              (a.org_nickname || "").localeCompare(b.org_nickname || "")
+            );
+            break;
+
+          case "views":
+            result = result.sort((a, b) => (b.views || 0) - (a.views || 0));
+            break;
+
+          default:
+            break;
+        }
       }
 
       // Pagination
@@ -141,7 +197,7 @@ export const useOrganizationsWithFilters =
       }
 
       return result;
-    }, [organizations, filters]);
+    }, [organizations, projects, filters]);
 
     return {
       organizations,

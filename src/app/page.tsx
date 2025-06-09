@@ -34,25 +34,9 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
-  // Debug logs
-  useEffect(() => {
-    console.log("Organizations sample:", organizations.slice(0, 3));
-    console.log("Campuses:", campuses);
-    console.log("Active Campus:", activeCampus);
-    if (organizations.length > 0) {
-      console.log("Organization fields:", Object.keys(organizations[0]));
-      // แสดง campus_name จากองค์กรตัวอย่าง
-      console.log(
-        "Sample campus names from orgs:",
-        organizations.slice(0, 5).map((org) => org.campus_name)
-      );
-    }
-  }, [organizations, campuses, activeCampus]);
-
   // ตั้งค่า default campus เป็นวิทยาเขตบางเขน
   useEffect(() => {
     if (campuses.length > 0 && activeCampus === undefined) {
-      console.log("Setting default campus from:", campuses);
       const bangkhenCampus = campuses.find(
         (campus) =>
           campus.name.includes("บางเขน") ||
@@ -61,13 +45,8 @@ export default function Home() {
       );
 
       if (bangkhenCampus) {
-        console.log("Found Bangkhen campus:", bangkhenCampus);
         setActiveCampus(bangkhenCampus.id);
       } else {
-        console.log(
-          "Bangkhen campus not found, using first campus:",
-          campuses[0]
-        );
         setActiveCampus(campuses[0].id);
       }
     }
@@ -91,15 +70,13 @@ export default function Home() {
     return [allCategory, ...typeCategories];
   }, [organizationTypes]);
 
-  // ฟังก์ชันช่วยในการเทียบชื่อวิทยาเขต - เช็คเฉพาะ campus_name
+  // ฟังก์ชันช่วยในการเทียบชื่อวิทยาเขต
   const isCampusMatch = useCallback(
     (
       orgCampusName: string | null | undefined,
       selectedCampusName: string
     ): boolean => {
       if (!orgCampusName || !selectedCampusName) return false;
-
-      // เช็คให้ตรงกันทุกตัวอักษร
       return orgCampusName === selectedCampusName;
     },
     []
@@ -118,21 +95,9 @@ export default function Home() {
       return organizations;
     }
 
-    const filtered = organizations.filter((org) => {
+    return organizations.filter((org) => {
       return isCampusMatch(org.campus_name, selectedCampus.name);
     });
-
-    console.log("Organizations by campus filter:", {
-      selectedCampus: selectedCampus.name,
-      totalOrgs: organizations.length,
-      filteredOrgs: filtered.length,
-      sampleMatches: filtered.slice(0, 3).map((org) => ({
-        name: org.orgnameth,
-        campus: org.campus_name,
-      })),
-    });
-
-    return filtered;
   }, [organizations, activeCampus, campuses, isCampusMatch]);
 
   const totalClubCount = useMemo(() => {
@@ -150,8 +115,6 @@ export default function Home() {
 
     // เพิ่มจำนวนรวมทั้งหมดสำหรับ "ทั้งหมด"
     countMap.set(undefined, organizationsByCampus.length);
-
-    console.log("Category count map:", Object.fromEntries(countMap));
 
     return countMap;
   }, [organizationsByCampus]);
@@ -211,15 +174,6 @@ export default function Home() {
       });
     }
 
-    console.log("Final filtered organizations:", {
-      total: organizations.length,
-      byCampus: organizationsByCampus.length,
-      final: filtered.length,
-      activeCampus,
-      activeCategory,
-      searchQuery,
-    });
-
     return filtered;
   }, [
     organizations,
@@ -228,7 +182,6 @@ export default function Home() {
     searchQuery,
     searchOrganizations,
     campuses,
-    organizationsByCampus,
     isCampusMatch,
   ]);
 
@@ -297,7 +250,6 @@ export default function Home() {
         )}
       />
 
-      {/* แสดง error ถ้ามี */}
       {campusError && (
         <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg z-50">
           <p>Campus Error: {campusError}</p>
