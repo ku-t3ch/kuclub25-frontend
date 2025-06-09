@@ -126,7 +126,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
 
         {/* Type Tag */}
         {type && (
-          <div className="absolute top-1 xs:top-1.5 sm:top-2 md:top-3 left-1 xs:left-1.5 sm:left-2 md:left-3">
+          <div className="absolute top-2 xs:top-1.5 sm:top-3 md:top-3 left-2.5 xs:left-1.5 sm:left-2 md:left-3">
             <div className={combine(
               "backdrop-blur-sm rounded-full shadow-sm flex items-center",
               "px-1 xs:px-1.5 sm:px-2 md:px-3 py-px xs:py-0.5 sm:py-1",
@@ -145,7 +145,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
       </div>
 
       {/* Content Section */}
-      <div className="p-2 xs:p-2 sm:p-3 md:p-4 flex-1 flex flex-col justify-between">
+      <div className="p-3 xs:p-2 sm:p-3 md:p-4 flex-1 flex flex-col justify-between">
         <div>
           {/* Title and View Count */}
           <div className="flex justify-between items-start mb-1 xs:mb-1 sm:mb-1.5">
@@ -194,8 +194,8 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
           {/* Secondary Name */}
           {secondaryName && secondaryName !== displayName && (
             <div className={combine(
-              "line-clamp-1 mb-1 xs:mb-1 sm:mb-1.5",
-              "text-sm xs:text-2xs sm:text-2xs md:text-xs",
+              "line-clamp-1 mb-2 xs:mb-1 sm:mb-1.5",
+              "text-xs xs:text-3xs sm:text-3xs md:text-2xs",
               getValueForTheme("text-white/60", "text-gray-500")
             )}>
               {secondaryName}
@@ -220,7 +220,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
             className={combine(
               "w-full relative overflow-hidden rounded-lg transition-all duration-300",
               "group/btn flex justify-center items-center shadow-inner",
-              "py-2 xs:py-1.5 sm:py-2 md:py-2.5",
+              "py-1.5 xs:py-1.5 sm:py-2 md:py-2.5",
               getValueForTheme(
                 "text-white/90 bg-gradient-to-r from-blue-600/30 to-indigo-600/30 hover:from-blue-600/50 hover:to-indigo-600/50 hover:text-white border border-blue-500/20 hover:border-blue-400/40 shadow-white/5",
                 "text-[#006C67]/90 bg-gradient-to-r from-[#006C67]/10 to-teal-600/10 hover:from-[#006C67]/20 hover:to-teal-600/20 hover:text-[#006C67] border border-[#006C67]/20 hover:border-[#006C67]/30 shadow-[#006C67]/5"
