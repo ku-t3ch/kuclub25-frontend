@@ -94,16 +94,6 @@ const TimeSlot = React.memo<{
         )}>
           {timeDisplay}
         </div>
-
-        <div className={combine(
-          "text-xs px-2 py-0.5 rounded-full ml-auto",
-          getValueForTheme(
-            "bg-white/10 text-white/70",
-            "bg-gray-100 text-gray-600"
-          )
-        )}>
-          ช่วงที่ {slotIndex + 1}
-        </div>
       </div>
       
       {/* Activity Description */}

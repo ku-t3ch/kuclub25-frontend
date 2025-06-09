@@ -10,6 +10,7 @@ import OrganizationGrid from "../../components/organization/organizationGrid";
 import LoadingSkeleton from "../../components/ui/loading/loadingOrganization";
 import ErrorState from "../../components/ui/error/errorOrganizationID";
 import EmptyState from "../../components/ui/empty/emptyStateOrganization";
+import { Vortex } from "../../components/ui/vortex";
 
 const OrganizationsPage: React.FC = () => {
   const { combine, getValueForTheme } = useThemeUtils();
@@ -28,6 +29,11 @@ const OrganizationsPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<"name" | "views" | "latest">("name");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const INITIAL_ITEMS = 20;
+  const ITEMS_PER_PAGE = 12;
 
   // Memoized theme classes for performance
   const themeClasses = useMemo(() => ({
@@ -37,6 +43,10 @@ const OrganizationsPage: React.FC = () => {
         "bg-gradient-to-b from-[#051D35] to-[#0A1A2F] text-white",
         "bg-gradient-to-b from-white to-gray-50 text-[#006C67]"
       )
+    ),
+    vortexBg: getValueForTheme(
+      "bg-gradient-to-b from-[#000000] to-[#123067]",
+      "bg-gradient-to-b from-white via-gray-50 to-gray-100"
     ),
     headerContainer: combine(
       "sticky top-16 md:top-20 z-40 backdrop-blur-md border-b",
@@ -206,6 +216,7 @@ const OrganizationsPage: React.FC = () => {
   // Optimized handlers with useCallback
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
+    setCurrentPage(1);
     setFilters({
       ...currentFilters,
       search: query || undefined,
@@ -214,6 +225,7 @@ const OrganizationsPage: React.FC = () => {
 
   const handleCategoryChange = useCallback((categoryId: string | undefined) => {
     setSelectedCategory(categoryId);
+    setCurrentPage(1);
     setFilters({
       ...currentFilters,
       orgTypeName: categoryId,
@@ -222,6 +234,7 @@ const OrganizationsPage: React.FC = () => {
 
   const handleSortChange = useCallback((sort: "name" | "views" | "latest") => {
     setSortBy(sort);
+    setCurrentPage(1);
     setFilters({
       ...currentFilters,
       sortBy: sort,
@@ -237,8 +250,20 @@ const OrganizationsPage: React.FC = () => {
     setSearchQuery("");
     setSelectedCategory(undefined);
     setSortBy("name");
+    setCurrentPage(1); // Reset pagination when clearing filters
     setFilters({});
   }, [setFilters]);
+
+  // Pagination handlers
+  const handleLoadMore = useCallback(() => {
+    setCurrentPage(prev => prev + 1);
+  }, []);
+
+  const handleShowLess = useCallback(() => {
+    setCurrentPage(1);
+    // Scroll to top of the organizations grid
+    document.getElementById('organizations-grid')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   const toggleFilters = useCallback(() => {
     setShowFilters(prev => !prev);
@@ -271,65 +296,152 @@ const OrganizationsPage: React.FC = () => {
     }`;
   }, [viewMode]);
 
+  // Paginated organizations
+  const paginatedOrganizations = useMemo(() => {
+    const totalItemsToShow = INITIAL_ITEMS + (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredOrganizations.slice(0, totalItemsToShow);
+  }, [filteredOrganizations, currentPage]);
+
+  // Check if there are more items to load
+  const hasMoreItems = useMemo(() => {
+    const totalItemsToShow = INITIAL_ITEMS + (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredOrganizations.length > totalItemsToShow;
+  }, [filteredOrganizations.length, currentPage]);
+
+  // Check if we can show less (more than initial items)
+  const canShowLess = useMemo(() => {
+    return currentPage > 1;
+  }, [currentPage]);
+
   return (
-    <div className={themeClasses.pageBackground}>
-      {/* Header Section */}
-      <OrganizationHeader
-        searchQuery={searchQuery}
-        onSearch={handleSearch}
-        selectedCategory={selectedCategory}
-        filteredOrganizations={filteredOrganizations}
-        showFilters={showFilters}
-        toggleFilters={toggleFilters}
-        categories={categories}
-        sortBy={sortBy}
-        viewMode={viewMode}
-        onCategoryChange={handleCategoryChange}
-        onSortChange={handleSortChange}
-        onViewModeChange={handleViewModeChange}
-        themeClasses={themeClasses}
-        animationVariants={animationVariants}
+    <div className={combine("min-h-screen pt-16 md:pt-20")}>
+      <Vortex
+        backgroundColor="transparent"
+        rangeY={800}
+        particleCount={100}
+        baseHue={120}
+        particleOpacity={0.3}
+        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
+        containerClassName={combine(
+          "fixed inset-0 z-0",
+          themeClasses.vortexBg
+        )}
       />
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Error State */}
-        {error && (
-          <ErrorState
-            error={error}
-            onClearError={clearError}
-            themeClasses={themeClasses}
-            getValueForTheme={getValueForTheme}
-          />
-        )}
+      <div className={themeClasses.pageBackground}>
+        {/* Header Section */}
+        <OrganizationHeader
+          searchQuery={searchQuery}
+          onSearch={handleSearch}
+          selectedCategory={selectedCategory}
+          filteredOrganizations={filteredOrganizations}
+          showFilters={showFilters}
+          toggleFilters={toggleFilters}
+          categories={categories}
+          sortBy={sortBy}
+          viewMode={viewMode}
+          onCategoryChange={handleCategoryChange}
+          onSortChange={handleSortChange}
+          onViewModeChange={handleViewModeChange}
+          themeClasses={themeClasses}
+          animationVariants={animationVariants}
+        />
 
-        {/* Loading State */}
-        {loading && (
-          <LoadingSkeleton 
-            viewMode={viewMode} 
-            themeClasses={themeClasses} 
-          />
-        )}
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+          {/* Error State */}
+          {error && (
+            <ErrorState
+              error={error}
+              onClearError={clearError}
+              themeClasses={themeClasses}
+              getValueForTheme={getValueForTheme}
+            />
+          )}
 
-        {/* Organizations Grid/List */}
-        {!loading && filteredOrganizations.length > 0 && (
-          <OrganizationGrid
-            organizations={filteredOrganizations}
-            viewMode={viewMode}
-            gridClasses={gridClasses}
-            animationVariants={animationVariants}
-          />
-        )}
+          {/* Loading State */}
+          {loading && (
+            <LoadingSkeleton 
+              viewMode={viewMode} 
+              themeClasses={themeClasses} 
+            />
+          )}
 
-        {/* Empty State */}
-        {!loading && filteredOrganizations.length === 0 && (
-          <EmptyState
-            themeClasses={themeClasses}
-            combine={combine}
-            getValueForTheme={getValueForTheme}
-            onClearFilters={handleClearFilters}
-          />
-        )}
+          {/* Organizations Grid/List */}
+          {!loading && filteredOrganizations.length > 0 && (
+            <div id="organizations-grid">
+              <OrganizationGrid
+                organizations={paginatedOrganizations}
+                viewMode={viewMode}
+                gridClasses={gridClasses}
+                animationVariants={animationVariants}
+              />
+              
+              {/* Pagination Controls */}
+              {(hasMoreItems || canShowLess) && (
+                <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  {hasMoreItems && (
+                    <button
+                      onClick={handleLoadMore}
+                      className={combine(
+                        "px-6 py-3 rounded-xl font-medium transition-all duration-200",
+                        "flex items-center gap-2 min-w-[140px] justify-center",
+                        getValueForTheme(
+                          "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-blue-500/25",
+                          "bg-[#006C67] hover:bg-[#005550] text-white shadow-lg hover:shadow-[#006C67]/25"
+                        )
+                      )}
+                    >
+                      <span>แสดงเพิ่มเติม</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  )}
+                  
+                  {canShowLess && (
+                    <button
+                      onClick={handleShowLess}
+                      className={combine(
+                        "px-6 py-3 rounded-xl font-medium transition-all duration-200",
+                        "flex items-center gap-2 min-w-[140px] justify-center border",
+                        getValueForTheme(
+                          "bg-white/5 hover:bg-white/10 text-white border-white/20 hover:border-white/30",
+                          "bg-white hover:bg-[#006C67]/5 text-[#006C67] border-[#006C67]/20 hover:border-[#006C67]/30"
+                        )
+                      )}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      </svg>
+                      <span>แสดงน้อยลง</span>
+                    </button>
+                  )}
+                </div>
+              )}
+              
+              {/* Results Counter */}
+              <div className="mt-6 text-center">
+                <span className={combine(
+                  "text-sm",
+                  getValueForTheme("text-white/70", "text-[#006C67]/70")
+                )}>
+                  แสดง {paginatedOrganizations.length} จาก {filteredOrganizations.length} ชมรม
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!loading && filteredOrganizations.length === 0 && (
+            <EmptyState
+              themeClasses={themeClasses}
+              combine={combine}
+              getValueForTheme={getValueForTheme}
+              onClearFilters={handleClearFilters}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

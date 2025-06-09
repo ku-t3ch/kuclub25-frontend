@@ -18,6 +18,7 @@ import ViewToggle from "../../components/project/viewToggle";
 import CalendarViewSection from "../../components/project/calendarViewSection";
 import ProjectList from "../../components/project/projectList";
 import SelectedDateProject from "../../components/project/selectedDate";
+import { Vortex } from "../../components/ui/vortex";
 
 import {
   getActivityTypes,
@@ -92,6 +93,10 @@ export default function ProjectsPage() {
         "bg-gradient-to-b from-[#051D35] via-[#051D35] to-[#000000] dark-theme",
         "bg-gradient-to-b from-white via-white to-gray-50 light-theme"
       ),
+      vortexBg: getValueForTheme(
+        "bg-gradient-to-b from-[#000000] to-[#123067]",
+        "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+      ),
       titleText: getValueForTheme(
         "text-white text-opacity-90",
         "text-[#006C67] text-opacity-90"
@@ -114,8 +119,6 @@ export default function ProjectsPage() {
     }),
     [getValueForTheme]
   );
-
-  // ...existing utility functions and state management...
 
   // Utility function to create date from project data
   const createProjectDate = useCallback(
@@ -395,40 +398,7 @@ export default function ProjectsPage() {
     [combine, themeValues]
   );
 
-  const BackgroundElements = useMemo(
-    () => (
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div
-          className={combine(
-            "absolute -top-10 xs:-top-15 sm:-top-20 md:-top-40 -right-10 xs:-right-15 sm:-right-20 md:-right-40",
-            "w-40 xs:w-56 sm:w-64 md:w-96 h-40 xs:h-56 sm:h-64 md:h-96",
-            themeValues.backgroundGradient1,
-            "rounded-full blur-[40px] xs:blur-[50px] sm:blur-[70px] md:blur-[100px]"
-          )}
-          style={{ animation: "pulse 8s ease-in-out infinite alternate" }}
-        />
 
-        <div
-          className={combine(
-            "absolute -bottom-10 xs:-bottom-15 sm:-bottom-20 md:-bottom-40 -left-10 xs:-left-15 sm:-left-20 md:-left-40",
-            "w-40 xs:w-56 sm:w-64 md:w-96 h-40 xs:h-56 sm:h-64 md:h-96",
-            themeValues.backgroundGradient2,
-            "rounded-full blur-[40px] xs:blur-[50px] sm:blur-[70px] md:blur-[100px]"
-          )}
-          style={{ animation: "float 15s ease-in-out infinite" }}
-        />
-
-        <div
-          className={combine(
-            "absolute inset-0 opacity-40",
-            themeValues.meshOverlay,
-            "z-0"
-          )}
-        />
-      </div>
-    ),
-    [combine, themeValues]
-  );
 
   // Error handling
   if (error) {
@@ -443,135 +413,149 @@ export default function ProjectsPage() {
   }
 
   return (
-    <motion.div
-      className={combine(
-        "min-h-screen relative overflow-hidden",
-        themeValues.containerBg
-      )}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={pageVariants}
-    >
-      {BackgroundElements}
-
-      {/* Fixed spacing for navbar */}
-      <div className="h-16 sm:h-20 md:h-24" />
+    <div className={combine("min-h-screen pt-16 md:pt-20")}>
+      <Vortex
+        backgroundColor="transparent"
+        rangeY={800}
+        particleCount={100}
+        baseHue={120}
+        particleOpacity={0.3}
+        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
+        containerClassName={combine(
+          "fixed inset-0 z-0",
+          themeValues.vortexBg
+        )}
+      />
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl relative z-10"
+        className={combine(
+          "min-h-screen relative overflow-hidden",
+        )}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        variants={pageVariants}
       >
-        {/* Header section - Fixed responsive layout */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-6 sm:mb-8">
-          <h1
-            className={combine(
-              "text-2xl sm:text-3xl lg:text-4xl font-bold text-center lg:text-left",
-              "tracking-wide leading-tight flex-shrink-0",
-              themeValues.titleText
-            )}
-          >
-            โครงการทั้งหมด
-          </h1>
 
-          <div className="flex justify-center lg:justify-end">
-            <ViewToggle
-              viewMode={viewMode}
-              setViewMode={handleViewModeChange}
-            />
-          </div>
-        </div>
 
-        {/* Activity Type Filter - Improved spacing */}
-        <div className="mb-6 sm:mb-8">
-          <ActivityTypeFilter
-            activeFilters={activeFilters}
-            toggleFilter={toggleFilter}
-            ACTIVITY_TYPES={ACTIVITY_TYPES}
-          />
-        </div>
+        {/* Fixed spacing for navbar */}
+        <div className="h-16 sm:h-20 md:h-24" />
 
-        {/* Loading State */}
-        {isLoading ? (
-          LoadingComponent
-        ) : (
-          <div className="space-y-6 sm:space-y-8">
-            {/* Month Selector - Better spacing */}
-            <div className="mb-6 sm:mb-8">
-              <MonthSelector
-                currentDate={currentDate}
-                selectedMonth={selectedMonth}
-                goToPreviousMonth={goToPreviousMonth}
-                goToNextMonth={goToNextMonth}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl relative z-10"
+        >
+          {/* Header section - Fixed responsive layout */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-6 sm:mb-8">
+            <h1
+              className={combine(
+                "text-2xl sm:text-3xl lg:text-4xl font-bold text-center lg:text-left",
+                "tracking-wide leading-tight flex-shrink-0",
+                themeValues.titleText
+              )}
+            >
+              โครงการทั้งหมด
+            </h1>
+
+            <div className="flex justify-center lg:justify-end">
+              <ViewToggle
+                viewMode={viewMode}
+                setViewMode={handleViewModeChange}
               />
             </div>
-
-            {/* Main Content - Improved container */}
-            <AnimatePresence mode="wait">
-              {viewMode === "calendar" ? (
-                <motion.div
-                  key="calendar"
-                  variants={contentVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="space-y-6 sm:space-y-8"
-                  ref={projectsListRef}
-                >
-                  <CalendarViewSection
-                    currentDate={currentDate}
-                    setCurrentDate={setCurrentDate}
-                    setSelectedMonth={setSelectedMonth}
-                    filteredEvents={filteredProjects}
-                    handleSelectSlot={handleSelectSlot}
-                    handleSelectEvent={handleSelectProject}
-                    activeFilters={activeFilters}
-                    projectMatchesFilters={projectMatchesFilters}
-                    ACTIVITY_TYPES={ACTIVITY_TYPES}
-                  />
-
-                  {/* Selected Date Projects - Better spacing */}
-                  <AnimatePresence>
-                    {selectedDate && projectsOnSelectedDate.length > 0 && (
-                      <div className="mt-8">
-                        <SelectedDateProject
-                          selectedDate={selectedDate}
-                          projectsOnSelectedDate={projectsOnSelectedDate}
-                          setSelectedDate={setSelectedDate}
-                          getActivityColor={(type: string) =>
-                            getActivityColor(type, ACTIVITY_TYPES)
-                          }
-                          ACTIVITY_TYPES={ACTIVITY_TYPES}
-                        />
-                      </div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="list"
-                  variants={contentVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  className="pb-8"
-                >
-                  <ProjectList
-                    filteredProjectsByMonth={filteredProjectsByMonth}
-                    getActivityColor={(type: string) =>
-                      getActivityColor(type, ACTIVITY_TYPES)
-                    }
-                    ACTIVITY_TYPES={ACTIVITY_TYPES}
-                    onProjectClick={handleProjectClick}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
-        )}
+
+          {/* Activity Type Filter - Improved spacing */}
+          <div className="mb-6 sm:mb-8">
+            <ActivityTypeFilter
+              activeFilters={activeFilters}
+              toggleFilter={toggleFilter}
+              ACTIVITY_TYPES={ACTIVITY_TYPES}
+            />
+          </div>
+
+          {/* Loading State */}
+          {isLoading ? (
+            LoadingComponent
+          ) : (
+            <div className="space-y-6 sm:space-y-8">
+              {/* Month Selector - Better spacing */}
+              <div className="mb-6 sm:mb-8">
+                <MonthSelector
+                  currentDate={currentDate}
+                  selectedMonth={selectedMonth}
+                  goToPreviousMonth={goToPreviousMonth}
+                  goToNextMonth={goToNextMonth}
+                />
+              </div>
+
+              {/* Main Content - Improved container */}
+              <AnimatePresence mode="wait">
+                {viewMode === "calendar" ? (
+                  <motion.div
+                    key="calendar"
+                    variants={contentVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-6 sm:space-y-8"
+                    ref={projectsListRef}
+                  >
+                    <CalendarViewSection
+                      currentDate={currentDate}
+                      setCurrentDate={setCurrentDate}
+                      setSelectedMonth={setSelectedMonth}
+                      filteredEvents={filteredProjects}
+                      handleSelectSlot={handleSelectSlot}
+                      handleSelectEvent={handleSelectProject}
+                      activeFilters={activeFilters}
+                      projectMatchesFilters={projectMatchesFilters}
+                      ACTIVITY_TYPES={ACTIVITY_TYPES}
+                    />
+
+                    {/* Selected Date Projects - Better spacing */}
+                    <AnimatePresence>
+                      {selectedDate && projectsOnSelectedDate.length > 0 && (
+                        <div className="mt-8">
+                          <SelectedDateProject
+                            selectedDate={selectedDate}
+                            projectsOnSelectedDate={projectsOnSelectedDate}
+                            setSelectedDate={setSelectedDate}
+                            getActivityColor={(type: string) =>
+                              getActivityColor(type, ACTIVITY_TYPES)
+                            }
+                            ACTIVITY_TYPES={ACTIVITY_TYPES}
+                          />
+                        </div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="list"
+                    variants={contentVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="pb-8"
+                  >
+                    <ProjectList
+                      filteredProjectsByMonth={filteredProjectsByMonth}
+                      getActivityColor={(type: string) =>
+                        getActivityColor(type, ACTIVITY_TYPES)
+                      }
+                      ACTIVITY_TYPES={ACTIVITY_TYPES}
+                      onProjectClick={handleProjectClick}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }

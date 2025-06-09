@@ -151,8 +151,8 @@ export default function Home() {
         backgroundColor="transparent"
         rangeY={800}
         particleCount={100}
-        baseHue={200}
-        particleOpacity={0.2}
+        baseHue={120}
+        particleOpacity={0.3}
         className="flex flex-col items-center justify-start w-full min-h-screen px-4"
         containerClassName={combine(
           "fixed inset-0 z-0 ",

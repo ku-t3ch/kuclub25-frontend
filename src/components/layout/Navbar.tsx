@@ -8,6 +8,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import Logo from "../../assets/logo.png";
+import LogoLight from "../../assets/logo_light.png";
 
 // Memoized icon components to prevent re-renders
 const SunIcon = React.memo(() => (
@@ -244,6 +245,11 @@ const NavBar = () => {
     []
   );
 
+  // Memoized logo selection based on theme
+  const currentLogo = useMemo(() => {
+    return resolvedTheme === "light" ? LogoLight : Logo;
+  }, [resolvedTheme]);
+
   return (
     <header className={headerClasses}>
       <nav className="container mx-auto px-4 md:px-6 py-3">
@@ -252,7 +258,7 @@ const NavBar = () => {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform">
               <Image
-                src={Logo}
+                src={currentLogo}
                 alt="KU Club Logo"
                 className="w-full h-full object-cover"
                 width={48}
