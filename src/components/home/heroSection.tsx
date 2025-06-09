@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
-import { Vortex } from "@/components/ui/vortex"; // ✅ Import Vortex ที่นี่
 
 interface HeroSectionProps {
   description: string;
@@ -25,7 +24,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [isSearching, setIsSearching] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { combine, getValueForTheme } = useThemeUtils();
+
+  // Fix hydration by ensuring client-side mounting
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     setSearchQuery(initialQuery);
@@ -71,13 +76,39 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     hoverShadow: getValueForTheme("hover:shadow-blue-600/30", "hover:shadow-[#006C67]/30"),
   }), [getValueForTheme]);
 
+  // Show nothing during SSR to prevent hydration mismatch
+  if (!isMounted) {
+    return (
+      <div className="relative w-full overflow-hidden bg-transparent">
+        <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl">
+          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#006C67] via-[#006C67] to-[#006C67]/80 py-2 xs:py-3 sm:py-4 md:py-5">
+            {title}
+          </h1>
+          <p className="text-sm xs:text-base sm:text-lg md:text-xl max-w-3xl mx-auto mb-4 xs:mb-5 sm:mb-6 md:mb-10 text-gray-700 leading-relaxed px-1 xs:px-2 sm:px-4 md:px-6">
+            {description}
+          </p>
+          <div className="max-w-xl mx-auto relative mb-5 xs:mb-6 sm:mb-8 md:mb-12 px-3 xs:px-4 sm:px-6 md:px-0">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="ค้นหาชมรม..."
+                className="w-full py-2.5 xs:py-3 sm:py-3.5 md:py-4 px-3 xs:px-4 sm:px-5 md:px-6 pl-9 xs:pl-10 sm:pl-11 md:pl-12 rounded-full backdrop-blur-sm border shadow-lg text-sm xs:text-base bg-white text-gray-900 placeholder-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:border-[#006C67] focus:ring-[#006C67]/25 transition-all duration-300"
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative w-full  overflow-hidden bg-transparent">
+    <div className="relative w-full overflow-hidden bg-transparent">
       <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl">
+        {/* Title */}
         <motion.h1
           className={combine(
             "text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3",
-            "mt-4 xs:mt-6 sm:mt-8 md:mt-10", // ✅ เพิ่มพื้นที่ด้านบน
             "bg-clip-text text-transparent bg-gradient-to-r",
             "whitespace-nowrap",
             themeValues.headingGradient,
@@ -90,6 +121,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           {title}
         </motion.h1>
 
+        {/* Description */}
+        <motion.p
+          className={combine(
+            "text-sm xs:text-base sm:text-lg md:text-xl max-w-3xl mx-auto mb-4 xs:mb-5 sm:mb-6 md:mb-10",
+            themeValues.descriptionText,
+            "leading-relaxed px-1 xs:px-2 sm:px-4 md:px-6"
+          )}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ ...defaultTransition, delay: 0.3 }}
+        >
+          {description}
+        </motion.p>
         {/* Description */}
         <motion.p
           className={combine(
@@ -131,6 +175,36 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               value={searchQuery}
               onChange={handleChange}
               disabled={isSearching}
+            />
+        {/* Search form */}
+        <motion.form
+          onSubmit={handleSubmit}
+          className="max-w-xl mx-auto relative mb-5 xs:mb-6 sm:mb-8 md:mb-12 group px-3 xs:px-4 sm:px-6 md:px-0"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ ...defaultTransition, delay: 0.5 }}
+          suppressHydrationWarning
+        >
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="ค้นหาชมรม..."
+              className={combine(
+                "w-full py-2.5 xs:py-3 sm:py-3.5 md:py-4 px-3 xs:px-4 sm:px-5 md:px-6 pl-9 xs:pl-10 sm:pl-11 md:pl-12",
+                "rounded-full backdrop-blur-sm border shadow-lg text-sm xs:text-base",
+                themeValues.searchBarBg,
+                themeValues.searchBarText,
+                themeValues.searchBarPlaceholder,
+                themeValues.searchBarBorder,
+                "focus:outline-none focus:ring-2",
+                themeValues.searchBarFocus,
+                "transition-all duration-300",
+                isSearching ? "pr-16 xs:pr-20" : ""
+              )}
+              value={searchQuery}
+              onChange={handleChange}
+              disabled={isSearching}
+              suppressHydrationWarning
             />
 
             {/* Search button */}
@@ -202,6 +276,27 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 ></path>
               </svg>
             </div>
+            {/* Search icon */}
+            <div
+              className={combine(
+                "absolute left-2.5 xs:left-3 sm:left-3.5 md:left-4 top-2.5 xs:top-3 sm:top-3.5 md:top-4",
+                themeValues.searchIconColor
+              )}
+            >
+              <svg
+                className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
 
             {/* Glow */}
             <div
@@ -210,7 +305,32 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 themeValues.glowEffect
               )}
             ></div>
+            {/* Glow */}
+            <div
+              className={combine(
+                "absolute inset-0 -z-10 blur-md xs:blur-lg sm:blur-xl rounded-full opacity-0 group-focus-within:opacity-70 transition-opacity duration-300",
+                themeValues.glowEffect
+              )}
+            ></div>
 
+            {/* Loading text */}
+            <AnimatePresence>
+              {isSearching && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className={combine(
+                    "absolute top-full left-0 right-0 mt-2 text-center text-xs",
+                    themeValues.searchIconColor
+                  )}
+                >
+                  กำลังค้นหา...
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.form>
             {/* Loading text */}
             <AnimatePresence>
               {isSearching && (
@@ -252,7 +372,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </AnimatePresence>
       </div>
-
     </div>
   );
 };
