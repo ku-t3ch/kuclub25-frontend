@@ -142,34 +142,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ ...defaultTransition, delay: 0.5 }}
-        >
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="ค้นหาชมรม..."
-              className={combine(
-                "w-full py-2.5 xs:py-3 sm:py-3.5 md:py-4 px-3 xs:px-4 sm:px-5 md:px-6 pl-9 xs:pl-10 sm:pl-11 md:pl-12",
-                "rounded-full backdrop-blur-sm border shadow-lg text-sm xs:text-base",
-                themeValues.searchBarBg,
-                themeValues.searchBarText,
-                themeValues.searchBarPlaceholder,
-                themeValues.searchBarBorder,
-                "focus:outline-none focus:ring-2",
-                themeValues.searchBarFocus,
-                "transition-all duration-300",
-                isSearching ? "pr-16 xs:pr-20" : ""
-              )}
-              value={searchQuery}
-              onChange={handleChange}
-              disabled={isSearching}
-            />
-        {/* Search form */}
-        <motion.form
-          onSubmit={handleSubmit}
-          className="max-w-xl mx-auto relative mb-5 xs:mb-6 sm:mb-8 md:mb-12 group px-3 xs:px-4 sm:px-6 md:px-0"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ ...defaultTransition, delay: 0.5 }}
           suppressHydrationWarning
         >
           <div className="relative">
