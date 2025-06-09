@@ -95,7 +95,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
   return (
     <section className="relative w-full overflow-hidden bg-transparent">
 
-      <div className="relative  z-10">
+      <div className="relative px-4 xs:px-5 sm:px-6 lg:px-8 py-2 z-10">
         <div className="max-w-7xl mx-auto">
 
           {/* Organizations Grid */}
