@@ -6,7 +6,6 @@ import { useOrganizationsWithFilters } from "../../hooks/useOrganization";
 import { useCampuses } from "../../hooks/useCampuses";
 import OrganizationPageHeader from "../../components/organization/organizationHeader";
 import OrganizationEnhancedFilters from "../../components/organization/organizationEnhancedFilters";
-import OrganizationControlsBar from "../../components/organization/organizationControlsBar";
 import OrganizationContent from "../../components/organization/organizationContent";
 import { Vortex } from "../../components/ui/vortex";
 
@@ -226,12 +225,6 @@ const OrganizationsPage: React.FC = () => {
           onToggleFilters={toggleFilters}
         />
 
-        {/* Controls Bar */}
-        <OrganizationControlsBar
-          stats={stats}
-          sortBy={sortBy}
-          onSortChange={handleSortChange}
-        />
 
         {/* Organizations Content */}
         <OrganizationContent

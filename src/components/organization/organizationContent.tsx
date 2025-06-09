@@ -115,7 +115,7 @@ const OrganizationContent: React.FC<OrganizationContentProps> = ({
     );
   }
 
-  // Organizations Grid with Pagination
+
   return (
     <div id="organizations-grid">
       <OrganizationGrid
