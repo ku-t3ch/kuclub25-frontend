@@ -1,116 +1,70 @@
 "use client";
 
-import React, { memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import SearchBar from "./searchBar";
-import FilterControls from "./filterController";
+import React from 'react';
+import { useThemeUtils } from '../../hooks/useThemeUtils';
 
-interface OrganizationHeaderProps {
-  searchQuery: string;
-  onSearch: (query: string) => void;
-  selectedCategory: string | undefined;
-  filteredOrganizations: any[];
-  showFilters: boolean;
-  toggleFilters: () => void;
-  categories: Array<{ id: string | undefined; name: string }>;
-  sortBy: "name" | "views" | "latest";
-  viewMode: "grid" | "list";
-  onCategoryChange: (categoryId: string | undefined) => void;
-  onSortChange: (sort: "name" | "views" | "latest") => void;
-  onViewModeChange: (mode: "grid" | "list") => void;
-  themeClasses: any;
-  animationVariants: any;
+interface OrganizationPageHeaderProps {
+  title: string;
+  error?: string;
+  campusError?: string;
+  onClearError: () => void;
 }
 
-const OrganizationHeader = memo(({
-  searchQuery,
-  onSearch,
-  selectedCategory,
-  filteredOrganizations,
-  showFilters,
-  toggleFilters,
-  categories,
-  sortBy,
-  viewMode,
-  onCategoryChange,
-  onSortChange,
-  onViewModeChange,
-  themeClasses,
-  animationVariants
-}: OrganizationHeaderProps) => (
-  <motion.div 
-    className={themeClasses.headerContainer}
-    variants={animationVariants.header}
-    initial="hidden"
-    animate="visible"
-  >
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        {/* Title and Stats */}
-        <div className="flex-1">
-          <h1 className={themeClasses.title}>ชมรมทั้งหมด</h1>
-          <div className="flex items-center gap-4 text-sm">
-            <span className={themeClasses.statsBadge}>
-              {filteredOrganizations.length} ชมรม
-            </span>
-            {selectedCategory && (
-              <span className={themeClasses.categoryText}>
-                ในหมวดหมู่: <span className="font-medium">{selectedCategory}</span>
-              </span>
+const OrganizationPageHeader: React.FC<OrganizationPageHeaderProps> = ({
+  title,
+  error,
+  campusError,
+  onClearError
+}) => {
+  const { combine, getValueForTheme } = useThemeUtils();
+
+  const themeClasses = {
+    title: combine(
+      "text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-center px-2",
+      getValueForTheme("text-white", "text-[#006C67]")
+    ),
+    errorContainer: combine(
+      "mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg sm:rounded-xl border-l-4 text-sm",
+      getValueForTheme(
+        "bg-red-500/10 border-red-500 text-red-300",
+        "bg-red-50 border-red-500 text-red-700"
+      )
+    ),
+    clearButton: combine(
+      "w-auto mx-auto px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border flex items-center justify-center gap-2",
+      getValueForTheme(
+        "bg-white/5 hover:bg-white/10 text-white border-white/20",
+        "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+      )
+    )
+  };
+
+  return (
+    <>
+      {/* Page Title */}
+      <h1 className={themeClasses.title}>
+        {title}
+      </h1>
+
+      {/* Error States */}
+      {(error || campusError) && (
+        <div className={themeClasses.errorContainer}>
+          <h3 className="font-semibold mb-2 text-sm sm:text-base">เกิดข้อผิดพลาด</h3>
+          {error && <p className="mb-1 text-xs sm:text-sm">Organizations: {error}</p>}
+          {campusError && <p className="mb-2 text-xs sm:text-sm">Campus: {campusError}</p>}
+          <button 
+            onClick={onClearError}
+            className={combine(
+              themeClasses.clearButton,
+              "text-xs sm:text-sm px-3 py-1.5 w-auto"
             )}
-          </div>
-        </div>
-
-        {/* Search and Controls */}
-        <div className="flex flex-col sm:flex-row gap-3 lg:min-w-96">
-          <SearchBar 
-            searchQuery={searchQuery}
-            onSearch={onSearch}
-            themeClasses={themeClasses}
-          />
-
-          {/* Filter Toggle */}
-          <button
-            onClick={toggleFilters}
-            className={`${themeClasses.filterButton} ${
-              showFilters ? themeClasses.filterButtonActive : themeClasses.filterButtonInactive
-            }`}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-            </svg>
-            ตัวกรอง
+            ลองอีกครั้ง
           </button>
         </div>
-      </div>
+      )}
+    </>
+  );
+};
 
-      {/* Filters Panel */}
-      <AnimatePresence mode="wait">
-        {showFilters && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <FilterControls
-              categories={categories}
-              selectedCategory={selectedCategory}
-              sortBy={sortBy}
-              viewMode={viewMode}
-              onCategoryChange={onCategoryChange}
-              onSortChange={onSortChange}
-              onViewModeChange={onViewModeChange}
-              themeClasses={themeClasses}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  </motion.div>
-));
-
-OrganizationHeader.displayName = "OrganizationHeader";
-
-export default OrganizationHeader;
+export default React.memo(OrganizationPageHeader);
