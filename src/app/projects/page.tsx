@@ -250,12 +250,6 @@ export default function ProjectsPage() {
     setSelectedCampus(campusName);
   }, []);
 
-  // Clear all filters
-  const clearAllFilters = useCallback(() => {
-    setActiveFilters(["all"]);
-    setSelectedCampus(undefined);
-  }, []);
-
   // Month navigation
   const goToNextMonth = useCallback(() => {
     const nextMonth = (selectedMonth + 1) % 12;
@@ -416,7 +410,7 @@ export default function ProjectsPage() {
   // Error handling
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">เกิดข้อผิดพลาด</h1>
           <p className="text-gray-600">{error}</p>
@@ -426,7 +420,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className={combine("min-h-screen pt-16 md:pt-20")}>
+    <div className={combine("min-h-screen pt-10 ")}>
       <Vortex
         backgroundColor="transparent"
         rangeY={800}
@@ -445,16 +439,16 @@ export default function ProjectsPage() {
         variants={pageVariants}
       >
         {/* Fixed spacing for navbar */}
-        <div className="h-16 sm:h-20 md:h-24" />
+        <div className="h-8 " />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-7xl relative z-10"
+          className="container mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12 max-w-7xl relative z-10"
         >
           {/* Header section */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6 mb-6 sm:mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-center gap-6 lg:gap-8 mb-8 sm:mb-10 lg:mb-12">
             <h1
               className={combine(
                 "text-2xl sm:text-3xl lg:text-4xl font-bold text-center lg:text-left",
@@ -464,28 +458,20 @@ export default function ProjectsPage() {
             >
               โครงการทั้งหมด
             </h1>
-
-            <div className="flex justify-center lg:justify-end">
-              <ViewToggle
-                viewMode={viewMode}
-                setViewMode={handleViewModeChange}
-              />
-            </div>
           </div>
 
-          {/* Filters Section */}
-          <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
-            {/* Campus Filter */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <label
-                className={combine(
-                  "text-sm font-medium flex-shrink-0",
-                  getValueForTheme("text-white/80", "text-gray-700")
-                )}
-              >
-                กรองตามวิทยาเขต:
-              </label>
+          {/* View Toggle */}
+          <div className="flex justify-center mb-8 sm:mb-10">
+            <ViewToggle
+              viewMode={viewMode}
+              setViewMode={handleViewModeChange}
+            />
+          </div>  
 
+          {/* Filters Section */}
+          <div className="space-y-6 sm:space-y-8 mb-8 sm:mb-10 lg:mb-12">
+            {/* Campus Filter */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center sm:items-center px-4 sm:px-0">
               <div className="flex flex-wrap gap-2 items-center">
                 <select
                   value={selectedCampus || ""}
@@ -494,9 +480,10 @@ export default function ProjectsPage() {
                   }
                   disabled={campusLoading}
                   className={combine(
-                    "px-3 py-2 rounded-lg border text-sm",
+                    "px-4 py-3 rounded-lg border text-sm",
                     "focus:outline-none focus:ring-2 focus:ring-[#006C67] focus:border-transparent",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
+                    "min-w-[200px]",
                     getValueForTheme(
                       "bg-white/10 border-white/20 text-white placeholder-white/50",
                       "bg-white border-gray-300 text-gray-900"
@@ -525,73 +512,16 @@ export default function ProjectsPage() {
                     </option>
                   ))}
                 </select>
-
-                {/* Clear filters button */}
-                {(selectedCampus || !activeFilters.includes("all")) && (
-                  <button
-                    onClick={clearAllFilters}
-                    className={combine(
-                      "px-3 py-2 rounded-lg text-sm font-medium",
-                      "transition-colors duration-200",
-                      getValueForTheme(
-                        "bg-red-500/20 text-red-300 hover:bg-red-500/30",
-                        "bg-red-50 text-red-600 hover:bg-red-100"
-                      )
-                    )}
-                  >
-                    ล้างตัวกรอง
-                  </button>
-                )}
               </div>
             </div>
 
             {/* Activity Type Filter */}
-            <ActivityTypeFilter
-              activeFilters={activeFilters}
-              toggleFilter={toggleFilter}
-              ACTIVITY_TYPES={ACTIVITY_TYPES}
-            />
-
-            {/* Filter Results Summary */}
-            <div
-              className={combine(
-                "px-4 py-3 rounded-lg border text-sm",
-                getValueForTheme(
-                  "bg-white/5 border-white/10 text-white/80",
-                  "bg-gray-50 border-gray-200 text-gray-700"
-                )
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <span>
-                  พบโครงการ{" "}
-                  <span className="font-semibold text-[#006C67]">
-                    {filteredProjects.length.toLocaleString("th-TH")}
-                  </span>{" "}
-                  โครงการ
-                  {(selectedCampus || !activeFilters.includes("all")) && (
-                    <span className="ml-2 text-xs opacity-75">
-                      (จากทั้งหมด{" "}
-                      {calendarProjects.length.toLocaleString("th-TH")} โครงการ)
-                    </span>
-                  )}
-                </span>
-
-                {/* Active Filters Indicator */}
-                {(selectedCampus || !activeFilters.includes("all")) && (
-                  <span
-                    className={combine(
-                      "px-2 py-1 rounded-full text-xs font-medium",
-                      getValueForTheme(
-                        "bg-blue-500/20 text-blue-300",
-                        "bg-[#006C67]/10 text-[#006C67]"
-                      )
-                    )}
-                  >
-                    มีตัวกรองที่ใช้งาน
-                  </span>
-                )}
-              </div>
+            <div className="px-4 sm:px-0">
+              <ActivityTypeFilter
+                activeFilters={activeFilters}
+                toggleFilter={toggleFilter}
+                ACTIVITY_TYPES={ACTIVITY_TYPES}
+              />
             </div>
           </div>
 
@@ -599,9 +529,9 @@ export default function ProjectsPage() {
           {isLoading ? (
             LoadingComponent
           ) : (
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-8 sm:space-y-10 lg:space-y-12">
               {/* Month Selector */}
-              <div className="mb-6 sm:mb-8">
+              <div className="mb-8 sm:mb-10 px-4 sm:px-0">
                 <MonthSelector
                   currentDate={currentDate}
                   selectedMonth={selectedMonth}
@@ -619,7 +549,7 @@ export default function ProjectsPage() {
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className="space-y-6 sm:space-y-8"
+                    className="space-y-8 sm:space-y-10 lg:space-y-12 px-2 sm:px-4 lg:px-0"
                     ref={projectsListRef}
                   >
                     <CalendarViewSection
@@ -637,7 +567,7 @@ export default function ProjectsPage() {
                     {/* Selected Date Projects */}
                     <AnimatePresence>
                       {selectedDate && projectsOnSelectedDate.length > 0 && (
-                        <div className="mt-8">
+                        <div className="mt-10 lg:mt-12">
                           <SelectedDateProject
                             selectedDate={selectedDate}
                             projectsOnSelectedDate={projectsOnSelectedDate}
@@ -658,7 +588,7 @@ export default function ProjectsPage() {
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    className="pb-8"
+                    className="pb-10 lg:pb-12 px-2 sm:px-4 lg:px-0"
                   >
                     <ProjectList
                       filteredProjectsByMonth={filteredProjectsByMonth}
@@ -667,8 +597,8 @@ export default function ProjectsPage() {
                       }
                       ACTIVITY_TYPES={ACTIVITY_TYPES}
                       onProjectClick={handleProjectClick}
-                      selectedCampus={selectedCampus} // เพิ่ม prop นี้
-                      currentDate={currentDate} // เพิ่ม prop นี้
+                      selectedCampus={selectedCampus}
+                      currentDate={currentDate}
                     />
                   </motion.div>
                 )}
