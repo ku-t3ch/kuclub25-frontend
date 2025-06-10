@@ -471,8 +471,8 @@ export default function ProjectsPage() {
           {/* Filters Section */}
           <div className="space-y-6 sm:space-y-8 mb-8 sm:mb-10 lg:mb-12">
             {/* Campus Filter */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-center sm:items-center px-4 sm:px-0">
-              <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex flex-col gap-3 items-center justify-center px-4 sm:px-6">
+              <div className="w-full max-w-xs relative">
                 <select
                   value={selectedCampus || ""}
                   onChange={(e) =>
@@ -480,20 +480,23 @@ export default function ProjectsPage() {
                   }
                   disabled={campusLoading}
                   className={combine(
-                    "px-4 py-3 rounded-lg border text-sm",
-                    "focus:outline-none focus:ring-2 focus:ring-[#006C67] focus:border-transparent",
+                    "w-full px-4 py-3 rounded-xl border-0 text-sm font-medium",
+                    "focus:outline-none focus:ring-2 focus:ring-[#006C67]/30 focus:ring-offset-2",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
-                    "min-w-[200px]",
+                    "transition-all duration-200 ease-in-out",
+                    "shadow-sm hover:shadow-md",
+                    "appearance-none cursor-pointer",
+                    "min-h-[48px]",
                     getValueForTheme(
-                      "bg-white/10 border-white/20 text-white placeholder-white/50",
-                      "bg-white border-gray-300 text-gray-900"
+                      "bg-white/5 backdrop-blur-sm border-white/10 text-white/90 hover:bg-white/10",
+                      "bg-white/80 backdrop-blur-sm border-gray-200 text-gray-700 hover:bg-white"
                     )
                   )}
                 >
                   <option
                     value=""
                     className={getValueForTheme(
-                      "bg-gray-800 text-white",
+                      "bg-gray-900 text-white",
                       "bg-white text-gray-900"
                     )}
                   >
@@ -504,7 +507,7 @@ export default function ProjectsPage() {
                       key={campus.id}
                       value={campus.name}
                       className={getValueForTheme(
-                        "bg-gray-800 text-white",
+                        "bg-gray-900 text-white",
                         "bg-white text-gray-900"
                       )}
                     >
@@ -512,11 +515,43 @@ export default function ProjectsPage() {
                     </option>
                   ))}
                 </select>
+                
+                {/* Custom dropdown arrow */}
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg
+                    className={combine(
+                      "w-5 h-5 transition-colors duration-200",
+                      getValueForTheme("text-white/60", "text-gray-400")
+                    )}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+                
+                {/* Loading indicator */}
+                {campusLoading && (
+                  <div className="absolute inset-y-0 right-8 flex items-center">
+                    <div
+                      className={combine(
+                        "w-4 h-4 rounded-full border-2 border-t-transparent animate-spin",
+                        getValueForTheme("border-white/40", "border-[#006C67]/40")
+                      )}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Activity Type Filter */}
-            <div className="px-4 sm:px-0">
+            <div className="px-4 sm:px-6 lg:px-0">
               <ActivityTypeFilter
                 activeFilters={activeFilters}
                 toggleFilter={toggleFilter}
