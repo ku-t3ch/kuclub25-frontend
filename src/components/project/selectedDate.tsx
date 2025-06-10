@@ -237,42 +237,6 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
             </motion.div>
           )}
         </div>
-
-        {/* Footer with actions */}
-        {validProjects.length > 0 && (
-          <div className={combine(
-            "px-5 py-3 border-t",
-            getValueForTheme(
-              "border-white/10 bg-white/3",
-              "border-[#006C67]/20 bg-[#006C67]/5"
-            )
-          )}>
-            <div className="flex items-center justify-between">
-              <span className={combine(
-                "text-xs",
-                getValueForTheme("text-white/60", "text-[#006C67]/60")
-              )}>
-                แสดง {validProjects.length} กิจกรรม
-              </span>
-              
-              <button
-                onClick={() => {
-                  // Handle view all click
-                }}
-                className={combine(
-                  "text-xs px-3 py-1.5 rounded-lg transition-all duration-200",
-                  "font-medium",
-                  getValueForTheme(
-                    "text-blue-300 hover:text-blue-200 hover:bg-blue-500/10",
-                    "text-[#006C67] hover:text-[#006C67]/80 hover:bg-[#006C67]/5"
-                  )
-                )}
-              >
-                ดูทั้งหมด
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </motion.div>
   );
