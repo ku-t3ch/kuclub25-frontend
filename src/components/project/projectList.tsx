@@ -125,11 +125,7 @@ const ProjectList = memo<ProjectListProps>(({
     return {
       title: "ไม่พบโครงการในเดือนนี้",
       subtitle: "ลองเลือกเดือนอื่น หรือดูในมุมมองปฏิทิน",
-      suggestions: [
-        { icon: "📅", text: "เปลี่ยนเดือน" },
-        { icon: "🔍", text: "ค้นหาโครงการ" },
-        { icon: "📊", text: "ดูปฏิทิน" }
-      ]
+     
     };
   };
 
@@ -213,29 +209,8 @@ const ProjectList = memo<ProjectListProps>(({
           >
             {emptyState.subtitle}
           </p>
-          
-          {/* Suggestions */}
-          <div className="flex flex-wrap justify-center gap-2 mt-6">
-            {emptyState.suggestions.map((suggestion, index) => (
-              <motion.div
-                key={suggestion.text}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-                className={combine(
-                  "px-3 py-1.5 rounded-full text-xs font-medium",
-                  "border transition-all duration-300",
-                  getValueForTheme(
-                    "bg-white/5 border-white/10 text-white/60 hover:bg-white/10",
-                    "bg-white border border-[#006C67]/20 text-[#006C67]/60 hover:bg-[#006C67]/5"
-                  )
-                )}
-              >
-                <span className="mr-1">{suggestion.icon}</span>
-                {suggestion.text}
-              </motion.div>
-            ))}
-          </div>
+      
+       
         </motion.div>
       </motion.div>
     );
@@ -308,38 +283,8 @@ const ProjectList = memo<ProjectListProps>(({
         ))}
       </div>
 
-      {/* Load more indicator (if needed) */}
-      {finalFilteredProjects.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center pt-6"
-        >
-          <div className={combine(
-            "inline-flex items-center px-4 py-2 rounded-full text-sm",
-            getValueForTheme(
-              "bg-white/5 text-white/60 border border-white/10",
-              "bg-white text-[#006C67]/60 border border-[#006C67]/20"
-            )
-          )}>
-            <svg 
-              className="w-4 h-4 mr-2" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M5 13l4 4L19 7" 
-              />
-            </svg>
-            แสดงครบทุกโครงการแล้ว ({finalFilteredProjects.length} โครงการ)
-          </div>
-        </motion.div>
-      )}
+      
+      
     </motion.div>
   );
 });
