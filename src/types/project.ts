@@ -39,6 +39,7 @@ export interface Project {
   project_location?: string;
   project_name_en?: string;
   project_name_th?: string;
+  campus_name?: string; 
   
   // Alternative field names (for compatibility)
   date_start?: Date;
