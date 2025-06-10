@@ -306,15 +306,6 @@ export default function ProjectsPage() {
           .filter(Boolean);
 
         setProjectsOnSelectedDate(projects);
-
-        if (projects.length > 0) {
-          setTimeout(() => {
-            projectsListRef.current?.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }, 300);
-        }
       } catch (error) {
         console.error("Error in updateProjectsOnSelectedDate:", error);
         setProjectsOnSelectedDate([]);
@@ -331,6 +322,39 @@ export default function ProjectsPage() {
       const clickedDate = moment(slotInfo.start).toDate();
       setSelectedDate(clickedDate);
       updateProjectsOnSelectedDate(clickedDate);
+
+      setTimeout(() => {
+        // หาตำแหน่งของ SelectedDateProject
+        const selectedDateElement = document.querySelector(
+          "[data-selected-date-projects]"
+        );
+
+        if (selectedDateElement) {
+          // เลื่อนไปยัง element โดยเพิ่ม offset เพื่อให้เลื่อนลงมากขึ้น
+          const elementTop =
+            selectedDateElement.getBoundingClientRect().top +
+            window.pageYOffset;
+          const offset = 100;
+
+          window.scrollTo({
+            top: elementTop - offset,
+            behavior: "smooth",
+          });
+        } else {
+          // fallback ไปยัง projectsListRef แต่เพิ่ม offset
+          if (projectsListRef.current) {
+            const elementTop =
+              projectsListRef.current.getBoundingClientRect().top +
+              window.pageYOffset;
+            const offset = 200; // เลื่อนลงมากขึ้น
+
+            window.scrollTo({
+              top: elementTop + offset,
+              behavior: "smooth",
+            });
+          }
+        }
+      }, 500);
     },
     [updateProjectsOnSelectedDate]
   );
@@ -466,7 +490,7 @@ export default function ProjectsPage() {
               viewMode={viewMode}
               setViewMode={handleViewModeChange}
             />
-          </div>  
+          </div>
 
           {/* Filters Section */}
           <div className="space-y-6 sm:space-y-8 mb-8 sm:mb-10 lg:mb-12">
@@ -515,7 +539,7 @@ export default function ProjectsPage() {
                     </option>
                   ))}
                 </select>
-                
+
                 {/* Custom dropdown arrow */}
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <svg
@@ -535,14 +559,17 @@ export default function ProjectsPage() {
                     />
                   </svg>
                 </div>
-                
+
                 {/* Loading indicator */}
                 {campusLoading && (
                   <div className="absolute inset-y-0 right-8 flex items-center">
                     <div
                       className={combine(
                         "w-4 h-4 rounded-full border-2 border-t-transparent animate-spin",
-                        getValueForTheme("border-white/40", "border-[#006C67]/40")
+                        getValueForTheme(
+                          "border-white/40",
+                          "border-[#006C67]/40"
+                        )
                       )}
                     />
                   </div>
@@ -604,6 +631,7 @@ export default function ProjectsPage() {
                       {selectedDate && projectsOnSelectedDate.length > 0 && (
                         <div className="mt-10 lg:mt-12">
                           <SelectedDateProject
+                            data-selected-date-projects
                             selectedDate={selectedDate}
                             projectsOnSelectedDate={projectsOnSelectedDate}
                             setSelectedDate={setSelectedDate}

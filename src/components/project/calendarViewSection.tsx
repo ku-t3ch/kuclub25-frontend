@@ -20,7 +20,7 @@ interface CalendarViewSectionProps {
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
   setSelectedMonth: (month: number) => void;
-  filteredEvents: any[]; // รับ filteredEvents จาก parent แทนการ fetch เอง
+  filteredEvents: any[]; 
   handleSelectSlot: (slotInfo: any) => void;
   handleSelectEvent: (project: any) => void;
   activeFilters: string[];
@@ -225,7 +225,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               const dot = document.createElement("div");
               dot.className = "day-indicator";
 
-              // Get color from ACTIVITY_TYPE_COLORS
+              
               const activityColor = ACTIVITY_TYPE_COLORS[activityType as keyof typeof ACTIVITY_TYPE_COLORS];
               
               if (activityColor) {
@@ -234,7 +234,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
                 dot.style.backgroundColor = '#9CA3AF'; // gray-400 fallback
               }
 
-              // Add CSS class for additional styling
+              
               switch (activityType) {
                 case 'competency_development_activities':
                   dot.classList.add('activity-competency');
@@ -253,7 +253,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               dotsContainer.appendChild(dot);
             }
 
-            // Make cell clickable
+            
             const clickHandler = () => {
               const clickedDate = new Date(
                 currentDate.getFullYear(),
@@ -290,7 +290,6 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
     projectsByDate
   ]);
 
-  // Effect to update calendar dots
   useEffect(() => {
     updateCalendarDots();
     
