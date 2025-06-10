@@ -142,11 +142,11 @@ const TabButton = React.memo<{
     whileHover={{ scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
   >
-    <span className="block sm:inline">{tab.label}</span>
+    <span className=" ">{tab.label}</span>
     {tab.count > 0 && (
       <span
         className={combine(
-          "ml-1 sm:ml-2 px-1.5 py-0.5 md:px-2 md:py-0.5 rounded-full text-xs",
+          "ml-1 sm:ml-2 mt-10 rounded-full  px-1.5 py-0.5 md:px-2 md:py-0.5 text-xs",
           isActive
             ? getValueForTheme("bg-blue-500/30", "bg-[#006C67]/20")
             : getValueForTheme("bg-white/10", "bg-[#006C67]/10")
@@ -248,7 +248,6 @@ const OrganizationProjectSection: React.FC<OrganizationProjectSectionProps> = ({
     >
       {/* Projects Header with Tabs */}
       <div className="flex flex-col gap-4 mb-6 md:mb-8">
-        {/* Title */}
         <h2
           className={combine(
             "text-xl sm:text-2xl md:text-3xl font-medium bg-clip-text text-transparent flex items-center gap-2 md:gap-3",
