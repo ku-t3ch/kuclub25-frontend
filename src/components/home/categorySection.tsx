@@ -240,8 +240,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const desktopLayoutClasses = useMemo(() => "hidden md:block space-y-8", []);
 
   const headerClasses = useMemo(() => ({
-    mobile: combine("text-xl font-bold", getValueForTheme("text-white", "text-[#006C67]")),
-    desktop: combine("text-2xl lg:text-3xl font-bold", getValueForTheme("text-white", "text-[#006C67]"))
+    mobile: combine("text-xl font-semibold", getValueForTheme("text-white", "text-[#006C67]")),
+    desktop: combine("text-2xl lg:text-3xl font-semibold", getValueForTheme("text-white", "text-[#006C67]"))
   }), [combine, getValueForTheme]);
 
   const selectClasses = useMemo(() => ({

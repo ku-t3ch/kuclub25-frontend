@@ -192,7 +192,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
           <h2
-            className={`text-lg md:text-3xl font-bold ${getValueForTheme(
+            className={`text-lg md:text-3xl font-semibold ${getValueForTheme(
               "text-white",
               "text-[#006C67]"
             )} leading-tight`}
