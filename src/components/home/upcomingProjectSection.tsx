@@ -11,7 +11,6 @@ interface UpcomingProjectSectionProps {
   onProjectClick?: (project: Project) => void;
   showViewAllButton?: boolean;
   onViewAll?: () => void;
-  // เพิ่ม props สำหรับการกรองตาม campus
   activeCampus?: string;
   campuses?: Array<{ id: string; name: string }>;
 }
