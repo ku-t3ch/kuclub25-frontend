@@ -317,7 +317,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     if (!monthDisplay.isRange) {
       // Single month display
       return (
-        <div className="text-white/90 text-xs sm:text-2xs md:text-xs font-medium uppercase tracking-wide mb-1 sm:mb-1">
+        <div className="text-white/90 text-2xs sm:text-xs md:text-xs font-medium uppercase tracking-wide mb-1 sm:mb-1">
           {monthDisplay.text}
         </div>
       );
@@ -349,7 +349,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     // Fallback to text display with enhanced spacing
     return (
       <div className="text-white/90 font-medium uppercase tracking-wide mb-1 sm:mb-1">
-        <div className="text-xs sm:text-2xs md:text-xs leading-tight text-center whitespace-nowrap">
+        <div className="text-2xs sm:text-xs md:text-xs leading-tight text-center whitespace-nowrap">
           {monthDisplay.text}
         </div>
       </div>
@@ -406,7 +406,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             <h3
               className={combine(
                 "font-medium mb-0 line-clamp-2 leading-tight transition-colors duration-300 py-1",
-                "text-base sm:text-base md:text-lg",
+                "text-sm sm:text-base md:text-lg",
                 styles.title
               )}
             >
@@ -417,7 +417,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             {projectData.orgName && (
               <div
                 className={combine(
-                  "mb-2 sm:mb-1.5 md:mb-2 text-sm sm:text-2xs md:text-xs font-medium flex items-center",
+                  "mb-2 sm:mb-1.5 md:mb-2 text-xs sm:text-2xs md:text-xs font-medium flex items-center",
                   styles.orgIcon
                 )}
               >
@@ -445,7 +445,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                   <div
                     key={`${tag.key}-${index}`}
                     className={combine(
-                      "inline-flex items-center px-2.5 sm:px-2 md:px-2.5 py-1 sm:py-0.75 md:py-1 rounded-full text-sm sm:text-2xs md:text-xs font-medium",
+                      "inline-flex items-center px-2.5 sm:px-2 md:px-2.5 py-1 sm:py-0.75 md:py-1 rounded-full text-xs sm:text-2xs md:text-xs font-medium",
                       activityTagColors.get(tag.typeColor) || getTagColors(tag.typeColor),
                       "transition-all duration-300 hover:shadow-sm"
                     )}
@@ -457,7 +457,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
             )}
 
             {/* Project Details */}
-            <div className="flex flex-col space-y-1.5 sm:space-y-1.5 text-sm sm:text-2xs md:text-xs mt-2 sm:mt-1.5 md:mt-2">
+            <div className="flex flex-col space-y-1.5 sm:space-y-1.5 text-xs sm:text-2xs md:text-xs mt-2 sm:mt-1.5 md:mt-2">
               
 
               {/* Location */}
@@ -507,7 +507,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
           onClick={handleButtonClick}
           className={combine(
             "w-full mt-auto py-2 sm:py-1.5 md:py-2 px-3 sm:px-3 md:px-4",
-            "transition-all duration-300 text-sm sm:text-2xs md:text-xs font-medium",
+            "transition-all duration-300 text-xs sm:text-2xs md:text-xs font-medium",
             "border-t rounded-b-xl",
             styles.button,
             styles.buttonBorder

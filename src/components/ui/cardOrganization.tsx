@@ -282,7 +282,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
           "absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none",
           getValueForTheme(
             "bg-gradient-to-t from-blue-500/10 to-transparent",
-            "bg-gradient-to-t from-[#006C67]/10 to-transparent"
+            "bg-gradient-to-t from-[#006C69]/10 to-transparent"
           )
         )}
         initial={{ opacity: 0 }}

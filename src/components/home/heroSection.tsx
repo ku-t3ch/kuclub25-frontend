@@ -79,7 +79,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   if (!isMounted) {
     return (
       <div className="relative w-full overflow-hidden bg-transparent">
-        <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl">
+        <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl pt-8 sm:pt-12 md:pt-16">
           <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3 bg-clip-text text-transparent bg-gradient-to-r from-[#006C67] via-[#006C67] to-[#006C67]/80 py-2 xs:py-3 sm:py-4 md:py-5">
             {title}
           </h1>
@@ -103,7 +103,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <div className="relative w-full overflow-hidden bg-transparent">
-      <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl">
+      <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl pt-8 sm:pt-12 md:pt-16">
         {/* Title */}
         <motion.h1
           className={combine(

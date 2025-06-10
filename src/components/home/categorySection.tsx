@@ -234,14 +234,14 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   );
 
   // Memoized class strings
-  const sectionClasses = useMemo(() => "relative z-10 px-4 sm:px-6 lg:px-8 py-8", []);
+  const sectionClasses = useMemo(() => "relative z-10 px-4 sm:px-6 lg:px-8 ", []);
   const containerClasses = useMemo(() => "max-w-7xl mx-auto", []);
   const mobileLayoutClasses = useMemo(() => "md:hidden space-y-6", []);
   const desktopLayoutClasses = useMemo(() => "hidden md:block space-y-8", []);
 
   const headerClasses = useMemo(() => ({
-    mobile: combine("text-xl font-bold", getValueForTheme("text-white", "text-[#006C67]")),
-    desktop: combine("text-2xl lg:text-3xl font-bold", getValueForTheme("text-white", "text-[#006C67]"))
+    mobile: combine("text-xl font-semibold", getValueForTheme("text-white", "text-[#006C67]")),
+    desktop: combine("text-2xl lg:text-3xl font-semibold", getValueForTheme("text-white", "text-[#006C67]"))
   }), [combine, getValueForTheme]);
 
   const selectClasses = useMemo(() => ({

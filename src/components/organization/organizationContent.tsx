@@ -131,7 +131,7 @@ const OrganizationContent: React.FC<OrganizationContentProps> = ({
       {/* Mobile-Optimized Pagination Controls */}
       {(hasMoreItems || canShowLess) && (
         <div className="mt-6 sm:mt-8 flex flex-col gap-3 sm:gap-4 items-center">
-          <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 w-full xs:w-auto">
+          <div className="inline-flex flex-col xs:flex-row gap-2 sm:gap-3">
             {hasMoreItems && (
               <button
                 onClick={onLoadMore}
