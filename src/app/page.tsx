@@ -280,6 +280,7 @@ export default function Home() {
         onCampusChange={handleCampusChange}
         campusLoading={campusLoading}
       />
+      <div className="h-8 md:h-6 xs:h-4 " />
 
       <OrganizationSection
         organizations={organizations}
@@ -290,7 +291,7 @@ export default function Home() {
         onCategoryChange={handleCategoryChange}
       />
 
-      <div className="h-16" />
+      <div className="h-8 md:h-6 xs:h-4 " />
 
       <UpcomingProjectSection
         projects={projects}
