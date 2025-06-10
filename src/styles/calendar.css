@@ -706,3 +706,149 @@
     gap: 3px;
   }
 }
+
+/* Enhanced mobile support for 375px devices (iPhone SE, older iPhones) */
+@media (max-width: 375px) {
+  .calendar-wrapper-dark .rbc-month-view,
+  .calendar-wrapper-light .rbc-month-view {
+    border-radius: 8px;
+    margin: 4px;
+  }
+
+  .rbc-header {
+    padding: 8px 2px;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+  }
+
+  .rbc-date-cell {
+    padding: 1px 0 14px !important;
+    font-size: 0.75rem;
+  }
+
+  .day-indicator {
+    width: 5px;
+    height: 5px;
+  }
+
+  .day-indicator-container {
+    bottom: 2px;
+    gap: 2px;
+  }
+
+  .project-count {
+    width: 14px;
+    height: 14px;
+    font-size: 0.6rem;
+    line-height: 14px;
+    top: 18px;
+  }
+
+  /* Improve touch targets */
+  .rbc-day-bg {
+    min-height: 45px;
+  }
+}
+
+/* Ultra-small mobile support for 320px devices (iPhone 5/SE first gen) */
+@media (max-width: 320px) {
+  /* Compact calendar layout */
+  .calendar-wrapper-dark .rbc-month-view,
+  .calendar-wrapper-light .rbc-month-view {
+    border-radius: 6px;
+    margin: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Minimal header spacing */
+  .rbc-header {
+    padding: 6px 1px;
+    font-size: 0.65rem;
+    letter-spacing: 0.3px;
+  }
+
+  /* Compact date cells */
+  .rbc-date-cell {
+    padding: 1px 0 12px !important;
+    font-size: 0.7rem;
+  }
+
+  /* Tiny indicators */
+  .day-indicator {
+    width: 4px;
+    height: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .day-indicator-container {
+    bottom: 1px;
+    gap: 1px;
+  }
+
+  /* Small project count badges */
+  .project-count {
+    width: 12px;
+    height: 12px;
+    font-size: 0.55rem;
+    line-height: 12px;
+    top: 16px;
+  }
+
+  /* Minimum touch targets */
+  .rbc-day-bg {
+    min-height: 40px;
+  }
+
+  /* Ultra-compact calendar */
+  .rbc-calendar {
+    font-size: 0.7rem;
+  }
+
+  .rbc-month-row {
+    min-height: 40px;
+  }
+
+  /* Subtle hover effects */
+  .has-projects:hover .day-indicator {
+    transform: scale(1.1);
+  }
+
+  .has-projects:hover .project-count {
+    transform: scale(1.1);
+  }
+}
+
+/* Landscape orientation optimizations for small devices */
+@media (max-width: 480px) and (orientation: landscape) {
+  .rbc-date-cell {
+    padding: 1px 0 10px !important;
+  }
+
+  .day-indicator {
+    width: 4px;
+    height: 4px;
+  }
+
+  .day-indicator-container {
+    bottom: 1px;
+  }
+
+  .project-count {
+    width: 12px;
+    height: 12px;
+    font-size: 0.55rem;
+    line-height: 12px;
+    top: 14px;
+  }
+}
+
+/* High DPI display improvements for small screens */
+@media (max-width: 375px) and (-webkit-min-device-pixel-ratio: 2) {
+  .day-indicator {
+    box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  .project-count {
+    border: 0.5px solid rgba(255, 255, 255, 0.4);
+  }
+}
