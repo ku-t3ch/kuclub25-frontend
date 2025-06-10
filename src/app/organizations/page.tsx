@@ -60,7 +60,7 @@ const OrganizationsPage: React.FC = () => {
     );
   }, [filteredOrganizations, selectedCampus, campuses, isCampusMatch]);
 
-  // Enhanced mobile-first theme classes
+
   const themeClasses = useMemo(() => ({
     pageBackground: combine(
       "min-h-screen pt-14 sm:pt-16 md:pt-20 relative"
