@@ -115,7 +115,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         project.name_th ||
         project.project_name_en ||
         project.name_en ||
-        "ไม่ระบุชื่อโครงการ",
+        "ไม่ระบุชื่อกิจกรรม",
       displayLocation:
         typeof project.schedule === "object" && project.schedule?.location
           ? project.schedule.location

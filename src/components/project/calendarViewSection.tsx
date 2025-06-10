@@ -11,7 +11,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../styles/calendar.css";
 
 const messages = {
-  showMore: (total: number) => `+ อีก ${total} โครงการ`,
+  showMore: (total: number) => `+ อีก ${total} กิจกรรม`,
 } as const;
 
 const localizer = momentLocalizer(moment);
@@ -64,7 +64,7 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
           getValueForTheme("text-white/70", "text-gray-600")
         )}
       >
-        กำลังโหลดโครงการ...
+        กำลังโหลดกิจกรรม...
       </p>
     </div>
   </motion.div>

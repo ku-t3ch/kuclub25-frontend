@@ -88,7 +88,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
             "text-sm",
             getValueForTheme("text-white/60", "text-[#006C67]/60")
           )}>
-            ไม่มีข้อมูลโครงการที่ถูกต้องสำหรับวันที่เลือก
+            ไม่มีข้อมูลกิจกรรมที่ถูกต้องสำหรับวันที่เลือก
           </p>
         </div>
       </motion.div>
@@ -134,7 +134,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                 "text-sm font-medium",
                 getValueForTheme("text-white/90", "text-[#006C67]/70")
               )}>
-                โครงการวันที่
+                กิจกรรมวันที่
               </h2>
               <p className={combine(
                 "text-lg font-semibold",
@@ -154,7 +154,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                 "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
               )
             )}>
-              {validProjects.length} โครงการ
+              {validProjects.length} กิจกรรม
             </div>
 
             {/* Close button */}
@@ -170,7 +170,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                   "text-[#006C67]/60 hover:text-[#006C67] hover:bg-[#006C67]/5"
                 )
               )}
-              aria-label="ปิดรายการโครงการ"
+              aria-label="ปิดรายการกิจกรรม"
             >
               <svg
                 className="w-4 h-4"
@@ -252,7 +252,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = ({
                 "text-xs",
                 getValueForTheme("text-white/60", "text-[#006C67]/60")
               )}>
-                แสดง {validProjects.length} โครงการ
+                แสดง {validProjects.length} กิจกรรม
               </span>
               
               <button

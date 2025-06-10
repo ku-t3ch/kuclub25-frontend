@@ -18,7 +18,7 @@ interface UpcomingProjectSectionProps {
 const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
   projects,
   loading = false,
-  title = "โครงการที่กำลังจะเกิดขึ้น",
+  title = "กิจกรรมที่กำลังจะเกิดขึ้น",
   maxProjects = 6,
   onProjectClick,
   showViewAllButton = true,
@@ -252,14 +252,14 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
               )}`}
             >
               {activeCampus ? 
-                `ไม่มีโครงการที่กำลังจะเกิดขึ้นในวิทยาเขตนี้` : 
-                `ไม่มีโครงการที่กำลังจะเกิดขึ้น`
+                `ไม่มีกิจกรรมที่กำลังจะเกิดขึ้นในวิทยาเขตนี้` : 
+                `ไม่มีกิจกรรมที่กำลังจะเกิดขึ้น`
               }
             </h3>
             <p className="text-sm sm:text-base leading-relaxed max-w-md mx-auto">
               {activeCampus ? 
-                `โครงการทั้งหมดในวิทยาเขตนี้ได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่ กรุณาลองเปลี่ยนวิทยาเขตหรือตรวจสอบอีกครั้งในภายหลัง` :
-                `โครงการทั้งหมดได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่ กรุณาตรวจสอบอีกครั้งในภายหลัง`
+                `กิจกรรมทั้งหมดในวิทยาเขตนี้ได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่ กรุณาลองเปลี่ยนวิทยาเขตหรือตรวจสอบอีกครั้งในภายหลัง` :
+                `กิจกรรมทั้งหมดได้สิ้นสุดลงแล้วหรือไม่มีข้อมูลวันที่ กรุณาตรวจสอบอีกครั้งในภายหลัง`
               }
             </p>
           </div>
