@@ -31,7 +31,7 @@ const LoadingSpinner = React.memo(() => {
           "text-lg",
           getValueForTheme("text-white/70", "text-[#006C67]/70")
         )}>
-          กำลังโหลดข้อมูลโครงการ...
+          กำลังโหลดข้อมูลกิจกรรม...
         </p>
       </div>
     </div>
@@ -75,13 +75,13 @@ const ErrorMessage = React.memo<{
           "text-2xl font-bold mb-4", 
           getValueForTheme("text-white", "text-[#006C67]")
         )}>
-          ไม่พบข้อมูลโครงการ
+          ไม่พบข้อมูลกิจกรรม
         </h1>
         <p className={combine(
           "mb-6", 
           getValueForTheme("text-white/70", "text-[#006C67]/70")
         )}>
-          {error || "ไม่สามารถโหลดข้อมูลโครงการได้"}
+          {error || "ไม่สามารถโหลดข้อมูลกิจกรรมได้"}
         </p>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -209,8 +209,7 @@ const DetailProjectPage = () => {
       outcomes,
       objectives,
       displayName: project.project_name_th || project.name_th || 
-                   project.project_name_en || project.name_en || 
-                   'ไม่ระบุชื่อโครงการ',
+                   'ไม่ระบุชื่อกิจกรรม',
       startDate: startDate,
       endDate: endDate,
       location: scheduleData?.location || project.project_location || project.location || 'ไม่ระบุสถานที่',

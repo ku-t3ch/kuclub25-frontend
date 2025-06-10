@@ -536,7 +536,7 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
     <div className="lg:col-span-2 space-y-6 xs:space-y-8 sm:space-y-10">
       {/* Project Description Card */}
       {project.project_description && renderProjectCard(
-        "รายละเอียดโครงการ",
+        "รายละเอียดกิจกรรม",
         <div className="space-y-4">
           <p className="text-base leading-relaxed">
             {project.project_description}

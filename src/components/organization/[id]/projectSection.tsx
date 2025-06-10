@@ -64,10 +64,10 @@ const EmptyState = React.memo<{
   getValueForTheme: (dark: string, light: string) => string;
 }>(({ activeTab, themeValues, combine, getValueForTheme }) => {
   const emptyMessages = useMemo(() => ({
-    all: "ยังไม่มีโครงการหรือกิจกรรม",
-    upcoming: "ไม่มีโครงการที่กำลังจะมาถึง",
-    ongoing: "ไม่มีโครงการที่กำลังดำเนินการ",
-    past: "ไม่มีโครงการที่ผ่านมา"
+    all: "ยังไม่มีกิจกรรมหรือกิจกรรม",
+    upcoming: "ไม่มีกิจกรรมที่กำลังจะมาถึง",
+    ongoing: "ไม่มีกิจกรรมที่กำลังดำเนินการ",
+    past: "ไม่มีกิจกรรมที่ผ่านมา"
   }), []);
 
   return (

@@ -161,7 +161,7 @@ export default function ProjectsPage() {
 
             return {
               id: project.id,
-              title: project.name_th || project.name_en || "ไม่ระบุชื่อโครงการ",
+              title: project.name_th || project.name_en || "ไม่ระบุชื่อกิจกรรม",
               start,
               end,
               allDay: isMultiDay,
@@ -400,7 +400,7 @@ export default function ProjectsPage() {
           />
         </div>
         <p className={combine("mt-4 text-sm", themeValues.loadingText)}>
-          กำลังโหลดข้อมูลโครงการ...
+          กำลังโหลดข้อมูลกิจกรรม...
         </p>
       </motion.div>
     ),
@@ -456,7 +456,7 @@ export default function ProjectsPage() {
                 themeValues.titleText
               )}
             >
-              โครงการทั้งหมด
+              กิจกรรมทั้งหมด
             </h1>
           </div>
 

@@ -134,7 +134,7 @@ const OrganizationSidebarSection: React.FC<OrganizationSidebarSectionProps> = ({
     {
       key: 'projects',
       value: projectCategories.counts?.all || 0,
-      label: 'โครงการทั้งหมด'
+      label: 'กิจกรรมทั้งหมด'
     },
     {
       key: 'views',
