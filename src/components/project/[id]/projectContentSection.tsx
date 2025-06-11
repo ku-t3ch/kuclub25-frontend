@@ -278,7 +278,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             {/* Date and Time Section */}
-            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-3 mb-2">
+            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-3 mb-2 ">
               <h4 className={combine(
                 "font-semibold text-sm xs:text-base break-words",
                 getValueForTheme("text-white", "text-[#006C67]")
@@ -484,12 +484,12 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
         className={combine(
           "backdrop-blur-sm rounded-lg xs:rounded-xl sm:rounded-2xl lg:rounded-3xl",
           "p-4 xs:p-5 sm:p-6 lg:p-8 border shadow-xl",
-          "mx-2 xs:mx-0", // Add margin for very small screens
+          "mx-2 xs:mx-0", 
           themeValues.cardBg
         )}
       >
         <h2 className={combine(
-          "text-lg xs:text-xl sm:text-2xl font-bold mb-4 xs:mb-6",
+          "text-lg xs:text-xl sm:text-2xl font-semibold  mb-4 xs:mb-6",
           "flex items-center gap-2 xs:gap-3 break-words",
           themeValues.primaryText
         )}>
@@ -552,10 +552,10 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
               )}
             >
               <span className={combine(
-                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2",
+                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2 ml-10 md:ml-8 xs:ml-6",
                 themeValues.bulletPoint
               )} />
-              <span className="break-words">{objective}</span>
+              <span className="break-words ">{objective}</span>
             </motion.li>
           ))}
         </ul>,
@@ -578,15 +578,15 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
           {/* Location */}
           {scheduleData.location && (
             <div className={combine(
-              "p-3 xs:p-4 rounded-lg border flex items-start gap-2 xs:gap-3",
+              " p-3 xs:p-4 rounded-lg border flex items-start gap-2 xs:gap-3",
               themeValues.locationCardBg
             )}>
-              <span className={combine("flex-shrink-0", themeValues.accentBlue)}>
+              <span className={combine("flex-shrink-0 relative z-10 top-1", themeValues.accentBlue)}>
                 {ICONS.location}
               </span>
               <div className="flex-1 min-w-0">
                 <p className={combine(
-                  "text-xs xs:text-sm font-medium mb-1",
+                  "text-md xs:text-sm font-medium mb-1",
                   themeValues.locationTitle
                 )}>
                   สถานที่จัดกิจกรรม
@@ -632,10 +632,10 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
               )}
             >
               <span className={combine(
-                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2",
+                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2 ml-10 md:ml-8 xs:ml-6",
                 themeValues.bulletPoint
               )} />
-              <span className="break-words">{outcome}</span>
+              <span className="break-words ">{outcome}</span>
             </motion.li>
           ))}
         </ul>,

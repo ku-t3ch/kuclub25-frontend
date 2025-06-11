@@ -222,7 +222,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
                     {activityIcons.competency}
                   </div>
                   <h4 className={combine(
-                    "text-sm sm:text-base font-medium line-clamp-2",
+                    "text-sm sm:text-base  line-clamp-2",
                     getValueForTheme("text-white/90", "text-[#006C67]/90")
                   )}>
                     {ACTIVITY_LABELS.competency_development_activities}

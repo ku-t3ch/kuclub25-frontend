@@ -247,7 +247,7 @@ const NavBar = () => {
 
   // Memoized logo selection based on theme
   const currentLogo = useMemo(() => {
-    return resolvedTheme === "light" ? LogoLight : Logo;
+    return resolvedTheme === "light" ? LogoLight : LogoLight;
   }, [resolvedTheme]);
 
   return (
@@ -276,16 +276,9 @@ const NavBar = () => {
                     getValueForTheme("text-[#8AD1FF]", "text-[#006C67]")
                   )}
                 >
-                  KU
+                  KU CLUB
                 </span>
-                <span
-                  className={combine(
-                    "font-bold text-2xl sm:text-3xl ml-2 tracking-wider",
-                    getValueForTheme("text-[#60B7F0]", "text-[#006C67]/80")
-                  )}
-                >
-                  CLUB
-                </span>
+           
               </div>
             </div>
           </Link>
