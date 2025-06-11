@@ -143,7 +143,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
         )}
       >
         <h3 className={combine(
-          "text-lg font-bold mb-4 flex items-center gap-2",
+          "text-lg xs:text-xl sm:text-2xl font-semibold mb-4 flex items-center gap-2",
           themeValues.primaryText
         )}>
           {dateTimeInfo?.isMultiDay ? "ระยะเวลากิจกรรม" : "วันที่จัดกิจกรรม"}
@@ -204,7 +204,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
           )}
         >
           <h3 className={combine(
-            "text-lg font-bold mb-4 flex items-center gap-2",
+            "text-lg font-semibold mb-4 flex items-center gap-2",
             themeValues.primaryText
           )}>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
