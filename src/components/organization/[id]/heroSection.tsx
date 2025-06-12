@@ -17,25 +17,25 @@ const ANIMATION_VARIANTS = {
     initial: { opacity: 0, x: -10 },
     animate: { opacity: 1, x: 0 },
     hover: { x: -5 },
-    tap: { scale: 0.95 }
+    tap: { scale: 0.95 },
   },
   imageContainer: {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
+    transition: { duration: 0.6 },
   },
   title: {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5, delay: 0.1 }
+    transition: { duration: 0.5, delay: 0.1 },
   },
   alternativeName: {
     initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 }
+    animate: { opacity: 1, y: 0 },
   },
   tag: {
-    hover: { y: -2 }
-  }
+    hover: { y: -2 },
+  },
 } as const;
 
 // Memoized image error handler
@@ -71,41 +71,38 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
   const [imageError, setImageError] = useState(false);
 
   // Memoized theme values to prevent recalculation
-  const themeStyles = useMemo(() => ({
-    backgroundBlob1: getValueForTheme("bg-blue-600/10", "bg-[#006C67]/10"),
-    backgroundBlob2: getValueForTheme("bg-purple-600/10", "bg-[#006C67]/15"),
-    backButton: getValueForTheme(
-      "text-white/70 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10",
-      "text-[#006C67]/70 hover:text-[#006C67] bg-white border border-[#006C67]/20 hover:bg-[#006C67]/5"
-    ),
-    imageContainer: getValueForTheme(
-      "shadow-blue-900/20 border border-white/10 group-hover:border-white/20",
-      "shadow-[#006C67]/20 border border-[#006C67]/20 group-hover:border-[#006C67]/40"
-    ),
-    placeholder: getValueForTheme(
-      "bg-gray-700 text-gray-400",
-      "bg-[#006C67]/10 text-[#006C67]/50"
-    ),
-    titleGradient: getValueForTheme(
-      "bg-gradient-to-r from-white via-blue-100 to-purple-100",
-      "bg-gradient-to-r from-[#006C67] via-[#006C67]/90 to-[#006C67]/80"
-    ),
-    alternativeText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
-    orgTypeTag: getValueForTheme(
-      "bg-blue-500/30 border border-blue-500/40",
-      "bg-[#006C67]/20 border border-[#006C67]/30"
-    ),
-    campusTag: getValueForTheme(
-      "bg-purple-500/30 border border-purple-500/40",
-      "bg-[#006C67]/30 border border-[#006C67]/40"
-    )
-  }), [getValueForTheme]);
+  const themeStyles = useMemo(
+    () => ({
+      backButton: getValueForTheme(
+        "text-white/70 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10",
+        "text-[#006C67]/70 hover:text-[#006C67] bg-white border border-[#006C67]/20 hover:bg-[#006C67]/5"
+      ),
+      imageContainer: getValueForTheme(
+        "shadow-black/20 border border-white/10 group-hover:border-white/20",
+        "shadow-[#006C67]/20 border border-[#006C67]/20 group-hover:border-[#006C67]/40"
+      ),
+      placeholder: getValueForTheme(
+        "bg-gray-700 text-gray-400",
+        "bg-[#006C67]/10 text-[#006C67]/50"
+      ),
+      titleGradient: getValueForTheme(
+        "bg-[white] ",
+        "bg-gradient-to-r from-[#006C67] via-[#006C67]/90 to-[#006C67]/80"
+      ),
+      alternativeText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
+      orgTypeTag: getValueForTheme(
+        "bg-[#54CF90]/50 border border-[#54CF90]",
+        "bg-[#006C67]/70 border border-[#006C67]"
+      ),
+      campusTag: getValueForTheme(
+        "bg-[#B2BB1C]/50 border border-[#B2BB1C]",
+        "bg-[#B2BB1C]/70 border border-[#B2BB1C]"
+      ),
+    }),
+    [getValueForTheme]
+  );
 
   // Memoized parallax transforms for better performance
-  const parallaxStyles = useMemo(() => ({
-    blob1: { transform: `translateY(${scrollY * 0.1}px)` },
-    blob2: { transform: `translateY(${scrollY * 0.05}px)` }
-  }), [scrollY]);
 
   // Memoized error handler
   const handleImageError = useCallback(() => {
@@ -120,55 +117,46 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
   // Memoized organization tags
   const organizationTags = useMemo(() => {
     const tags = [];
-    
+
     if (organizationInfo.orgType) {
       tags.push({
-        key: 'orgType',
+        key: "orgType",
         text: organizationInfo.orgType,
-        className: themeStyles.orgTypeTag
+        className: themeStyles.orgTypeTag,
       });
     }
-    
+
     if (organizationInfo.campus) {
       tags.push({
-        key: 'campus',
+        key: "campus",
         text: organizationInfo.campus,
-        className: themeStyles.campusTag
+        className: themeStyles.campusTag,
       });
     }
-    
+
     return tags;
-  }, [organizationInfo.orgType, organizationInfo.campus, themeStyles.orgTypeTag, themeStyles.campusTag]);
+  }, [
+    organizationInfo.orgType,
+    organizationInfo.campus,
+    themeStyles.orgTypeTag,
+    themeStyles.campusTag,
+  ]);
 
   // Memoized alternative names with proper transitions
   const alternativeNames = useMemo(() => {
-    return organizationInfo.alternativeNames.map((name: any, index: number) => ({
-      ...name,
-      transition: {
-        duration: 0.5,
-        delay: 0.15 + index * 0.05
-      }
-    }));
+    return organizationInfo.alternativeNames.map(
+      (name: any, index: number) => ({
+        ...name,
+        transition: {
+          duration: 0.5,
+          delay: 0.15 + index * 0.05,
+        },
+      })
+    );
   }, [organizationInfo.alternativeNames]);
 
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Background decorations with optimized transforms */}
-      <div
-        className={combine(
-          "absolute -top-16 -right-16 w-60 xs:w-72 sm:w-96 h-60 xs:h-72 sm:h-96 rounded-full blur-3xl opacity-70",
-          themeStyles.backgroundBlob1
-        )}
-        style={parallaxStyles.blob1}
-      />
-      <div
-        className={combine(
-          "absolute top-24 -left-16 w-48 xs:w-60 sm:w-72 h-48 xs:h-60 sm:h-72 rounded-full blur-3xl opacity-70",
-          themeStyles.backgroundBlob2
-        )}
-        style={parallaxStyles.blob2}
-      />
-
       <div className="container mx-auto px-4 md:px-6 pt-8 pb-12 relative z-10">
         {/* Back Button */}
         <motion.button
@@ -219,30 +207,11 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
                 className={combine(
                   "w-full h-full flex items-center justify-center",
                   themeStyles.placeholder,
-                  (!organization.org_image || imageError) ? "flex" : "hidden"
+                  !organization.org_image || imageError ? "flex" : "hidden"
                 )}
               >
                 <ImagePlaceholder />
               </div>
-
-              {/* Organization tags */}
-              {organizationTags.length > 0 && (
-                <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2">
-                  {organizationTags.map((tag) => (
-                    <motion.div
-                      key={tag.key}
-                      variants={ANIMATION_VARIANTS.tag}
-                      whileHover="hover"
-                      className={combine(
-                        "backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 shadow-lg",
-                        tag.className
-                      )}
-                    >
-                      {tag.text}
-                    </motion.div>
-                  ))}
-                </div>
-              )}
             </div>
           </motion.div>
 
@@ -266,7 +235,7 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
 
             {/* Alternative names */}
             {alternativeNames.length > 0 && (
-              <div className="space-y-1 mb-6">
+              <div className="space-y-1 mb-6 ">
                 {alternativeNames.map((name, index) => (
                   <motion.h2
                     key={`${name.text}-${index}`}
@@ -284,6 +253,24 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
                 ))}
               </div>
             )}
+             {/* Organization tags */}
+              {organizationTags.length > 0 && (
+                <div className="items-center justify-center lg:justify-start xs:justify-center flex flex-wrap gap-2">
+                  {organizationTags.map((tag) => (
+                    <motion.div
+                      key={tag.key}
+                      variants={ANIMATION_VARIANTS.tag}
+                      whileHover="hover"
+                      className={combine(
+                        "backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 shadow-lg",
+                        tag.className
+                      )}
+                    >
+                      {tag.text}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
           </div>
         </div>
       </div>

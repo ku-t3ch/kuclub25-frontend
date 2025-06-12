@@ -11,7 +11,7 @@ import HeroSection from "../components/home/heroSection";
 import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
 import UpcomingProjectSection from "../components/home/upcomingProjectSection";
-import { Vortex } from "@/components/ui/vortex";
+
 export default function Home() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();

@@ -148,7 +148,7 @@ const TabButton = React.memo<{
         className={combine(
           "ml-1 sm:ml-2 mt-10 rounded-full  px-1.5 py-0.5 md:px-2 md:py-0.5 text-xs",
           isActive
-            ? getValueForTheme("bg-blue-500/30", "bg-[#006C67]/20")
+            ? getValueForTheme("bg-[#B2BB1C]/15", "bg-[#006C67]/20")
             : getValueForTheme("bg-white/10", "bg-[#006C67]/10")
         )}
       >
@@ -171,25 +171,25 @@ const OrganizationProjectSection: React.FC<OrganizationProjectSectionProps> = ({
   // Memoized theme values for better performance
   const themeValues = useMemo(() => ({
     cardBg: getValueForTheme(
-      "bg-white/5 border-white/10 shadow-blue-900/5",
+      "bg-white/5 border-white/10 shadow-black/20",
       "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
     primaryText: getValueForTheme("text-white", "text-[#006C67]"),
     secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
     accentBlue: getValueForTheme("text-blue-300", "text-[#006C67]"),
     titleGradient: getValueForTheme(
-      "bg-gradient-to-r from-white to-blue-100",
+      "bg-white",
       "bg-gradient-to-r from-[#006C67] to-[#006C67]/80"
     ),
     tabActive: getValueForTheme(
-      "bg-blue-500/20 text-blue-300 border-blue-500/30",
+      "bg-[#54CF90]/40 text-white border-[#54CF90]/80",
       "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
     ),
     tabInactive: getValueForTheme(
       "bg-white/5 text-white/60 border-white/10 hover:bg-white/10",
       "bg-white text-[#006C67]/60 border border-[#006C67]/20 hover:bg-[#006C67]/5"
     ),
-    spinnerBorder: getValueForTheme("border-blue-400", "border-[#006C67]"),
+    spinnerBorder: getValueForTheme("border-[#54CF90]", "border-[#006C67]"),
     hoverShadow: getValueForTheme(
       "0 15px 20px -5px rgba(0, 0, 0, 0.3)",
       "0 15px 20px -5px rgba(0, 108, 103, 0.1)"
