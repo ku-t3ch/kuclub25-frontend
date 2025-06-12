@@ -12,35 +12,39 @@ interface ActivityTypeFilterProps {
 const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
   activeFilters,
   toggleFilter,
-  ACTIVITY_TYPES
+  ACTIVITY_TYPES,
 }) => {
   const { getValueForTheme, combine } = useThemeUtils();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const getActiveFilterLabel = () => {
-    if (activeFilters.includes('all')) {
-      return 'ทั้งหมด';
+    if (activeFilters.includes("all")) {
+      return "ทั้งหมด";
     }
     if (activeFilters.length === 0) {
-      return 'เลือกประเภทกิจกรรม';
+      return "เลือกประเภทกิจกรรม";
     }
     if (activeFilters.length === 1) {
-      const activeType = ACTIVITY_TYPES.find(type => activeFilters.includes(type.id));
-      return activeType?.label || 'ทั้งหมด';
+      const activeType = ACTIVITY_TYPES.find((type) =>
+        activeFilters.includes(type.id)
+      );
+      return activeType?.label || "ทั้งหมด";
     }
     return `เลือก ${activeFilters.length} ประเภท`;
   };
 
   const getActiveFilterColor = () => {
-    if (activeFilters.includes('all') || activeFilters.length === 0) {
-      return getValueForTheme('#3B82F6', '#006C67');
+    if (activeFilters.includes("all") || activeFilters.length === 0) {
+      return getValueForTheme("#3B82F6", "#006C67");
     }
     if (activeFilters.length === 1) {
-      const activeType = ACTIVITY_TYPES.find(type => activeFilters.includes(type.id));
-      return activeType?.color || getValueForTheme('#3B82F6', '#006C67');
+      const activeType = ACTIVITY_TYPES.find((type) =>
+        activeFilters.includes(type.id)
+      );
+      return activeType?.color || getValueForTheme("#3B82F6", "#006C67");
     }
     // For multiple selections, use default color
-    return getValueForTheme('#3B82F6', '#006C67');
+    return getValueForTheme("#3B82F6", "#006C67");
   };
 
   return (
@@ -66,7 +70,7 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
           )}
         >
           <div className="flex items-center">
-            <span 
+            <span
               className="w-3 h-3 rounded-full mr-3 flex-shrink-0"
               style={{ backgroundColor: getActiveFilterColor() }}
             />
@@ -102,7 +106,7 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
                 "absolute top-full left-4 right-4 mt-2 py-2 rounded-xl shadow-lg border z-50",
                 "backdrop-blur-sm",
                 getValueForTheme(
-                  "bg-gray-900/95 border-white/10",
+                  "bg-black/25 border-white/10",
                   "bg-white/95 border-gray-200"
                 )
               )}
@@ -110,14 +114,14 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
               {/* All option */}
               <button
                 onClick={() => {
-                  toggleFilter('all');
+                  toggleFilter("all");
                   setIsDropdownOpen(false);
                 }}
                 className={combine(
                   "w-full flex items-center px-4 py-3 text-sm font-medium transition-colors duration-150",
-                  activeFilters.includes('all')
+                  activeFilters.includes("all")
                     ? getValueForTheme(
-                        "bg-blue-500/20 text-blue-300",
+                        "bg-[#54CF90]/20 text-[#54CF90]",
                         "bg-[#006C67]/10 text-[#006C67]"
                       )
                     : getValueForTheme(
@@ -126,12 +130,14 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
                       )
                 )}
               >
-                <span 
+                <span
                   className="w-3 h-3 rounded-full mr-3 flex-shrink-0"
-                  style={{ backgroundColor: getValueForTheme('#3B82F6', '#006C67') }}
+                  style={{
+                    backgroundColor: getValueForTheme("#3B82F6", "#006C67"),
+                  }}
                 />
                 <span>ทั้งหมด</span>
-                {activeFilters.includes('all') && (
+                {activeFilters.includes("all") && (
                   <svg
                     className="w-4 h-4 ml-auto"
                     fill="currentColor"
@@ -167,11 +173,13 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
                         )
                   )}
                 >
-                  <span 
+                  <span
                     className="w-3 h-3 rounded-full mr-3 flex-shrink-0"
                     style={{ backgroundColor: activityType.color }}
                   />
-                  <span className="truncate flex-1 text-left">{activityType.label}</span>
+                  <span className="truncate flex-1 text-left">
+                    {activityType.label}
+                  </span>
                   {activeFilters.includes(activityType.id) && (
                     <svg
                       className="w-4 h-4 ml-2 flex-shrink-0"
@@ -235,14 +243,14 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
           <div className="flex gap-3 sm:flex-wrap sm:justify-center min-w-min">
             {/* All filter button */}
             <motion.button
-              onClick={() => toggleFilter('all')}
+              onClick={() => toggleFilter("all")}
               whileTap={{ scale: 0.95 }}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 flex-shrink-0 ${
-                activeFilters.includes('all')
+                activeFilters.includes("all")
                   ? combine(
                       "shadow-md",
                       getValueForTheme(
-                        "bg-blue-500 text-white",
+                        "bg-gradient-to-r from-[#54CF90] to-[#006C67] text-white",
                         "bg-[#006C67] text-white"
                       )
                     )
@@ -254,7 +262,7 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
             >
               ทั้งหมด
             </motion.button>
-            
+
             {/* Activity type filter buttons */}
             {ACTIVITY_TYPES.map((activityType) => {
               return (
@@ -274,13 +282,17 @@ const ActivityTypeFilter: React.FC<ActivityTypeFilterProps> = ({
                         )
                   }`}
                   style={{
-                    backgroundColor: activeFilters.includes(activityType.id) ? activityType.color : undefined
+                    backgroundColor: activeFilters.includes(activityType.id)
+                      ? activityType.color
+                      : undefined,
                   }}
                 >
-                  <span 
+                  <span
                     className={`w-2.5 h-2.5 rounded-full mr-2 flex-shrink-0`}
                     style={{
-                      backgroundColor: !activeFilters.includes(activityType.id) ? activityType.color : 'white'
+                      backgroundColor: !activeFilters.includes(activityType.id)
+                        ? activityType.color
+                        : "white",
                     }}
                   ></span>
                   <span className="truncate">{activityType.label}</span>

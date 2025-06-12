@@ -45,7 +45,7 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
       "glass-panel backdrop-blur-sm rounded-xl overflow-hidden border shadow-lg mb-6 sm:mb-8",
       "flex items-center justify-center",
       getValueForTheme(
-        "calendar-wrapper-dark bg-white/5 border-white/10 shadow-blue-900/20",
+        "calendar-wrapper-dark bg-white/5 border-white/10 shadow-black/1",
         "calendar-wrapper-light bg-white border-gray-100 shadow-gray-200/50"
       )
     )}
@@ -55,7 +55,7 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
       <div 
         className={combine(
           "animate-spin rounded-full h-8 w-8 border-b-2",
-          getValueForTheme("border-blue-500", "border-[#006C67]")
+          getValueForTheme("border-[#54CF90]-500", "border-[#006C67]")
         )}
       />
       <p 
@@ -336,7 +336,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
         "glass-panel backdrop-blur-sm rounded-lg overflow-hidden border shadow-md mb-6 sm:mb-8",
         "transition-all duration-300 hover:shadow-lg",
         getValueForTheme(
-          "calendar-wrapper-dark bg-white/5 border-white/10 shadow-blue-900/5",
+          "calendar-wrapper-dark bg-black/2 border-white/10 shadow-black/1",
           "calendar-wrapper-light bg-white border-gray-100 shadow-gray-100/50"
         )
       )}

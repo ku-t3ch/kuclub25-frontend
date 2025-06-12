@@ -172,18 +172,18 @@
 
 /* Multi-day project styling for dark theme */
 .calendar-wrapper-dark .multi-day-project {
-  background: linear-gradient(135deg, #0c4a6e 0%, #0ea5e9 100%) !important;
+  background: linear-gradient(135deg, #000000 0%, #2d2d2d 100%) !important;
 }
 
 /* ปรับแต่งมุมมองเดือนให้ดูทันสมัยสำหรับธีม Dark */
 .calendar-wrapper-dark .rbc-month-view {
-  background-color: rgba(11, 20, 33, 0.95);
+  background-color: rgba(255, 255, 255, 0);
   border: none;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  
 }
 
 .calendar-wrapper-dark:hover .rbc-month-view {
@@ -195,7 +195,7 @@
 .calendar-wrapper-dark .rbc-header,
 .dark-theme .rbc-header {
   font-weight: 400;
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(255, 255, 255, 0.045);
   padding: 14px 0;
   color: rgba(255, 255, 255, 0.8);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -212,38 +212,26 @@
 /* พื้นหลังของแต่ละวัน */
 .calendar-wrapper-dark .rbc-day-bg,
 .dark-theme .rbc-day-bg {
-  background-color: rgba(13, 23, 37, 0.8);
+  background-color: rgba(255, 255, 255, 0.072);
   transition: all 0.2s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-  border-right: 1px solid rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  border-right: 1px solid rgba(255, 255, 255, 0.055);
 }
 
 /* เอฟเฟกต์เมื่อวางเมาส์บนวัน */
 .calendar-wrapper-dark .rbc-day-bg:hover {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: rgba(255, 255, 255, 0.138);
 }
 
 /* วันปัจจุบัน */
 .calendar-wrapper-dark .rbc-today,
 .dark-theme .rbc-today {
-  background-color: rgba(59, 130, 246, 0.15) !important;
+  background-color: rgba(255, 255, 255, 0.145) !important;
   position: relative;
   z-index: 1;
 }
 
-.calendar-wrapper-dark .rbc-today::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 10px;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: rgba(59, 130, 246, 0.15);
-  z-index: -1;
-  animation: pulse 2s infinite;
-}
+
 
 /* เลขวันที่ */
 .calendar-wrapper-dark .rbc-date-cell,
@@ -259,7 +247,7 @@
 /* Indicator for days with projects */
 .calendar-wrapper-dark .rbc-date-cell.dark-theme-has-projects {
   font-weight: 500;
-  color: #3b82f6;
+  color: ¸;
 }
 
 .dark-theme-has-projects .rbc-day-bg,
@@ -269,7 +257,7 @@
 
 /* วันที่นอกเดือนปัจจุบัน */
 .calendar-wrapper-dark .rbc-off-range-bg {
-  background-color: rgba(10, 18, 30, 0.9);
+  background-color: rgba(255, 255, 255, 0.021);
 }
 
 .calendar-wrapper-dark .rbc-off-range,
@@ -290,13 +278,13 @@
 
 /* Month selector active state for dark theme */
 .calendar-wrapper-dark .month-selector-active::before {
-  background-color: #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  background-color: #54CF90;
+  box-shadow: 0 0 8px rgba(1, 97, 59, 0.5)
 }
 
 /* Dark theme day selected animation */
 .calendar-wrapper-dark .rbc-day-bg.day-selected {
-  background-color: rgba(59, 130, 246, 0.2);
+  background-color: #54CF90;
 }
 
 /* Dark theme scrollbar */
@@ -305,29 +293,29 @@
 }
 
 .calendar-wrapper-dark::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.3);
+  background: rgba(28, 28, 28, 0.3);
 }
 
 .calendar-wrapper-dark::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.5);
+  background: rgba(30, 30, 30, 0.5);
 }
 
 /* Month label enhancement for dark theme */
 .calendar-wrapper-dark .month-year-label {
-  background: linear-gradient(to right, #38bdf8, #0ea5e9);
+  background: linear-gradient(to right, #54CF90, #54CF90);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
+  text-shadow: 0 2px 10px rgba(14, 233, 72, 0.2);
 }
 
 .calendar-wrapper-dark .month-year-label::after {
-  background: linear-gradient(to right, #38bdf8, transparent);
+  background: linear-gradient(to right, #54CF90, transparent);
 }
 
 /* Glassmorphism panel for dark theme */
 .calendar-wrapper-dark .glass-panel {
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 42, 15, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
@@ -556,8 +544,8 @@
 /* Theme-specific styles for project count */
 .calendar-wrapper-dark .project-count,
 .dark-theme .project-count {
-  background-color: #4f46e5;
-  background-image: linear-gradient(135deg, #4f46e5, #60a5fa);
+  background-color: #54CF90;
+  background-image: linear-gradient(135deg, #54CF90, #047857);
 }
 
 .calendar-wrapper-light .project-count,
@@ -602,7 +590,7 @@
 }
 
 .dark-theme .filter-button-active::after {
-  background-color: #3b82f6;
+  background-color: #54CF90;
 }
 
 .light-theme .filter-button-active::after {

@@ -142,7 +142,7 @@ const ProjectList = memo<ProjectListProps>(
             "backdrop-blur-sm rounded-xl p-12 md:p-16 text-center",
             "border shadow-sm",
             getValueForTheme(
-              "bg-white/5 border-white/10 shadow-blue-900/20",
+              "bg-white/5 border-white/10 shadow-black/10",
               "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
             )
           )}
@@ -257,7 +257,7 @@ const ProjectList = memo<ProjectListProps>(
             className={combine(
               "px-3 py-1 rounded-full text-sm font-medium",
               getValueForTheme(
-                "bg-blue-500/20 text-blue-300 border border-blue-400/30",
+                "bg-[#047857]/50 text-[white]/75 border border-[#047857]",
                 "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
               )
             )}
