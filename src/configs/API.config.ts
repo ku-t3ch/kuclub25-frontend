@@ -8,8 +8,8 @@ const getApiBaseUrl = (): string => {
   // For client-side, check hostname
   const hostname = window.location.hostname;
 
-  if (hostname === "10.31.37.199") {
-    return process.env.NEXT_PUBLIC_API_NETWORK || "http://10.31.37.199:4000";
+  if (hostname === process.env.NEXT_PUBLIC_NETWORK) {
+    return `http://${process.env.NEXT_PUBLIC_NETWORK}:4000` || "http://localhost:4000";
   }
 
   return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
