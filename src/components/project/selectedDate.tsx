@@ -25,10 +25,12 @@ const containerVariants = {
   },
 } as const;
 
+
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 } as const;
+
 
 const singleProjectVariants = {
   initial: { opacity: 0, scale: 0.95 },
