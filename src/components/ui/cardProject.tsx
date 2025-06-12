@@ -14,7 +14,7 @@ interface ProjectCardProps {
 interface ActivityTag {
   type: string;
   key: keyof typeof ACTIVITY_COLORS;
-  typeColor: "purple" | "orange" | "emerald" | "default";
+  typeColor: "#36EF11" | "#D540FF" | "#5271FF" | "default";
 }
 
 const ALLOWED_ACTIVITY_TYPES = [
@@ -122,7 +122,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
           : project.project_location || project.location || "ไม่ระบุสถานที่",
       startDate,
       endDate,
-      monthDisplay, // Enhanced month display object
+      monthDisplay: monthDisplay, // Enhanced month display object
       displayDay: startDate ? new Date(startDate).getDate().toString() : "?",
       displayEndDay: endDate ? new Date(endDate).getDate().toString() : null,
     };
@@ -160,7 +160,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
           activities.push({
             type: ACTIVITY_LABELS[key] || key.replace(/_/g, " "),
             key: key as keyof typeof ACTIVITY_COLORS,
-            typeColor: "purple",
+            typeColor: "#5271FF", // Competency development color
           });
         }
       }
@@ -170,11 +170,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         typeof value === "number" &&
         value > 0
       ) {
-        const typeColor =
+        const typeColor: "#36EF90" | "#D540FF" | "#5271FF" | "default" =
           key === "social_activities"
-            ? "orange"
+            ? "#36EF90"
             : key === "university_activities"
-            ? "emerald"
+            ? "#D540FF"
+            : key === "competency_development_activities"
+            ? "#5271FF"
             : "default";
 
         activities.push({
@@ -206,36 +208,36 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   const styles = useMemo(
     () => ({
       card: getValueForTheme(
-        "bg-gradient-to-b from-white/5 to-white/3 border border-white/10 hover:border-blue-400/30",
+        "bg-[#171717]/25  border border-white/10 hover:border-[#54CF90]/30",
         "bg-white border border-[#006C67]/20 hover:border-[#006C67]/40 shadow-sm"
       ),
-      orgIcon: getValueForTheme("text-blue-300/90", "text-[#006C67]/80"),
+      orgIcon: getValueForTheme("text-[#54CF90]/90", "text-[#006C67]/80"),
       title: getValueForTheme(
-        "text-white group-hover:text-blue-100",
+        "text-white group-hover:text-[#54CF90]",
         "text-[#006C67] group-hover:text-[#006C67]/80"
       ),
       dateBg: getValueForTheme(
-        "bg-gradient-to-br from-blue-500/70 to-indigo-600/70 border border-blue-400/20",
+        "bg-gradient-to-br from-[#006C67]/80 to-[#54CF90]/80 border border-[#54CF90]/20",
         "bg-[#006C67]/70 border border-[#006C67]/20"
       ),
       dateHover: getValueForTheme(
-        "group-hover:from-blue-500/80 group-hover:to-indigo-600/80",
+        "group-hover:from-[#006C67]/60 group-hover:to-[#54CF90]/60",
         "group-hover:from-[#006C67]/90 group-hover:to-[#006C67]/80"
       ),
       details: getValueForTheme(
-        "text-white/70 group-hover:text-blue-200/90",
+        "text-white/70 group-hover:text-[#54CF90]/90",
         "text-[#006C67]/60 group-hover:text-[#006C67]/80"
       ),
       iconBg: getValueForTheme(
-        "bg-blue-500/10 text-blue-400/80",
+        "bg-[#006C67]/20 text-[#54CF90]/80",
         "bg-[#006C67]/10 text-[#006C67]/60"
       ),
       button: getValueForTheme(
-        "bg-gradient-to-r from-blue-800/20 to-indigo-800/20 hover:from-blue-700/30 hover:to-indigo-700/30",
+        "bg-gradient-to-r from-[#006C67]/80 via-[#54CF90]/80 to-[#54CF90]/80 hover:from-[#006C67]/20 hover:via-[#54CF90]/20 hover:to-[#54CF90]/20",
         "bg-gradient-to-r from-[#006C67]/5 to-[#006C67]/10 hover:from-[#006C67]/10 hover:to-[#006C67]/15"
       ),
       buttonBorder: getValueForTheme(
-        "border-white/5 hover:border-blue-400/10",
+        "border-[#54CF90]/20 hover:border-[#54CF90]/30",
         "border-[#006C67]/20 hover:border-[#006C67]/30"
       ),
       buttonText: getValueForTheme(
@@ -243,7 +245,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         "text-[#006C67]/70 hover:text-[#006C67]"
       ),
       buttonIcon: getValueForTheme(
-        "text-blue-300/70 group-hover:text-blue-200",
+        "text-[#54CF90]/70 group-hover:text-[#54CF90]",
         "text-[#006C67]/50 group-hover:text-[#006C67]"
       ),
     }),
@@ -271,42 +273,42 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
     [handleClick]
   );
 
-  // Activity Tag Colors - Fixed to properly respond to theme changes
+  // Activity Tag Colors - Updated to use hex color codes
   const getTagColors = useCallback(
     (typeColor: string) => {
       const colorMap = {
-        purple: getValueForTheme(
-          "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30",
-          "bg-purple-50 text-purple-600 ring-1 ring-purple-200"
+        "#D540FF": getValueForTheme(
+          "bg-[#D540FF]/30 text-purple-300 ring-1 ring-purple-500/30",
+          "bg-[#D540FF]/10 text-purple-600 ring-1 ring-purple-200"
         ),
-        emerald: getValueForTheme(
-          "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30",
-          "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
+        "#36EF90": getValueForTheme(
+          "bg-[#54CF90]/30 text-emerald-300 ring-1 ring-[#54CF90]/30",
+          "bg-[#36EF90]/10 text-emerald-600 ring-1 ring-emerald-200"
         ),
-        orange: getValueForTheme(
-          "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30",
-          "bg-orange-50 text-orange-600 ring-1 ring-orange-200"
+        "#5271FF": getValueForTheme(
+          "bg-[#5271FF]/30 text-blue-300 ring-1 ring-blue-500/30",
+          "bg-[#5271FF]/10 text-blue-600 ring-1 ring-blue-200"
         ),
         default: getValueForTheme(
-          "bg-gray-600/20 text-gray-300 ring-1 ring-gray-500/30",
+          "bg-[#006C67]/20 text-[#54CF90]/80 ring-1 ring-[#54CF90]/30",
           "bg-[#006C67]/10 text-[#006C67] ring-1 ring-[#006C67]/20"
         ),
       };
       return colorMap[typeColor as keyof typeof colorMap] || colorMap.default;
     },
-    [getValueForTheme] // Now properly depends on getValueForTheme
+    [getValueForTheme]
   );
 
   // Memoize tag colors for performance
   const activityTagColors = useMemo(() => {
     const colorCache = new Map<string, string>();
-    
-    activityTags.forEach(tag => {
+
+    activityTags.forEach((tag) => {
       if (!colorCache.has(tag.typeColor)) {
         colorCache.set(tag.typeColor, getTagColors(tag.typeColor));
       }
     });
-    
+
     return colorCache;
   }, [activityTags, getTagColors]);
 
@@ -445,21 +447,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
                   <div
                     key={`${tag.key}-${index}`}
                     className={combine(
-                      "inline-flex items-center px-2.5 sm:px-2 md:px-2.5 py-1 sm:py-0.75 md:py-1 rounded-full text-xs sm:text-2xs md:text-xs font-medium",
-                      activityTagColors.get(tag.typeColor) || getTagColors(tag.typeColor),
-                      "transition-all duration-300 hover:shadow-sm"
+                      "inline-flex items-center px-2 py-0.75  rounded-full text-xs sm:text-2xs md:text-xs font-medium",
+                      activityTagColors.get(tag.typeColor) ||
+                        getTagColors(tag.typeColor),
+                                            "transition-all duration-300 hover:shadow-sm"
                     )}
                   >
                     {tag.type}
                   </div>
-                ))}
+                ))} 
               </div>
             )}
 
             {/* Project Details */}
             <div className="flex flex-col space-y-1.5 sm:space-y-1.5 text-xs sm:text-2xs md:text-xs mt-2 sm:mt-1.5 md:mt-2">
-              
-
               {/* Location */}
               <div
                 className={combine(

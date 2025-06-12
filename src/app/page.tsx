@@ -11,8 +11,7 @@ import HeroSection from "../components/home/heroSection";
 import CategorySection from "../components/home/categorySection";
 import OrganizationSection from "../components/home/organizationSection";
 import UpcomingProjectSection from "../components/home/upcomingProjectSection";
-import { Vortex } from "../components/ui/vortex";
-
+import { Vortex } from "@/components/ui/vortex";
 export default function Home() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
@@ -233,23 +232,15 @@ export default function Home() {
   const loading = typesLoading || orgsLoading;
 
   return (
-    <div className={combine("min-h-screen pt-16 md:pt-20")}>
-      <Vortex
-        backgroundColor="transparent"
-        rangeY={800}
-        particleCount={100}
-        baseHue={120}
-        particleOpacity={0.3}
-        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
-        containerClassName={combine(
-          "fixed inset-0 z-0 ",
-          getValueForTheme(
-            "bg-gradient-to-b from-[#000000] to-[#123067]",
-            "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-          )
-        )}
-      />
-
+    <div
+      className={combine(
+        "min-h-screen pt-16 md:pt-20",
+        getValueForTheme(
+          "bg-[#ffff]/2",
+          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+        )
+      )}
+    >
       {campusError && (
         <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg z-50">
           <p>Campus Error: {campusError}</p>
@@ -257,7 +248,7 @@ export default function Home() {
       )}
 
       <HeroSection
-        title="ค้นพบชมรมที่ใช่สำหรับคุณ"
+        title="ค้นพบชมรมและกิจกรรมที่ใช่สำหรับคุณ"
         description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
         onSearch={handleSearch}
         initialQuery={searchQuery}
@@ -280,7 +271,8 @@ export default function Home() {
         onCampusChange={handleCampusChange}
         campusLoading={campusLoading}
       />
-      <div className="h-8 md:h-6 xs:h-4 " />
+
+      <div className="h-10" />
 
       <OrganizationSection
         organizations={organizations}
@@ -291,7 +283,7 @@ export default function Home() {
         onCategoryChange={handleCategoryChange}
       />
 
-      <div className="h-8 md:h-6 xs:h-4 " />
+      <div className="h-8 md:h-6 xs:h-4" />
 
       <UpcomingProjectSection
         projects={projects}

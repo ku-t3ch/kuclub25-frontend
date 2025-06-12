@@ -73,7 +73,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
         "h-full flex flex-col transition-all duration-500 cursor-pointer",
         "shadow-sm hover:shadow-xl",
         getValueForTheme(
-          "bg-gradient-to-br from-white/10 to-white/5 border border-white/15 hover:border-blue-400/50 shadow-blue-900/10",
+          "bg-black/2 border border-white/15 hover:border-[#8bbda3]/50 shadow-[#8bbda3]/10",
           "bg-white border border-gray-200 hover:border-[#006C67]/30 shadow-gray-200/50"
         ),
         className
@@ -138,7 +138,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
                 "backdrop-blur-sm rounded-full shadow-sm flex items-center",
                 "px-1 xs:px-1.5 sm:px-2 md:px-3 py-px xs:py-0.5 sm:py-1",
                 getValueForTheme(
-                  "bg-gradient-to-r from-blue-600/90 to-blue-500/90 text-white shadow-blue-900/30 border border-blue-400/30",
+                  "bg-[#54CF90]/70  text-white  border border-[#54CF90]/30",
                   "bg-gradient-to-r from-[#006C67]/90 to-teal-600/90 text-white shadow-[#006C67]/20 border border-[#006C67]/30"
                 )
               )}
@@ -162,7 +162,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
                 "font-semibold line-clamp-1 transition-colors duration-300",
                 "text-sm xs:text-2xs sm:text-base md:text-lg",
                 getValueForTheme(
-                  "text-white group-hover:text-blue-100",
+                  "text-white group-hover:text-[#54CF90]",
                   "text-gray-800 group-hover:text-[#006C67]"
                 )
               )}
@@ -227,7 +227,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
               "group/btn flex justify-center items-center shadow-inner",
               "py-1.5 xs:py-1.5 sm:py-2 md:py-2.5",
               getValueForTheme(
-                "text-white/90 bg-gradient-to-r from-blue-600/30 to-indigo-600/30 hover:from-blue-600/50 hover:to-indigo-600/50 hover:text-white border border-blue-500/20 hover:border-blue-400/40 shadow-white/5",
+                "text-white/90 bg-gradient-to-r from-[#006C67] via-[#54CF90]/70 to-[#54CF90]/50 hover:from-[#54CF90]/50 hover:to-[#54CF90]/50 hover:text-white border border-[#54CF90]/30 hover:border-[#54CF90]/40 shadow-white/5",
                 "text-[#006C67]/90 bg-gradient-to-r from-[#006C67]/10 to-teal-600/10 hover:from-[#006C67]/20 hover:to-teal-600/20 hover:text-[#006C67] border border-[#006C67]/20 hover:border-[#006C67]/30 shadow-[#006C67]/5"
               )
             )}
@@ -241,7 +241,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
                 className={combine(
                   "w-3 xs:w-2.5 sm:w-3 md:w-4 h-3 xs:h-2.5 sm:h-3 md:h-4 ml-1.5 xs:ml-1 sm:ml-1.5 md:ml-2",
                   getValueForTheme(
-                    "text-blue-300 group-hover/btn:text-blue-200",
+                    "text-[#54CF90] group-hover/btn:text-white",
                     "text-[#006C67]/70 group-hover/btn:text-[#006C67]"
                   )
                 )}
@@ -266,7 +266,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
               className={combine(
                 "absolute inset-0 opacity-0 group-hover/btn:opacity-100",
                 getValueForTheme(
-                  "bg-gradient-to-r from-blue-500/20 to-indigo-500/20",
+                  "bg-gradient-to-r from-[#54CF90]/20 to-[#54CF90]/20",
                   "bg-gradient-to-r from-[#006C67]/20 to-teal-500/20"
                 )
               )}
@@ -286,7 +286,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
         className={combine(
           "absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 pointer-events-none",
           getValueForTheme(
-            "bg-gradient-to-t from-blue-500/10 to-transparent",
+            "bg-gradient-to-t from-[#54CF90]/10 to-transparent",
             "bg-gradient-to-t from-[#006C69]/10 to-transparent"
           )
         )}

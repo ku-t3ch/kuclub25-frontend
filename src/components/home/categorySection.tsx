@@ -240,8 +240,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const desktopLayoutClasses = useMemo(() => "hidden md:block space-y-8", []);
 
   const headerClasses = useMemo(() => ({
-    mobile: combine("text-xl font-semibold", getValueForTheme("text-white", "text-[#006C67]")),
-    desktop: combine("text-2xl lg:text-3xl font-semibold", getValueForTheme("text-white", "text-[#006C67]"))
+    mobile: combine("text-l font-medium", getValueForTheme("text-white", "text-[#006C67]")),
+    desktop: combine("text-xl lg:text-2xl font-medium ", getValueForTheme("text-white", "text-[#006C67]"))
   }), [combine, getValueForTheme]);
 
   const selectClasses = useMemo(() => ({
@@ -445,33 +445,92 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
         {/* Desktop Layout */}
         <div className={desktopLayoutClasses}>
-          {/* Campus Filter - Desktop */}
-          <div className="space-y-4">
-            <h2 className={headerClasses.desktop}>วิทยาเขต</h2>
-            <div className="relative inline-block">
-              <select
-                value={activeCampus || ''}
-                onChange={handleCampusSelectChange}
-                disabled={campusLoading}
-                className={selectClasses.desktop}
-              >
-                {!campusLoading && campusOptions}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Campus Filter - Desktop */}
+            <div className="space-y-4">
+              <h2 className={headerClasses.desktop}>วิทยาเขต</h2>
+              <div className="relative">
+                <select
+                  value={activeCampus || ''}
+                  onChange={handleCampusSelectChange}
+                  disabled={campusLoading}
+                  className={combine(
+                    "px-6 py-3 pr-12 rounded-xl text-sm font-medium",
+                    "transition-all duration-200 appearance-none cursor-pointer",
+                    "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                    "w-full shadow-sm",
+                    getValueForTheme(
+                      "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-[#54CF90]",
+                      "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
+                    ),
+                    campusLoading ? "opacity-50 cursor-not-allowed" : ""
+                  )}
+                >
+                
+                  {!campusLoading && campusOptions}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Category Filter - Desktop */}
-          <div className="space-y-4">
-            <h2 className={headerClasses.desktop}>ประเภทองค์กร</h2>
-            <div className="relative">
-              <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
-                <div className="flex flex-nowrap gap-3 pb-2 min-w-max">
-                  {!loading && categoryItems}
+            {/* Category Filter - Desktop */}
+            <div className="space-y-4">
+              <h2 className={headerClasses.desktop}>ประเภทองค์กร</h2>
+              <div className="relative">
+                <select
+                  value={activeCategory || ''}
+                  onChange={(event) => {
+                    const selectedValue = event.target.value;
+                    onCategoryChange(selectedValue || undefined);
+                  }}
+                  disabled={loading}
+                  className={combine(
+                    "px-6 py-3 pr-12 rounded-xl text-sm font-medium",
+                    "transition-all duration-200 appearance-none cursor-pointer",
+                    "focus:outline-none focus:ring-2 focus:ring-offset-2",
+                    "w-full shadow-sm",
+                    getValueForTheme(
+                      "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-[#54CF90]",
+                      "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
+                    ),
+                    loading ? "opacity-50 cursor-not-allowed" : ""
+                  )}
+                >
+                  <option 
+                    value=""
+                    className={getValueForTheme(
+                      "bg-gray-800 text-white",
+                      "bg-white text-gray-900"
+                    )}
+                  >
+                    ทั้งหมด
+                    {categoryCountMap.get(undefined) && ` (${categoryCountMap.get(undefined)})`}
+                  </option>
+                  {!loading && categories
+                    .filter(category => category.id !== undefined)
+                    .map((category) => (
+                      <option 
+                        key={category.id} 
+                        value={category.id}
+                        className={getValueForTheme(
+                          "bg-gray-800 text-white",
+                          "bg-white text-gray-900"
+                        )}
+                      >
+                        {category.name}
+                        {categoryCountMap.get(category.id) && ` (${categoryCountMap.get(category.id)})`}
+                      </option>
+                    ))
+                  }
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </div>
               </div>
             </div>
