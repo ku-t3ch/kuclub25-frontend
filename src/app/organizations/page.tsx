@@ -7,7 +7,6 @@ import { useCampuses } from "../../hooks/useCampuses";
 import OrganizationPageHeader from "../../components/organization/organizationHeader";
 import OrganizationEnhancedFilters from "../../components/organization/organizationEnhancedFilters";
 import OrganizationContent from "../../components/organization/organizationContent";
-import { Vortex } from "../../components/ui/vortex";
 
 const OrganizationsPage: React.FC = () => {
   const { combine, getValueForTheme } = useThemeUtils();
@@ -63,13 +62,13 @@ const OrganizationsPage: React.FC = () => {
 
   const themeClasses = useMemo(() => ({
     pageBackground: combine(
-      "min-h-screen pt-14 sm:pt-16 md:pt-20 relative"
+      "min-h-screen pt-14 sm:pt-16 md:pt-20",
+      getValueForTheme(
+        "bg-[#ffff]/2",
+        "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+      )
     ),
-    vortexBg: getValueForTheme(
-      "bg-gradient-to-b from-[#000000] to-[#123067]",
-      "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-    ),
-    contentContainer: "max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8 relative z-10"
+    contentContainer: "max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8"
   }), [combine, getValueForTheme]);
 
   // Memoized categories
@@ -185,19 +184,6 @@ const OrganizationsPage: React.FC = () => {
 
   return (
     <div className={themeClasses.pageBackground}>
-      <Vortex
-        backgroundColor="transparent"
-        rangeY={800}
-        particleCount={100}
-        baseHue={120}
-        particleOpacity={0.3}
-        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
-        containerClassName={combine(
-          "fixed inset-0 z-0",
-          themeClasses.vortexBg
-        )}
-      />
-
       <div className={themeClasses.contentContainer}>
         {/* Page Header with Error Handling */}
         <OrganizationPageHeader
