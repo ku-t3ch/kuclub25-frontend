@@ -27,7 +27,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(({
         "transition-all duration-200 px-3 py-3 rounded-lg text-sm relative overflow-hidden touch-manipulation",
         isActive
           ? getValueForTheme(
-            "bg-blue-600/15 border border-blue-500/30 text-blue-200",
+            "bg-[#54CF90]/15 border border-[#54CF90]/30 text-[#54CF90]",
             "bg-[#006C67]/10 border border-[#006C67]/20 text-[#006C67]"
           )
           : getValueForTheme(
@@ -41,7 +41,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(({
       "whitespace-nowrap transition-all duration-200 px-4 py-2.5 rounded-full text-sm font-medium",
       isActive
         ? getValueForTheme(
-          "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+          "bg-[#54CF90]/20 text-[#54CF90] border border-[#54CF90]/30",
           "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
         )
         : getValueForTheme(
@@ -55,7 +55,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(({
     const baseClasses = isMobile ? "px-2 py-0.5 rounded-full text-xs font-medium" : "ml-2 px-2 py-0.5 rounded-full text-xs";
     const colorClasses = isActive
       ? getValueForTheme(
-        isMobile ? "bg-blue-500/20 text-blue-200" : "bg-blue-600/30 text-blue-200",
+        isMobile ? "bg-[#54CF90]/20 text-[#54CF90]" : "bg-[#54CF90]/30 text-[#54CF90]",
         "bg-[#006C67]/20 text-[#006C67]"
       )
       : getValueForTheme(
@@ -67,7 +67,7 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(({
 
   const indicatorClasses = useMemo(() => combine(
     "absolute top-1 right-1 w-1.5 h-1.5 rounded-full",
-    getValueForTheme("bg-blue-400", "bg-[#006C67]")
+    getValueForTheme("bg-[#54CF90]", "bg-[#006C67]")
   ), [combine, getValueForTheme]);
 
   const shouldShowCount = isActive && count !== undefined;
@@ -128,7 +128,7 @@ const DropdownOption: React.FC<DropdownOptionProps> = memo(({
     "transition-colors duration-150 touch-manipulation",
     isActive
       ? getValueForTheme(
-        "bg-blue-600/20 text-blue-200",
+        "bg-[#54CF90]/20 text-[#54CF90]",
         "bg-[#006C67]/10 text-[#006C67]"
       )
       : getValueForTheme(
@@ -145,7 +145,7 @@ const DropdownOption: React.FC<DropdownOptionProps> = memo(({
     "px-2 py-1 rounded-full text-xs font-medium",
     isActive
       ? getValueForTheme(
-        "bg-blue-500/20 text-blue-200",
+        "bg-[#54CF90]/20 text-[#54CF90]",
         "bg-[#006C67]/20 text-[#006C67]"
       )
       : getValueForTheme(
@@ -156,7 +156,7 @@ const DropdownOption: React.FC<DropdownOptionProps> = memo(({
 
   const indicatorClasses = useMemo(() => combine(
     "w-2 h-2 rounded-full",
-    getValueForTheme("bg-blue-400", "bg-[#006C67]")
+    getValueForTheme("bg-[#54CF90]", "bg-[#006C67]")
   ), [combine, getValueForTheme]);
 
   return (
@@ -250,7 +250,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       "transition-all duration-200 appearance-none cursor-pointer",
       "focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm",
       getValueForTheme(
-        "bg-white/10 border border-white/20 text-white focus:bg-white/15 focus:ring-blue-500",
+        "bg-white/10 border border-white/20 text-white focus:bg-white/15 focus:ring-#006C67-500",
         "bg-white border border-gray-200 text-gray-700 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
       ),
       campusLoading ? "opacity-50 cursor-not-allowed" : ""
@@ -261,7 +261,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       "focus:outline-none focus:ring-2 focus:ring-offset-2",
       "min-w-[240px] shadow-sm",
       getValueForTheme(
-        "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-blue-500",
+        "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-#006C67-500",
         "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
       ),
       campusLoading ? "opacity-50 cursor-not-allowed" : ""
@@ -283,7 +283,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     "rounded-xl border shadow-lg overflow-hidden",
     "animate-in fade-in-0 zoom-in-95 duration-200",
     getValueForTheme(
-      "bg-gray-900/95 border-white/20 backdrop-blur-md",
+      "bg-black/75 border-white/20 backdrop-blur-md",
       "bg-white border-gray-200 shadow-xl"
     )
   ), [combine, getValueForTheme]);
@@ -291,7 +291,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const countBadgeClasses = useMemo(() => combine(
     "px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0",
     getValueForTheme(
-      "bg-blue-500/20 text-blue-300",
+      "bg-[#54CF90]/20 text-[#54CF90]",
       "bg-[#006C67]/10 text-[#006C67]"
     )
   ), [combine, getValueForTheme]);

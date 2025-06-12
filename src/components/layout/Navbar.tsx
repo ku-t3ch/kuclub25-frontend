@@ -274,21 +274,14 @@ const NavBar = () => {
                   className={combine(
                     "font-bold text-2xl sm:text-3xl tracking-wider",
                     getValueForTheme(
-                      "bg-gradient-to-r from-[#1c7648] via-[#54CF90]/90 to-[#54CF90]/80 bg-clip-text text-transparent",
+                      "bg-gradient-to-r from-[#54CF90] via-[#54CF90]/90 to-[#54CF90]/80 bg-clip-text text-transparent",
                       "text-[#006C67]"
                     )
                   )}
                 >
-                  KU
+                  KU CLUB
                 </span>
-                <span
-                  className={combine(
-                    "font-bold text-2xl sm:text-3xl ml-2 tracking-wider",
-                    getValueForTheme("text-[#60B7F0]", "text-[#006C67]/80")
-                  )}
-                >
-                  CLUB
-                </span>
+        
               </div>
             </div>
           </Link>

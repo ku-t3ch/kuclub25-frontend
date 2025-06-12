@@ -249,7 +249,9 @@ export default function Home() {
 
       <HeroSection
         title="ค้นพบชมรมและกิจกรรมที่ใช่สำหรับคุณ"
-        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่มีความหลากหลาย พร้อมพัฒนาทักษะ ความสามารถและสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
+        description={`เลือกจากกว่า ${totalClubCount} ชมรมที่หลากหลาย
+                        พร้อมพัฒนาทักษะ ความสามารถ 
+                        และสร้างเครือข่ายที่มีคุณค่าตลอดชีวิตการเป็นนิสิต`}
         onSearch={handleSearch}
         initialQuery={searchQuery}
         isLoading={isSearching}

@@ -45,36 +45,60 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     }
   }, [isLoading]);
 
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (onSearch && searchQuery.trim() !== "") {
-      setIsSearching(true);
-      onSearch(searchQuery.trim());
-    }
-  }, [onSearch, searchQuery]);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (onSearch && searchQuery.trim() !== "") {
+        setIsSearching(true);
+        onSearch(searchQuery.trim());
+      }
+    },
+    [onSearch, searchQuery]
+  );
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSearchQuery(newValue);
-    if (newValue === "" && onSearch) {
-      setIsSearching(false);
-      onSearch("");
-    }
-  }, [onSearch]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+      setSearchQuery(newValue);
+      if (newValue === "" && onSearch) {
+        setIsSearching(false);
+        onSearch("");
+      }
+    },
+    [onSearch]
+  );
 
-  const themeValues = useMemo(() => ({
-    headingGradient: getValueForTheme("from-[#54CF90] via-[#54CF90] to-[#54CF90]/90", "from-[#006C67] via-[#006C67] to-[#006C67]/80"),
-    descriptionText: getValueForTheme("text-white/80", "text-gray-700"),
-    searchBarBg: getValueForTheme("bg-white/10 backdrop-blur-sm", "bg-white"),
-    searchBarText: getValueForTheme("text-white", "text-gray-900"),
-    searchBarPlaceholder: getValueForTheme("placeholder-gray-300", "placeholder-gray-500"),
-    searchBarBorder: getValueForTheme("border-white/20", "border-gray-200"),
-    searchBarFocus: getValueForTheme("focus:border-[#54CF90] focus:ring-[#54CF90]/25", "focus:border-[#006C67] focus:ring-[#006C67]/25"),
-    searchButton: getValueForTheme("from-[#54CF90] to-[#54CF90]/90", "from-[#006C67] to-[#006C67]/90"),
-    searchIconColor: getValueForTheme("text-white/50", "text-gray-400"),
-    glowEffect: getValueForTheme("bg-[#54CF90]/20", "bg-[#006C67]/20"),
-    hoverShadow: getValueForTheme("hover:shadow-[#54CF90]/30", "hover:shadow-[#006C67]/30"),
-  }), [getValueForTheme]);
+  const themeValues = useMemo(
+    () => ({
+      headingGradient: getValueForTheme(
+        "from-[#54CF90] via-[#54CF90] to-[#54CF90]/90",
+        "from-[#006C67] via-[#006C67] to-[#006C67]/80"
+      ),
+      descriptionText: getValueForTheme("text-white/80", "text-gray-700"),
+      searchBarBg: getValueForTheme("bg-white/10 backdrop-blur-sm", "bg-white"),
+      searchBarText: getValueForTheme("text-white", "text-gray-900"),
+      searchBarPlaceholder: getValueForTheme(
+        "placeholder-gray-300",
+        "placeholder-gray-500"
+      ),
+      searchBarBorder: getValueForTheme("border-white/20", "border-gray-200"),
+      searchBarFocus: getValueForTheme(
+        "focus:border-[#54CF90] focus:ring-[#54CF90]/25",
+        "focus:border-[#006C67] focus:ring-[#006C67]/25"
+      ),
+      searchButton: getValueForTheme(
+        "from-[#54CF90] to-[#54CF90]/90",
+        "from-[#006C67] to-[#006C67]/90"
+      ),
+      searchIconColor: getValueForTheme("text-white/50", "text-gray-400"),
+      glowEffect: getValueForTheme("bg-[#54CF90]/20", "bg-[#006C67]/20"),
+      hoverShadow: getValueForTheme(
+        "hover:shadow-[#54CF90]/30",
+        "hover:shadow-[#006C67]/30"
+      ),
+    }),
+    [getValueForTheme]
+  );
 
   if (!isMounted) {
     return (
@@ -103,15 +127,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <div className="relative w-full overflow-hidden bg-transparent">
-      <div className="container my-auto mx-auto px-3 xs:px-4 sm:px-6 text-center relative z-10 max-w-5xl pt-8 sm:pt-12 md:pt-16">
+      <div className="container my-auto mx-auto px-4 xs:px-6 sm:px-8 md:px-10 lg:px-12 text-center relative z-10 max-w-7xl pt-6 xs:pt-8 sm:pt-12 md:pt-16 lg:pt-20">
         {/* Title */}
         <motion.h1
           className={combine(
-            "text-xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3",
-            "bg-clip-text text-transparent bg-gradient-to-r ",
-            "whitespace-nowrap",
+            "text-3xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-3 xs:mb-2 sm:mb-3 md:mb-1",
+            "bg-clip-text text-transparent bg-gradient-to-r  ",
+            "break-words text-center leading-tight",
+            "max-w-5xl mx-auto px-2",
             themeValues.headingGradient,
-            "py-2 xs:py-3 sm:py-4 md:py-5"
+            "py-2 xs:py-3 sm:py-4 md:py-3"
           )}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,9 +148,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Description */}
         <motion.p
           className={combine(
-            "text-sm xs:text-base sm:text-lg md:text-xl max-w-3xl mx-auto mb-4 xs:mb-5 sm:mb-6 md:mb-10",
+            "text-sm xs:text-base sm:text-lg md:text-xl  max-w-4xl mx-auto mb-6 xs:mb-8 sm:mb-10 md:mb-12",
             themeValues.descriptionText,
-            "leading-relaxed px-1 xs:px-2 sm:px-4 md:px-6"
+            "leading-relaxed px-3 xs:px-4 sm:px-6 md:px-8",
+            "text-center break-words",
+            "hyphens-auto"
           )}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
