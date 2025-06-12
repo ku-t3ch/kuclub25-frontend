@@ -279,9 +279,16 @@ const NavBar = () => {
                     )
                   )}
                 >
-                  KU CLUB
+                  KU
                 </span>
-           
+                <span
+                  className={combine(
+                    "font-bold text-2xl sm:text-3xl ml-2 tracking-wider",
+                    getValueForTheme("text-[#60B7F0]", "text-[#006C67]/80")
+                  )}
+                >
+                  CLUB
+                </span>
               </div>
             </div>
           </Link>
