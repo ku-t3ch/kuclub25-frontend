@@ -63,17 +63,17 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   }, [onSearch]);
 
   const themeValues = useMemo(() => ({
-    headingGradient: getValueForTheme("from-blue-400 via-blue-300 to-purple-400", "from-[#006C67] via-[#006C67] to-[#006C67]/80"),
+    headingGradient: getValueForTheme("from-[#54CF90] via-[#54CF90] to-[#54CF90]/90", "from-[#006C67] via-[#006C67] to-[#006C67]/80"),
     descriptionText: getValueForTheme("text-white/80", "text-gray-700"),
     searchBarBg: getValueForTheme("bg-white/10 backdrop-blur-sm", "bg-white"),
     searchBarText: getValueForTheme("text-white", "text-gray-900"),
     searchBarPlaceholder: getValueForTheme("placeholder-gray-300", "placeholder-gray-500"),
     searchBarBorder: getValueForTheme("border-white/20", "border-gray-200"),
-    searchBarFocus: getValueForTheme("focus:border-blue-400 focus:ring-blue-400/25", "focus:border-[#006C67] focus:ring-[#006C67]/25"),
-    searchButton: getValueForTheme("from-blue-600 to-blue-700", "from-[#006C67] to-[#006C67]/90"),
+    searchBarFocus: getValueForTheme("focus:border-[#54CF90] focus:ring-[#54CF90]/25", "focus:border-[#006C67] focus:ring-[#006C67]/25"),
+    searchButton: getValueForTheme("from-[#54CF90] to-[#54CF90]/90", "from-[#006C67] to-[#006C67]/90"),
     searchIconColor: getValueForTheme("text-white/50", "text-gray-400"),
-    glowEffect: getValueForTheme("bg-blue-500/20", "bg-[#006C67]/20"),
-    hoverShadow: getValueForTheme("hover:shadow-blue-600/30", "hover:shadow-[#006C67]/30"),
+    glowEffect: getValueForTheme("bg-[#54CF90]/20", "bg-[#006C67]/20"),
+    hoverShadow: getValueForTheme("hover:shadow-[#54CF90]/30", "hover:shadow-[#006C67]/30"),
   }), [getValueForTheme]);
 
   if (!isMounted) {
@@ -107,8 +107,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Title */}
         <motion.h1
           className={combine(
-            "text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3",
-            "bg-clip-text text-transparent bg-gradient-to-r",
+            "text-xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3",
+            "bg-clip-text text-transparent bg-gradient-to-r ",
             "whitespace-nowrap",
             themeValues.headingGradient,
             "py-2 xs:py-3 sm:py-4 md:py-5"
@@ -170,7 +170,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               type="submit"
               disabled={isSearching || !searchQuery.trim()}
               className={combine(
-                "absolute right-1 xs:right-1.5 sm:right-2 top-1 xs:top-1.5 sm:top-2",
+                "absolute right-2 xs:right-1.5 sm:right-2 top-2 xs:top-1.5 sm:top-2",
                 "p-1.5 xs:p-1.5 sm:p-2 rounded-full bg-gradient-to-r",
                 themeValues.searchButton,
                 "hover:shadow-md transition duration-300",
@@ -216,7 +216,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             {/* Search icon */}
             <div
               className={combine(
-                "absolute left-2.5 xs:left-3 sm:left-3.5 md:left-4 top-2.5 xs:top-3 sm:top-3.5 md:top-4",
+                "absolute left-2.5 xs:left-3 sm:left-3.5 md:left-4 top-3 xs:top-3 sm:top-3.5 md:top-4",
                 themeValues.searchIconColor
               )}
             >

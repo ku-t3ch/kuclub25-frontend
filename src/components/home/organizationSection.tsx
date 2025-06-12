@@ -125,7 +125,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                 >
 
                   {/* Pagination Controls */}
-                  <div className="flex items-center space-x-1 sm:space-x-2">
+                  <div className="flex items-center space-x-1 mt-5  sm:space-x-2">
                     {/* Previous Button */}
                     <motion.button
                       onClick={() => handlePageChange(currentPage - 1)}
@@ -139,7 +139,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                               "text-gray-400 cursor-not-allowed"
                             )
                           : getValueForTheme(
-                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#54CF90] hover:text-[#54CF90]/80 hover:bg-white/10",
                               "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
                             )
                       )}
@@ -160,7 +160,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                           className={combine(
                             "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                             getValueForTheme(
-                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#54CF90] hover:text-[#54CF90]/80 hover:bg-white/10",
                               "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
                             )
                           )}
@@ -189,11 +189,11 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                           "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                           page === currentPage
                             ? getValueForTheme(
-                                "bg-blue-600 text-white shadow-lg",
+                                "bg-[#54CF90]/75 text-white shadow-lg",
                                 "bg-[#006C67] text-white shadow-lg"
                               )
                             : getValueForTheme(
-                                "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                                "text-[#54CF90] hover:text-[#54CF90]/80 hover:bg-white/10",
                                 "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
                               )
                         )}
@@ -220,7 +220,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                           className={combine(
                             "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                             getValueForTheme(
-                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#54CF90] hover:text-[#54CF90]/80 hover:bg-white/10",
                               "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
                             )
                           )}
@@ -245,7 +245,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                               "text-gray-400 cursor-not-allowed"
                             )
                           : getValueForTheme(
-                              "text-blue-300 hover:text-blue-200 hover:bg-white/10",
+                              "text-[#54CF90] hover:text-[#54CF90]/80 hover:bg-white/10",
                               "text-[#006C67] hover:text-[#005550] hover:bg-[#006C67]/10"
                             )
                       )}
@@ -328,7 +328,7 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
                 onClick={() => onCategoryChange(undefined)}
                 className={combine(
                   "px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-sm sm:text-base font-medium transition-all duration-200",
-                  getValueForTheme("bg-blue-600 hover:bg-blue-700 text-white", "bg-[#006C67] hover:bg-[#005550] text-white")
+                  getValueForTheme("bg-[#54CF90] hover:bg-[#54CF90]/80 text-white", "bg-[#006C67] hover:bg-[#005550] text-white")
                 )}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

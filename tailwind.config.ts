@@ -10,6 +10,7 @@ module.exports = {
   theme: {
     extend: {
       screens: {
+        'xxs' : '320px',   // Extra small phones
         'xs': '375px',    // iPhone SE and small phones
         'sm': '640px',    // Small tablets
         'md': '768px',    // Medium tablets

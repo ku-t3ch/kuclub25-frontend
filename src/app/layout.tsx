@@ -3,7 +3,6 @@ import "./globals.css";
 import { ThemeProvider } from "../contexts/ThemeContext";
 import { AuthProvider } from "../contexts/AuthContext";
 import Navbar from "../components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 
 const kanit = Kanit({
   subsets: ['thai', 'latin'],
@@ -36,7 +35,7 @@ export default function RootLayout({
               <main className="flex-1">
                 {children}
               </main>
-              <Footer />
+      
             </div>
           </AuthProvider>
         </ThemeProvider>

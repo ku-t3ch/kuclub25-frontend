@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
-import Logo from "../../assets/logo.png";
-import LogoLight from "../../assets/logo_light.png";
+import LogoDark from "../../assets/logo.png";
+import LogoLight from "../../assets/logo.png";
 
 // Memoized icon components to prevent re-renders
 const SunIcon = React.memo(() => (
@@ -203,7 +203,7 @@ const NavBar = () => {
       combine(
         "p-2.5 rounded-full ml-2 flex items-center justify-center hover:scale-110 transition-all",
         getValueForTheme(
-          "bg-blue-500/20 border border-blue-500/30 hover:bg-blue-500/30",
+          "bg-[#54CF90]/20 border border-[#54CF90]/30 hover:bg-[#54CF90]/30",
           "bg-[#006C67]/10 border border-[#006C67]/20 hover:bg-[#006C67]/15"
         )
       ),
@@ -215,7 +215,7 @@ const NavBar = () => {
       combine(
         "p-2 rounded-full flex items-center justify-center hover:scale-110 transition-all",
         getValueForTheme(
-          "bg-blue-500/20 border border-blue-500/30 hover:bg-blue-500/30",
+          "bg-[#54CF90]/20 border border-[#54CF90]/30 hover:bg-[#54CF90]/30",
           "bg-[#006C67]/10 border border-[#006C67]/20 hover:bg-[#006C67]/15"
         )
       ),
@@ -227,7 +227,7 @@ const NavBar = () => {
       combine(
         "flex flex-col justify-center items-center w-10 h-10 rounded-full transition-all",
         getValueForTheme(
-          "bg-blue-500/20 border border-blue-500/30 hover:bg-blue-500/30",
+          "bg-[#54CF90]/20 border border-[#54CF90]/30 hover:bg-[#54CF90]/30",
           "bg-[#006C67]/10 border border-[#006C67]/20 hover:bg-[#006C67]/15"
         )
       ),
@@ -247,7 +247,7 @@ const NavBar = () => {
 
   // Memoized logo selection based on theme
   const currentLogo = useMemo(() => {
-    return resolvedTheme === "light" ? LogoLight : LogoLight;
+    return resolvedTheme === "light" ? LogoLight : LogoDark;
   }, [resolvedTheme]);
 
   return (
@@ -256,15 +256,15 @@ const NavBar = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform">
+            <div className="relative z-10 h-10 w-10 sm:h-12 sm:w-12 rounded-lg flex items-center justify-center overflow-hidden hover:scale-105 transition-transform duration-200">
               <Image
                 src={currentLogo}
                 alt="KU Club Logo"
-                className="w-full h-full object-cover"
-                width={48}
-                height={48}
+                className="w-full h-full object-cover "
+                width={200}
+                height={200}
                 priority
-                sizes="(max-width: 640px) 40px, 48px"
+                sizes="(max-width: 640px) 80px, 80px"
               />
             </div>
 
@@ -273,12 +273,22 @@ const NavBar = () => {
                 <span
                   className={combine(
                     "font-bold text-2xl sm:text-3xl tracking-wider",
-                    getValueForTheme("text-[#8AD1FF]", "text-[#006C67]")
+                    getValueForTheme(
+                      "bg-gradient-to-r from-[#1c7648] via-[#54CF90]/90 to-[#54CF90]/80 bg-clip-text text-transparent",
+                      "text-[#006C67]"
+                    )
                   )}
                 >
-                  KU CLUB
+                  KU
                 </span>
-           
+                <span
+                  className={combine(
+                    "font-bold text-2xl sm:text-3xl ml-2 tracking-wider",
+                    getValueForTheme("text-[#60B7F0]", "text-[#006C67]/80")
+                  )}
+                >
+                  CLUB
+                </span>
               </div>
             </div>
           </Link>
@@ -291,11 +301,11 @@ const NavBar = () => {
                 <Link
                   key={link.path}
                   href={link.path}
-                  className={combine(
+                   className={combine(
                     "px-4 py-2 rounded-full transition-all duration-200 font-medium",
                     isActive
                       ? getValueForTheme(
-                          "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+                          "bg-gradient-to-r from-[#015a5e]/10 via-[#54CF90]/10 to-[#54CF90]/10 text-[#54CF90] border border-[#54CF90]/30",
                           "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
                         )
                       : getValueForTheme(
@@ -361,7 +371,7 @@ const NavBar = () => {
                         "block px-4 py-3 rounded-lg transition-all duration-200 font-medium mb-1",
                         isActive
                           ? getValueForTheme(
-                              "bg-blue-500/20 text-blue-400 border border-blue-500/30",
+                              "bg-gradient-to-r from-[#015a5e] via-[#54CF90] to-[#54CF90]/90 text-white border border-[#54CF90]/30",
                               "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
                             )
                           : getValueForTheme(
