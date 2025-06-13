@@ -8,7 +8,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import LogoDark from "../../assets/logo.png";
-import LogoLight from "../../assets/logo.png";
+import LogoLight from "../../assets/logo_light.png";
 
 // Memoized icon components to prevent re-renders
 const SunIcon = React.memo(() => (
@@ -279,7 +279,7 @@ const NavBar = () => {
                     )
                   )}
                 >
-                  KU CLUB
+                  KU Club & Acitivity
                 </span>
         
               </div>
