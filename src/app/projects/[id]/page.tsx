@@ -18,14 +18,14 @@ const LoadingSpinner = React.memo(() => {
     <div className={combine(
       "min-h-screen pt-16 md:pt-20 flex items-center justify-center",
       getValueForTheme(
-        "bg-gradient-to-b from-[#051D35] to-[#091428]",
+        "bg-[#ffff]/2",
         "bg-gradient-to-b from-white to-gray-50"
       )
     )}>
       <div className="text-center">
         <div className={combine(
           "w-12 h-12 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4",
-          getValueForTheme("border-blue-400", "border-[#006C67]")
+          getValueForTheme("border-[#54CF90]", "border-[#006C67]")
         )} />
         <p className={combine(
           "text-lg",
@@ -50,7 +50,7 @@ const ErrorMessage = React.memo<{
     <div className={combine(
       "min-h-screen pt-16 md:pt-20 flex items-center justify-center",
       getValueForTheme(
-        "bg-gradient-to-b from-[#051D35] to-[#091428]",
+        "bg-gradient-to-b from-gray-900 to-black",
         "bg-gradient-to-b from-white to-gray-50"
       )
     )}>
@@ -90,7 +90,7 @@ const ErrorMessage = React.memo<{
           className={combine(
             "px-6 py-3 rounded-lg font-medium transition-all duration-300 text-white shadow-lg",
             getValueForTheme(
-              "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
+              "bg-gradient-to-r from-[#54CF90] to-[#54CF90]/90 hover:from-[#4AB87E] hover:to-[#4AB87E]/90",
               "bg-gradient-to-r from-[#006C67] to-[#006C67]/90 hover:from-[#006C67]/90 hover:to-[#006C67]/80"
             )
           )}
@@ -123,10 +123,10 @@ const DetailProjectPage = () => {
     isValid: !!project?.organization_orgid,
   }), [project?.organization_orgid, project?.org_nickname, project?.org_name_th, project?.org_name_en]);
 
-  // Memoized theme values for performance
+  // Memoized theme values for performance - แก้ไขให้ตรงกับหน้าอื่น
   const themeValues = useMemo(() => ({
     containerBg: getValueForTheme(
-      "bg-gradient-to-b from-[#051D35] to-[#0A1A2F] text-white",
+      "bg-[#ffff]/2",
       "bg-gradient-to-b from-white to-gray-50 text-[#006C67]"
     ),
   }), [getValueForTheme]);
@@ -266,28 +266,18 @@ const DetailProjectPage = () => {
   // Effect for error handling
   useEffect(() => {
     if (projectError) {
-      console.error('Error loading project:', projectError);
+      console.error('Project loading error:', projectError);
     }
   }, [projectError]);
 
   // Handle loading state
   if (projectLoading) {
-    return (
-      <div className={themeValues.containerBg}>
-        <NavBar />
-        <LoadingSpinner />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   // Handle error state
   if (projectError || !project || !projectData) {
-    return (
-      <div className={themeValues.containerBg}>
-        <NavBar />
-        <ErrorMessage onBack={handleBackNavigation} error={projectError} />
-      </div>
-    );
+    return <ErrorMessage onBack={handleBackNavigation} error={projectError} />;
   }
 
   return (
@@ -305,33 +295,24 @@ const DetailProjectPage = () => {
         onViewOrganization={handleViewOrganizationDetails}
       />
 
-      {/* Main Content Section */}
-      <div className="container mx-auto px-4 xs:px-5 sm:px-6 pb-12 xs:pb-14 sm:pb-16 max-w-6xl">
+      <div className="container mx-auto px-4 xs:px-5 sm:px-6 lg:px-8 pb-12 xs:pb-16 sm:pb-20 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xs:gap-8 sm:gap-10">
-          <ProjectContentSection
-            project={project}
-            projectData={projectData}
-          />
-
-          <ProjectSidebarSection
-            dateTimeInfo={dateTimeInfo}
-            projectData={projectData}
-            organization={organization}
-            organizationInfo={organizationInfo}
-            orgLoading={orgLoading}
-            onViewOrganization={handleViewOrganizationDetails}
-          />
+          <div className="lg:col-span-2">
+            <ProjectContentSection project={project} projectData={projectData} />
+          </div>
+          
+          <div className="lg:col-span-1">
+            <ProjectSidebarSection
+              dateTimeInfo={dateTimeInfo}
+              projectData={projectData}
+              organization={organization}
+              organizationInfo={organizationInfo}
+              orgLoading={orgLoading}
+              onViewOrganization={handleViewOrganizationDetails}
+            />
+          </div>
         </div>
       </div>
-
-      {/* Visual separator */}
-      <div className={combine(
-        "relative h-px mx-auto w-[90%] xs:w-[80%] sm:w-[70%] my-4 xs:my-6 sm:my-8",
-        getValueForTheme(
-          "bg-gradient-to-r from-transparent via-white/20 to-transparent",
-          "bg-gradient-to-r from-transparent via-[#006C67]/30 to-transparent"
-        )
-      )}></div>
     </div>
   );
 };

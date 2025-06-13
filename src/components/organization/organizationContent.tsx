@@ -41,7 +41,7 @@ const OrganizationContent: React.FC<OrganizationContentProps> = ({
     primaryButton: combine(
       "px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all duration-200 shadow-lg text-sm sm:text-base",
       getValueForTheme(
-        "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/25",
+        "bg-gradient-to-r from-[#54CF90] via-[#54CF90] to-[#54CF90]/90 hover:from-[#4AB87E] hover:via-[#4AB87E] hover:to-[#4AB87E]/90 text-white shadow-[#54CF90]/25",
         "bg-[#006C67] hover:bg-[#005550] text-white shadow-[#006C67]/25"
       )
     ),

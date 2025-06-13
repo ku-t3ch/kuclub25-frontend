@@ -51,11 +51,11 @@ module.exports = {
         "ku-primary": {
           DEFAULT: "#051D35",
           light: "#006C67",
-          dark: "#041628",
+          dark: "#54CF90",
         },
         primary: {
           DEFAULT: "#006C67",
-          dark: "#051D35",
+          dark: "#54CF90",
         },
       },
       fontFamily: {

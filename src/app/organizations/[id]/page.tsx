@@ -74,7 +74,7 @@ const SuspenseFallback = memo(() => {
     <div className={combine(
       "min-h-screen pt-16 md:pt-20 flex items-center justify-center",
       getValueForTheme(
-        "bg-gradient-to-b from-[#051D35] to-[#091428]",
+        "bg-gradient-to-b from-gray-900 to-black",
         "bg-gradient-to-b from-white to-gray-50"
       )
     )}>
@@ -146,7 +146,7 @@ export default function OrganizationDetailPage() {
   // Memoized theme values (computed only once per theme change)
   const themeValues = useMemo(() => ({
     containerBg: getValueForTheme(
-      "bg-gradient-to-b from-[#051D35] to-[#091428]",
+      "bg-[#ffff]/2",
       "bg-gradient-to-b from-white to-gray-50"
     ),
   }), [getValueForTheme]);

@@ -108,7 +108,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
   const iconContainerClasses = combine(
     "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0",
     getValueForTheme(
-      "bg-blue-500/15 text-blue-300/90",
+      "bg-[#54CF90]/20 text-[#54CF90]",
       "bg-[#006C67]/15 text-[#006C67]"
     )
   );
@@ -116,7 +116,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
   const badgeClasses = combine(
     "px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap",
     getValueForTheme(
-      "bg-blue-500/15 text-blue-300/90",
+      "bg-[#54CF90]/20 text-[#54CF90]",
       "bg-[#006C67]/15 text-[#006C67]"
     )
   );
@@ -150,10 +150,7 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
 
       {/* Section Header */}
       <motion.div variants={itemVariants} className="flex items-center gap-2">
-        <span className={combine(
-          "h-4 w-1 rounded-full",
-          getValueForTheme("bg-blue-400", "bg-[#006C67]")
-        )} />
+      
         <h3 className={combine(
           "text-sm sm:text-base font-medium",
           getValueForTheme("text-white/90", "text-[#006C67]/90")
@@ -258,8 +255,8 @@ const ActivityContentWithTheme: React.FC<CompetencyActivitiesDisplayProps> = ({ 
                       >
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <span className={combine(
-                            "h-2 w-2 rounded-full flex-shrink-0",
-                            getValueForTheme("bg-blue-400", "bg-[#006C67]")
+                            "h-1 w-1 rounded-full flex-shrink-0",
+                            getValueForTheme("bg-[#54CF90]", "bg-[#006C67]")
                           )} />
                           <span className={combine(
                             "text-xs sm:text-sm line-clamp-2",

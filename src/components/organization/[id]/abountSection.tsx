@@ -18,10 +18,10 @@ const ANIMATION_CONFIG = {
 // Memoized SVG icon component
 const InfoIcon = React.memo(() => (
   <svg
-    className="w-6 h-6"
+    className="w-7 h-7"
     fill="none"
     stroke="currentColor"
-    viewBox="0 0 24 24"
+    viewBox="0 0 30 24"
   >
     <path
       strokeLinecap="round"
@@ -75,7 +75,7 @@ const OrganizationAboutSection: React.FC<OrganizationAboutSectionProps> = ({
   // Memoized theme values for better performance
   const themeStyles = useMemo(() => ({
     cardBg: getValueForTheme(
-      "bg-white/5 border-white/10 shadow-blue-900/5",
+      "bg-white/5 border-white/10 shadow-black/20",
       "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
     primaryText: getValueForTheme("text-white", "text-[#006C67]"),
@@ -138,7 +138,7 @@ const OrganizationAboutSection: React.FC<OrganizationAboutSectionProps> = ({
       {/* Header */}
       <h2
         className={combine(
-          "text-2xl md:text-3xl font-medium bg-clip-text text-transparent inline-flex items-center gap-3 mb-6",
+          "text-2xl md:text-3xl font-medium bg-clip-text text-transparent inline-flex items-center gap-1 mb-6",
           themeStyles.titleGradient
         )}
       >

@@ -25,12 +25,10 @@ const containerVariants = {
   },
 } as const;
 
-
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 } as const;
-
 
 const singleProjectVariants = {
   initial: { opacity: 0, scale: 0.95 },
@@ -103,7 +101,7 @@ const EmptyState = memo<{
         "backdrop-blur-sm rounded-lg xs:rounded-xl overflow-hidden border shadow-lg",
         "p-4 xs:p-6 sm:p-8 text-center",
         getValueForTheme(
-          "bg-white/5 border-white/10 shadow-blue-900/20",
+          "bg-white/5 border-white/10 shadow-[black]",
           "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
         )
       )}
@@ -172,7 +170,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = memo(
     const themeClasses = useMemo(
       () => ({
         container: getValueForTheme(
-          "bg-white/5 border-white/10 shadow-blue-900/20",
+          "bg-white/5 border-white/10 shadow-[black]",
           "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
         ),
         header: getValueForTheme(
@@ -180,13 +178,13 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = memo(
           "border-[#006C67]/20 bg-gradient-to-r from-[#006C67]/5 to-white"
         ),
         indicator: getValueForTheme(
-          "bg-gradient-to-b from-blue-400 to-blue-600",
+          "bg-gradient-to-b from-[#047857] via-[#006C67] to-[#047857]",
           "bg-gradient-to-b from-[#006C67] to-[#006C67]/80"
         ),
         titleText: getValueForTheme("text-white/90", "text-[#006C67]/70"),
         dateText: getValueForTheme("text-white", "text-[#006C67]"),
         badge: getValueForTheme(
-          "bg-blue-500/20 text-blue-300 border border-blue-400/30",
+          "bg-[#047857]/40 text-[white]/75 border border-[#047857]/90",
           "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
         ),
         closeButton: getValueForTheme(
@@ -199,7 +197,7 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = memo(
         ),
         footerText: getValueForTheme("text-white/60", "text-[#006C67]/60"),
         viewAllButton: getValueForTheme(
-          "text-blue-300 hover:text-blue-200 hover:bg-blue-500/10",
+          "text-[#047857] hover:text-[#047857] hover:bg-[#047857]",
           "text-[#006C67] hover:text-[#006C67]/80 hover:bg-[#006C67]/5"
         ),
       }),
@@ -255,36 +253,24 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = memo(
               themeClasses.header
             )}
           >
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
               <div
                 className={combine(
-                  "w-1 h-4 xs:h-6 rounded-full mr-2 xs:mr-3",
+                  "w-1 h-6 xs:h-6 rounded-full flex-shrink-0",
                   themeClasses.indicator
                 )}
                 aria-hidden="true"
               />
-              <div>
-                <h2
-                  className={combine(
-                    "text-xs xs:text-sm font-medium",
-                    themeClasses.titleText
-                  )}
-                >
-                  กิจกรรมวันที่
-                </h2>
+              <div className="flex-1 min-w-0">
                 <p
                   className={combine(
-                    "text-sm xs:text-lg font-semibold break-words",
+                    "text-lg xs:text-lg font-medium break-words",
                     themeClasses.dateText
                   )}
                 >
                   {formattedDate}
                 </p>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between xs:justify-end gap-2 xs:gap-3">
-              {/* Project count badge */}
               <div
                 className={combine(
                   "px-2 xs:px-3 py-1 rounded-full text-xs xs:text-sm font-medium flex-shrink-0",
@@ -293,8 +279,6 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = memo(
               >
                 {validProjects.length} กิจกรรม
               </div>
-
-              {/* Close button */}
               <button
                 onClick={handleCloseClick}
                 className={combine(
@@ -309,7 +293,6 @@ const SelectedDateProjects: React.FC<SelectedDateProjectsProps> = memo(
               </button>
             </div>
           </div>
-
           {/* Projects List */}
           <div className="p-3 xs:p-4 sm:p-5">
             {validProjects.length === 1 ? (

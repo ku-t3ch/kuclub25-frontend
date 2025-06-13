@@ -10,7 +10,7 @@ import React, {
 import { motion, AnimatePresence } from "framer-motion";
 import { useProjects } from "../../hooks/useProject";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
-import { useCampuses } from "../../hooks/useCampuses"; // เพิ่ม import
+import { useCampuses } from "../../hooks/useCampuses";
 import moment from "moment";
 import "moment/locale/th";
 import ActivityTypeFilter from "../../components/project/activityTypeFilter";
@@ -19,7 +19,6 @@ import ViewToggle from "../../components/project/viewToggle";
 import CalendarViewSection from "../../components/project/calendarViewSection";
 import ProjectList from "../../components/project/projectList";
 import SelectedDateProject from "../../components/project/selectedDate";
-import { Vortex } from "../../components/ui/vortex";
 
 import {
   getActivityTypes,
@@ -72,7 +71,7 @@ moment.locale("th");
 export default function ProjectsPage() {
   const { getValueForTheme, combine } = useThemeUtils();
   const { projects, isLoading, error } = useProjects();
-  const { campuses, loading: campusLoading } = useCampuses(); // เพิ่ม hook
+  const { campuses, loading: campusLoading } = useCampuses();
 
   // State management
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -87,30 +86,30 @@ export default function ProjectsPage() {
   const [activeFilters, setActiveFilters] = useState<string[]>(["all"]);
   const [selectedCampus, setSelectedCampus] = useState<string | undefined>(
     undefined
-  ); // เพิ่ม state
+  );
 
   const projectsListRef = useRef<HTMLDivElement>(null);
 
   // Memoized theme values for performance
   const themeValues = useMemo(
     () => ({
-      containerBg: getValueForTheme(
-        "bg-gradient-to-b from-[#051D35] via-[#051D35] to-[#000000] dark-theme",
-        "bg-gradient-to-b from-white via-white to-gray-50 light-theme"
+      pageBackground: combine(
+        "min-h-screen pt-14 sm:pt-16 md:pt-20",
+        getValueForTheme(
+          "bg-[#ffff]/2",
+          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+        )
       ),
-      vortexBg: getValueForTheme(
-        "bg-gradient-to-b from-[#000000] to-[#123067]",
-        "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-      ),
+      contentContainer: "container mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12 max-w-7xl relative z-10",
       titleText: getValueForTheme(
         "text-white text-opacity-90",
         "text-[#006C67] text-opacity-90"
       ),
-      loadingSpinner: getValueForTheme("border-blue-400", "border-[#006C67]"),
+      loadingSpinner: getValueForTheme("border-[#54CF90]-400", "border-[#006C67]"),
       loadingBorder: getValueForTheme("border-white/10", "border-[#006C67]/20"),
       loadingText: getValueForTheme("text-white/60", "text-[#006C67]/70"),
     }),
-    [getValueForTheme]
+    [getValueForTheme, combine]
   );
 
   // Utility function to create date from project data
@@ -444,32 +443,19 @@ export default function ProjectsPage() {
   }
 
   return (
-    <div className={combine("min-h-screen pt-10 ")}>
-      <Vortex
-        backgroundColor="transparent"
-        rangeY={800}
-        particleCount={100}
-        baseHue={120}
-        particleOpacity={0.3}
-        className="flex flex-col items-center justify-start w-full min-h-screen px-4"
-        containerClassName={combine("fixed inset-0 z-0", themeValues.vortexBg)}
-      />
-
+    <div className={themeValues.pageBackground}>
       <motion.div
-        className={combine("min-h-screen relative overflow-hidden")}
+        className="min-h-screen relative overflow-hidden"
         initial="initial"
         animate="animate"
         exit="exit"
         variants={pageVariants}
       >
-        {/* Fixed spacing for navbar */}
-        <div className="h-8 " />
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="container mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-10 lg:py-12 max-w-7xl relative z-10"
+          className={themeValues.contentContainer}
         >
           {/* Header section */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-center gap-6 lg:gap-8 mb-8 sm:mb-10 lg:mb-12">

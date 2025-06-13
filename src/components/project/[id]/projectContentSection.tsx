@@ -75,7 +75,7 @@ const TimeSlot = React.memo<{
       className={combine(
         "p-2 xs:p-3 rounded-md border-l-2 mt-3 xs:mt-4",
         getValueForTheme(
-          "bg-white/5 border-l-blue-400/50",
+          "bg-white/5 border-l-[#54CF90]/50",
           "bg-gray-50 border-l-[#006C67]/50"
         )
       )}
@@ -84,12 +84,12 @@ const TimeSlot = React.memo<{
       <div className="flex items-center gap-1 xs:gap-2 mb-1 xs:mb-2">
         <div className={combine(
           "w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full flex-shrink-0",
-          getValueForTheme("bg-blue-400", "bg-[#006C67]")
+          getValueForTheme("bg-[#54CF90]", "bg-[#006C67]")
         )} />
         
         <div className={combine(
           "text-xs xs:text-sm font-medium break-words",
-          getValueForTheme("text-blue-300", "text-[#006C67]")
+          getValueForTheme("text-[#54CF90]", "text-[#006C67]")
         )}>
           {timeDisplay}
         </div>
@@ -280,7 +280,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             {/* Date and Time Section */}
             <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-3 mb-2 ">
               <h4 className={combine(
-                "font-semibold text-sm xs:text-base break-words",
+                "font-medium text-md xs:text-base break-words",
                 getValueForTheme("text-white", "text-[#006C67]")
               )}>
                 {formatDateForDisplay(date)}
@@ -291,7 +291,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
                 <ClockIcon />
                 <span className={combine(
                   "text-xs xs:text-sm font-medium break-words",
-                  getValueForTheme("text-blue-300", "text-[#006C67]")
+                  getValueForTheme("text-white/75", "text-[#006C67]")
                 )}>
                   {timeDisplay}
                 </span>
@@ -301,8 +301,8 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             {/* Day Description */}
             {dayDescription && (
               <p className={combine(
-                "text-xs xs:text-sm font-medium mb-2 break-words",
-                getValueForTheme("text-blue-200", "text-[#006C67]/80")
+                "text-sm xs:text-sm font-medium mb-2 break-words",
+                getValueForTheme("text-[#54CF90]", "text-[#006C67]/80")
               )}>
                 {dayDescription}
               </p>
@@ -349,7 +349,7 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
             <div className={combine(
               "text-xs px-2 py-1 rounded-full",
               getValueForTheme(
-                "bg-blue-500/20 text-blue-300",
+                "bg-[#54CF90]/20 text-[#54CF90]",
                 "bg-[#006C67]/10 text-[#006C67]"
               )
             )}>
@@ -453,18 +453,18 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
   // Memoized theme values
   const themeValues = useMemo(() => ({
     cardBg: getValueForTheme(
-      "bg-white/5 border-white/10 shadow-blue-900/5",
+      "bg-white/5 border-white/10 shadow-black/20",
       "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
     primaryText: getValueForTheme("text-white", "text-[#006C67]"),
     secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
-    accentBlue: getValueForTheme("text-blue-300", "text-[#006C67]"),
-    bulletPoint: getValueForTheme("bg-blue-300", "bg-[#006C67]"),
+    accentBlue: getValueForTheme("text-[#54CF90]", "text-[#006C67]"),
+    bulletPoint: getValueForTheme("bg-[#54CF90]", "bg-[#006C67]"),
     locationCardBg: getValueForTheme(
       "bg-white/5 border-white/10",
       "bg-gray-50 border border-[#006C67]/20"
     ),
-    locationTitle: getValueForTheme("text-blue-300", "text-[#006C67]"),
+    locationTitle: getValueForTheme("text-[white]", "text-[#006C67]"),
     locationText: getValueForTheme("text-white/80", "text-[#006C67]/70"),
     contentText: getValueForTheme("text-white/80", "text-[#006C67]/80"),
   }), [getValueForTheme]);
