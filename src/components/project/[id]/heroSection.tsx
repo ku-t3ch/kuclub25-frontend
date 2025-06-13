@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useThemeUtils } from "../../../hooks/useThemeUtils";
 import ProjectCardDateDisplay from "../../ui/dateDisplay";
@@ -33,22 +33,22 @@ interface HeroSectionProps {
 const ActivityTag = React.memo<ActivityTagComponentProps>(
   ({ type, hours, resolvedTheme }) => {
     const ACTIVITY_LABELS = {
-      social_activities: "กิจกรรมสังคม",
       university_activities: "กิจกรรมมหาวิทยาลัย",
+      social_activities: "กิจกรรมสังคม",
       competency_development_activities: "กิจกรรมเสริมสมรรถนะ",
     };
 
     const ACTIVITY_COLORS = {
-      social_activities: {
-        light: "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20",
-        dark: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
-      },
       university_activities: {
-        light: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-        dark: "bg-green-500/20 text-green-300 border border-green-500/30",
+        light: "bg-emerald-100 text-emerald-700 border border-emerald-200",
+        dark: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
+      },
+      social_activities: {
+        light: "bg-orange-100 text-orange-700 border border-orange-200",
+        dark: "bg-orange-500/20 text-orange-300 border border-orange-500/30",
       },
       competency_development_activities: {
-        light: "bg-purple-50 text-purple-700 border border-purple-200",
+        light: "bg-purple-100 text-purple-700 border border-purple-200",
         dark: "bg-purple-500/20 text-purple-300 border border-purple-500/30",
       },
     };
@@ -120,6 +120,30 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(
     onViewOrganization,
   }) => {
     const { combine, getValueForTheme } = useThemeUtils();
+
+    // Sort activity tags in the correct order
+    const sortedActivityTags = useMemo(() => {
+      const activityOrder = [
+        "university_activities",
+        "social_activities",
+        "competency_development_activities",
+      ];
+
+      return [...activityTags].sort((a, b) => {
+        const indexA = activityOrder.indexOf(a.type);
+        const indexB = activityOrder.indexOf(b.type);
+
+        // If both types are in the order array, sort by their index
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
+        }
+        // If only one type is in the order array, prioritize it
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        // If neither type is in the order array, maintain original order
+        return 0;
+      });
+    }, [activityTags]);
 
     const themeValues = {
       headerBackdrop: getValueForTheme("bg-[#ffffff]/2", "bg-[#006C67]/5"),
@@ -227,21 +251,23 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(
               </motion.h1>
 
               {/* Activity Tags */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.15 }}
-                className="flex flex-wrap justify-center md:justify-start gap-2 mb-4"
-              >
-                {activityTags.map((tag, index) => (
-                  <ActivityTag
-                    key={`${tag.type}-${index}`}
-                    type={tag.type}
-                    hours={tag.hours}
-                    resolvedTheme={resolvedTheme}
-                  />
-                ))}
-              </motion.div>
+              {sortedActivityTags.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="flex flex-wrap justify-center md:justify-start gap-2 mb-4"
+                >
+                  {sortedActivityTags.map((tag, index) => (
+                    <ActivityTag
+                      key={`${tag.type}-${index}`}
+                      type={tag.type}
+                      hours={tag.hours}
+                      resolvedTheme={resolvedTheme}
+                    />
+                  ))}
+                </motion.div>
+              )}
 
               {/* Info Pills */}
               <motion.div
@@ -254,7 +280,7 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(
                 {projectData.startDate &&
                   renderInfoPill(
                     icons.calendar,
-                    <span className={combine("ml-0.5", )}>
+                    <span className={combine("ml-0.5")}>
                       {dateTimeInfo?.isMultiDay
                         ? `${dateTimeInfo.startDate} - ${dateTimeInfo.endDate}`
                         : dateTimeInfo?.startDate}
