@@ -194,9 +194,17 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
             const dotsContainer = document.createElement("div");
             dotsContainer.className = "day-indicator-container";
 
-            // Get unique activity types
+            // Get unique activity types in specific order
+            const activityOrder = [
+              'university_activities',
+              'social_activities', 
+              'competency_development_activities'
+            ];
+            
             const activityTypesSet = new Set<string>();
+            const orderedActivityTypes: string[] = [];
 
+            // First, collect all activity types
             for (let i = 0; i < projectsOnDay.length; i++) {
               const project = projectsOnDay[i];
               if (project.originalProject) {
@@ -207,6 +215,20 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               }
             }
 
+            // Then, order them according to our preferred sequence
+            activityOrder.forEach(activityType => {
+              if (activityTypesSet.has(activityType)) {
+                orderedActivityTypes.push(activityType);
+              }
+            });
+
+            // Add any remaining activity types not in our predefined order
+            activityTypesSet.forEach(activityType => {
+              if (!activityOrder.includes(activityType)) {
+                orderedActivityTypes.push(activityType);
+              }
+            });
+
             // Add project count
             const projectCount = projectsOnDay.length;
             if (projectCount > 0) {
@@ -216,16 +238,15 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               dotsContainer.appendChild(projectCountText);
             }
 
-            // Show max 3 unique activity types
-            const uniqueActivityTypes = Array.from(activityTypesSet).slice(0, 3);
+            // Show max 3 unique activity types in order
+            const displayActivityTypes = orderedActivityTypes.slice(0, 3);
 
-            // Add dots for each type
-            for (let i = 0; i < uniqueActivityTypes.length; i++) {
-              const activityType = uniqueActivityTypes[i];
+            // Add dots for each type in the correct order
+            for (let i = 0; i < displayActivityTypes.length; i++) {
+              const activityType = displayActivityTypes[i];
               const dot = document.createElement("div");
               dot.className = "day-indicator";
 
-              
               const activityColor = ACTIVITY_TYPE_COLORS[activityType as keyof typeof ACTIVITY_TYPE_COLORS];
               
               if (activityColor) {
@@ -234,16 +255,16 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
                 dot.style.backgroundColor = '#9CA3AF'; // gray-400 fallback
               }
 
-              
+              // Add specific classes for styling
               switch (activityType) {
-                case 'competency_development_activities':
-                  dot.classList.add('activity-competency');
+                case 'university_activities':
+                  dot.classList.add('activity-university');
                   break;
                 case 'social_activities':
                   dot.classList.add('activity-social');
                   break;
-                case 'university_activities':
-                  dot.classList.add('activity-university');
+                case 'competency_development_activities':
+                  dot.classList.add('activity-competency');
                   break;
                 default:
                   dot.classList.add('activity-default');

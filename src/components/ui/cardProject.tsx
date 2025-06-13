@@ -14,7 +14,7 @@ interface ProjectCardProps {
 interface ActivityTag {
   type: string;
   key: keyof typeof ACTIVITY_COLORS;
-  typeColor: "#36EF11" | "#D540FF" | "#5271FF" | "default";
+  typeColor: "#10b981" | "#a855f7" | "#f97316" | "default"; // emerald, purple, orange
 }
 
 const ALLOWED_ACTIVITY_TYPES = [
@@ -140,50 +140,67 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
 
     const activities: ActivityTag[] = [];
 
-    Object.entries(project.activity_hours).forEach(([key, value]) => {
-      if (key === "__proto__") return;
+    // Define the order we want to display the activities
+    const activityOrder = [
+      "university_activities",
+      "social_activities",
+      "competency_development_activities",
+    ];
 
-      // Handle nested competency_development_activities
-      if (
-        key === "competency_development_activities" &&
-        typeof value === "object" &&
-        value !== null &&
-        !Array.isArray(value)
-      ) {
-        const totalHours = Object.values(value as Record<string, number>)
-          .filter(
-            (hours): hours is number => typeof hours === "number" && hours > 0
-          )
-          .reduce((sum, hours) => sum + hours, 0);
+    // Process activities in the specified order
+    activityOrder.forEach((activityKey) => {
+      const value = project.activity_hours[activityKey];
 
-        if (totalHours > 0) {
+      if (activityKey === "competency_development_activities") {
+        // Handle nested competency_development_activities
+        if (
+          typeof value === "object" &&
+          value !== null &&
+          !Array.isArray(value)
+        ) {
+          const totalHours = Object.values(value as Record<string, number>)
+            .filter(
+              (hours): hours is number => typeof hours === "number" && hours > 0
+            )
+            .reduce((sum, hours) => sum + hours, 0);
+
+          if (totalHours > 0) {
+            activities.push({
+              type: ACTIVITY_LABELS[activityKey] || activityKey.replace(/_/g, " "),
+              key: activityKey as keyof typeof ACTIVITY_COLORS,
+              typeColor: "#a855f7", // Purple for competency development
+            });
+          }
+        }
+        // Handle direct competency_development_activities value
+        else if (typeof value === "number" && value > 0) {
           activities.push({
-            type: ACTIVITY_LABELS[key] || key.replace(/_/g, " "),
-            key: key as keyof typeof ACTIVITY_COLORS,
-            typeColor: "#5271FF", // Competency development color
+            type:
+              ACTIVITY_LABELS[activityKey as keyof typeof ACTIVITY_LABELS] ||
+              activityKey.replace(/_/g, " "),
+            key: activityKey as keyof typeof ACTIVITY_COLORS,
+            typeColor: "#a855f7", // Purple for competency development
           });
         }
       }
-      // Handle direct activity types
+      // Handle university_activities and social_activities
       else if (
-        ALLOWED_ACTIVITY_TYPES.includes(key as any) &&
+        ALLOWED_ACTIVITY_TYPES.includes(activityKey as any) &&
         typeof value === "number" &&
         value > 0
       ) {
-        const typeColor: "#36EF90" | "#D540FF" | "#5271FF" | "default" =
-          key === "social_activities"
-            ? "#36EF90"
-            : key === "university_activities"
-            ? "#D540FF"
-            : key === "competency_development_activities"
-            ? "#5271FF"
+        const typeColor: "#10b981" | "#a855f7" | "#f97316" | "default" =
+          activityKey === "university_activities"
+            ? "#10b981" // Emerald for university activities
+            : activityKey === "social_activities"
+            ? "#f97316" // Orange for social activities
             : "default";
 
         activities.push({
           type:
-            ACTIVITY_LABELS[key as keyof typeof ACTIVITY_LABELS] ||
-            key.replace(/_/g, " "),
-          key: key as keyof typeof ACTIVITY_COLORS,
+            ACTIVITY_LABELS[activityKey as keyof typeof ACTIVITY_LABELS] ||
+            activityKey.replace(/_/g, " "),
+          key: activityKey as keyof typeof ACTIVITY_COLORS,
           typeColor,
         });
       }
@@ -277,17 +294,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
   const getTagColors = useCallback(
     (typeColor: string) => {
       const colorMap = {
-        "#D540FF": getValueForTheme(
-          "bg-[#D540FF]/30 text-purple-300 ring-1 ring-purple-500/30",
-          "bg-[#D540FF]/10 text-purple-600 ring-1 ring-purple-200"
+        "#a855f7": getValueForTheme(
+          "bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30",
+          "bg-purple-100 text-purple-700 ring-1 ring-purple-200"
         ),
-        "#36EF90": getValueForTheme(
-          "bg-[#54CF90]/30 text-emerald-300 ring-1 ring-[#54CF90]/30",
-          "bg-[#36EF90]/10 text-emerald-600 ring-1 ring-emerald-200"
+        "#10b981": getValueForTheme(
+          "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30",
+          "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200"
         ),
-        "#5271FF": getValueForTheme(
-          "bg-[#5271FF]/30 text-blue-300 ring-1 ring-blue-500/30",
-          "bg-[#5271FF]/10 text-blue-600 ring-1 ring-blue-200"
+        "#f97316": getValueForTheme(
+          "bg-orange-500/20 text-orange-300 ring-1 ring-orange-500/30",
+          "bg-orange-100 text-orange-700 ring-1 ring-orange-200"
         ),
         default: getValueForTheme(
           "bg-[#006C67]/20 text-[#54CF90]/80 ring-1 ring-[#54CF90]/30",
