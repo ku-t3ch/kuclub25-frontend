@@ -74,14 +74,14 @@ const SuspenseFallback = memo(() => {
     <div className={combine(
       "min-h-screen pt-16 md:pt-20 flex items-center justify-center",
       getValueForTheme(
-        "bg-gradient-to-b from-gray-900 to-black",
+        "bg-[#ffff]/2",
         "bg-gradient-to-b from-white to-gray-50"
       )
     )}>
       <div className="flex flex-col items-center space-y-4">
         <div className={combine(
           "animate-spin rounded-full h-12 w-12 border-b-2",
-          getValueForTheme("border-blue-500", "border-primary")
+          getValueForTheme("border-gray-500", "border-primary")
         )} />
         <p className={getValueForTheme("text-white/70", "text-gray-600")}>
           กำลังโหลด...

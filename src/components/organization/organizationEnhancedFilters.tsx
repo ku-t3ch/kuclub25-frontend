@@ -77,7 +77,7 @@ const OrganizationEnhancedFilters: React.FC<OrganizationEnhancedFiltersProps> = 
       "focus:outline-none focus:ring-2 transition-all duration-200",
       "placeholder:text-xs sm:placeholder:text-sm",
       getValueForTheme(
-        "bg-white/10 border-white/20 text-white placeholder-white/50 focus:border-blue-500 focus:ring-blue-500/25",
+        "bg-white/10 border-white/20 text-white placeholder-white/50 focus:border-black/20 focus:ring-black/20",
         "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-[#006C67] focus:ring-[#006C67]/25"
       )
     ),
@@ -85,7 +85,7 @@ const OrganizationEnhancedFilters: React.FC<OrganizationEnhancedFiltersProps> = 
       "w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl border text-xs sm:text-sm appearance-none cursor-pointer",
       "focus:outline-none focus:ring-2 transition-all duration-200",
       getValueForTheme(
-        "bg-white/10 border-white/20 text-white focus:border-blue-500 focus:ring-blue-500/25",
+        "bg-white/10 border-white/20 text-white focus:border-black/20 focus:ring-black/20",
         "bg-white border-gray-300 text-gray-900 focus:border-[#006C67] focus:ring-[#006C67]/25"
       )
     ),

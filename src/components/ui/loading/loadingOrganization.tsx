@@ -1,6 +1,7 @@
 "use client";
 
 import React, { memo } from "react";
+import { motion } from "framer-motion";
 
 interface LoadingSkeletonProps {
   viewMode: "grid" | "list";
@@ -19,59 +20,164 @@ const LoadingSkeleton = memo(({
   // Individual skeleton item height based on view mode
   const skeletonHeight = viewMode === "grid" ? "h-80" : "h-32";
 
+  // Animation variants for staggered loading
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.4 },
+    },
+  };
+
+  // Shimmer animation variants
+  const shimmerVariants = {
+    animate: {
+      x: ["-100%", "100%"],
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: "loop" as const,
+          duration: 1.5,
+          ease: "linear",
+        },
+      },
+    },
+  };
+
+  const SkeletonElement = ({ 
+    className, 
+    style 
+  }: { 
+    className?: string; 
+    style?: React.CSSProperties; 
+  }) => (
+    <div 
+      className={`bg-gray-700/30 dark:bg-gray-300/60 rounded animate-pulse ${className}`}
+      style={style}
+    />
+  );
+
   return (
-    <div className={`grid gap-6 ${gridClasses}`}>
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className={`grid gap-6 ${gridClasses}`}
+    >
       {Array.from({ length: 8 }, (_, i) => (
-        <div
+        <motion.div
           key={i}
-          className={`${themeClasses.skeleton} ${skeletonHeight} relative overflow-hidden`}
+          variants={itemVariants}
+          className={`
+            ${skeletonHeight} 
+            relative 
+            overflow-hidden 
+            rounded-xl 
+            border
+            ${themeClasses.cardBg || 'bg-gray-800/30 border-gray-700/50 dark:bg-white dark:border-gray-200/50'}
+          `}
         >
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          {/* Enhanced shimmer effect */}
+          <motion.div 
+            variants={shimmerVariants}
+            animate="animate"
+            className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gray-600/20 dark:via-gray-300/30 to-transparent"
+          />
           
           {viewMode === "grid" ? (
             // Grid skeleton content
-            <div className="p-4 h-full flex flex-col">
+            <div className="p-4 xs:p-5 h-full flex flex-col">
               {/* Image placeholder */}
-              <div className={`w-full h-40 rounded-lg mb-4 ${themeClasses.skeleton}`} />
+              <SkeletonElement className="w-full h-40 xs:h-44 rounded-lg mb-4" />
               
               {/* Title placeholder */}
-              <div className={`h-4 rounded mb-2 ${themeClasses.skeleton}`} style={{ width: '80%' }} />
+              <SkeletonElement 
+                className="h-4 xs:h-5 rounded-lg mb-2" 
+                style={{ width: '80%' }} 
+              />
               
               {/* Subtitle placeholder */}
-              <div className={`h-3 rounded mb-3 ${themeClasses.skeleton}`} style={{ width: '60%' }} />
+              <SkeletonElement 
+                className="h-3 xs:h-4 rounded-lg mb-3" 
+                style={{ width: '60%' }} 
+              />
               
               {/* Description placeholders */}
-              <div className="space-y-2 flex-1">
-                <div className={`h-3 rounded ${themeClasses.skeleton}`} />
-                <div className={`h-3 rounded ${themeClasses.skeleton}`} style={{ width: '90%' }} />
-                <div className={`h-3 rounded ${themeClasses.skeleton}`} style={{ width: '75%' }} />
+              <div className="space-y-2 xs:space-y-3 flex-1">
+                <SkeletonElement className="h-3 rounded-lg" />
+                <SkeletonElement 
+                  className="h-3 rounded-lg" 
+                  style={{ width: '90%' }} 
+                />
+                <SkeletonElement 
+                  className="h-3 rounded-lg" 
+                  style={{ width: '75%' }} 
+                />
+              </div>
+              
+              {/* Tags placeholder */}
+              <div className="flex gap-2 mb-4 mt-3">
+                <SkeletonElement className="h-6 xs:h-7 w-16 xs:w-20 rounded-full" />
+                <SkeletonElement className="h-6 xs:h-7 w-20 xs:w-24 rounded-full" />
+                <SkeletonElement className="h-6 xs:h-7 w-14 xs:w-16 rounded-full" />
               </div>
               
               {/* Button placeholder */}
-              <div className={`h-8 rounded-lg mt-4 ${themeClasses.skeleton}`} />
+              <SkeletonElement className="h-8 xs:h-10 rounded-lg" />
             </div>
           ) : (
             // List skeleton content
-            <div className="p-4 h-full flex">
+            <div className="p-4 xs:p-5 h-full flex">
               {/* Image placeholder */}
-              <div className={`w-24 h-24 rounded-lg mr-4 flex-shrink-0 ${themeClasses.skeleton}`} />
+              <SkeletonElement className="w-20 xs:w-24 h-20 xs:h-24 rounded-lg mr-4 flex-shrink-0" />
               
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 {/* Title placeholder */}
-                <div className={`h-4 rounded mb-2 ${themeClasses.skeleton}`} style={{ width: '70%' }} />
+                <SkeletonElement 
+                  className="h-4 xs:h-5 rounded-lg mb-2" 
+                  style={{ width: '70%' }} 
+                />
                 
                 {/* Subtitle placeholder */}
-                <div className={`h-3 rounded mb-2 ${themeClasses.skeleton}`} style={{ width: '50%' }} />
+                <SkeletonElement 
+                  className="h-3 xs:h-4 rounded-lg mb-2" 
+                  style={{ width: '50%' }} 
+                />
                 
-                {/* Description placeholder */}
-                <div className={`h-3 rounded ${themeClasses.skeleton}`} style={{ width: '90%' }} />
+                {/* Description placeholders */}
+                <div className="space-y-1 xs:space-y-2 mb-3">
+                  <SkeletonElement 
+                    className="h-3 rounded-lg" 
+                    style={{ width: '90%' }} 
+                  />
+                  <SkeletonElement 
+                    className="h-3 rounded-lg" 
+                    style={{ width: '75%' }} 
+                  />
+                </div>
+                
+                {/* Tags placeholder - horizontal layout for list view */}
+                <div className="flex gap-1 xs:gap-2">
+                  <SkeletonElement className="h-5 xs:h-6 w-12 xs:w-16 rounded-full" />
+                  <SkeletonElement className="h-5 xs:h-6 w-16 xs:w-20 rounded-full" />
+                </div>
               </div>
             </div>
           )}
-        </div>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 });
 

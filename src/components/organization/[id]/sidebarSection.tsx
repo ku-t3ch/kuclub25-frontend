@@ -109,7 +109,7 @@ const OrganizationSidebarSection: React.FC<OrganizationSidebarSectionProps> = ({
   // Memoized theme values for better performance
   const themeStyles = useMemo(() => ({
     cardBg: getValueForTheme(
-      "bg-white/5 border-white/10 shadow-blue-900/5",
+      "bg-white/5 border-white/10 shadow-black/20",
       "bg-white border border-[#006C67]/20 shadow-[#006C67]/10"
     ),
     primaryText: getValueForTheme("text-white", "text-[#006C67]"),
