@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { apiService, ApiError } from '../services/apiService';
 import { API_CONFIG } from '../configs/API.config';
 import { Project, ProjectsResponse, ProjectDetailResponse, ProjectAllReturn, ProjectDetailReturn, ProjectFilters } from '../types/project';
 import { parseDate, formatDateForDisplay, formatDateTimeForDisplay, formatTimeOnly } from '../utils/formatdate';
 
-// Enhanced project normalization with date formatting
 const normalizeProject = (project: Project): Project => {
   const normalized = {
     ...project,
@@ -13,12 +11,10 @@ const normalizeProject = (project: Project): Project => {
     organization_orgid: String(project.organization_orgid),
     date_start_the_project: parseDate(project.date_start_the_project),
     date_end_the_project: parseDate(project.date_end_the_project),
-    // Handle alternative date field names for compatibility
     date_start: parseDate(project.date_start),
     date_end: parseDate(project.date_end),
   };
 
-  // Add formatted date helpers as non-enumerable properties
   Object.defineProperties(normalized, {
     startDateFormatted: {
       get() {
@@ -74,14 +70,12 @@ const normalizeProject = (project: Project): Project => {
         const startFormatted = formatDateForDisplay(start);
         const endFormatted = formatDateForDisplay(end);
         
-        // Same day - show date with time range
         if (startFormatted === endFormatted) {
           const startTime = formatTimeOnly(start);
           const endTime = formatTimeOnly(end);
           return `${startFormatted} (${startTime} - ${endTime})`;
         }
         
-        // Different days
         return `${startFormatted} - ${endFormatted}`;
       },
       enumerable: false,
@@ -92,7 +86,6 @@ const normalizeProject = (project: Project): Project => {
   return normalized;
 };
 
-// Custom hook for API requests with error handling
 const useApiRequest = <T>(
   fetchFunction: () => Promise<T>,
   dependencies: React.DependencyList = [],
@@ -112,7 +105,6 @@ const useApiRequest = <T>(
       const errorMessage = err instanceof ApiError 
         ? err.message 
         : 'An unexpected error occurred';
-      console.error('API Error:', err);
       setError(errorMessage);
       setData(null);
     } finally {
@@ -131,7 +123,6 @@ const useApiRequest = <T>(
   return { data, loading, error, refetch: execute, clearError };
 };
 
-// Hook to get all projects
 export const useProjects = (): ProjectAllReturn => {
   const fetchProjects = useCallback(async (): Promise<Project[]> => {
     const response = await apiService.get<ProjectsResponse>(
@@ -160,7 +151,6 @@ export const useProjects = (): ProjectAllReturn => {
   };
 };
 
-// Hook to get project by ID
 export const useProjectDetail = (id: string | null): ProjectDetailReturn => {
   const fetchProject = useCallback(async (): Promise<Project | null> => {
     if (!id) return null;
@@ -191,7 +181,6 @@ export const useProjectDetail = (id: string | null): ProjectDetailReturn => {
   };
 };
 
-// Hook to get projects by organization
 export const useProjectsByOrganization = (orgId: string | null): ProjectAllReturn => {
   const fetchProjectsByOrganization = useCallback(async (): Promise<Project[]> => {
     if (!orgId) return [];
@@ -222,10 +211,8 @@ export const useProjectsByOrganization = (orgId: string | null): ProjectAllRetur
   };
 };
 
-// Enhanced filtering with date support
 const filterProjects = (projects: Project[], filters: ProjectFilters): Project[] => {
   return projects.filter(project => {
-    // Search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       const searchableFields = [
@@ -241,12 +228,10 @@ const filterProjects = (projects: Project[], filters: ProjectFilters): Project[]
       )) return false;
     }
 
-    // Organization filter
     if (filters.organizationId && project.organization_orgid !== filters.organizationId) {
       return false;
     }
 
-    // Activity format filter
     if (filters.activityFormat) {
       const format = filters.activityFormat.toLowerCase();
       const projectFormat = project.activity_format;
@@ -260,13 +245,11 @@ const filterProjects = (projects: Project[], filters: ProjectFilters): Project[]
       }
     }
 
-    // Location filter
     if (filters.location) {
       const location = filters.location.toLowerCase();
       if (!project.project_location?.toLowerCase().includes(location)) return false;
     }
 
-    // Date range filters
     const projectStartDate = project.date_start_the_project || project.date_start;
     const projectEndDate = project.date_end_the_project || project.date_end;
 
@@ -318,7 +301,6 @@ const paginateProjects = (projects: Project[], offset?: number, limit?: number):
   return projects;
 };
 
-// Hook with filtering capabilities
 interface UseProjectsWithFiltersReturn extends ProjectAllReturn {
   filteredProjects: Project[];
   setFilters: (filters: ProjectFilters) => void;
@@ -357,7 +339,6 @@ export const useProjectsWithFilters = (): UseProjectsWithFiltersReturn => {
   };
 };
 
-// Convenience hooks for auto-fetching (memoized)
 export const useAllProjects = () => useProjects();
 
 export const useProjectById = (id: string | undefined) => 
