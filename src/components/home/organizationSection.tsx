@@ -8,7 +8,6 @@ import { Organization } from "../../types/organization";
 
 
 interface OrganizationSectionProps {
-  organizations: Organization[];
   filteredOrganizations: Organization[];
   activeCategory: string | undefined;
   categories: Array<{ id: string | undefined; name: string }>;
@@ -17,6 +16,7 @@ interface OrganizationSectionProps {
 }
 
 const OrganizationSection: React.FC<OrganizationSectionProps> = ({
+  
   filteredOrganizations,
   activeCategory,
   categories,
@@ -345,9 +345,11 @@ const OrganizationSection: React.FC<OrganizationSectionProps> = ({
 };
 
 export default memo(OrganizationSection, (prevProps, nextProps) => {
-  return (
-    prevProps.filteredOrganizations.length === nextProps.filteredOrganizations.length &&
-    prevProps.activeCategory === nextProps.activeCategory &&
-    prevProps.loading === nextProps.loading
-  );
+  // เปรียบเทียบ array reference แทน length
+  const isSameArray = prevProps.filteredOrganizations === nextProps.filteredOrganizations;
+  const isSameCategory = prevProps.activeCategory === nextProps.activeCategory;
+  const isSameLoading = prevProps.loading === nextProps.loading;
+  
+  // ถ้า array reference เหมือนกัน และ category + loading เหมือนกัน = ไม่ต้อง re-render
+  return isSameArray && isSameCategory && isSameLoading;
 });

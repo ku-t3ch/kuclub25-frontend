@@ -31,6 +31,8 @@ export const useOrganizations = (): OrganizationAllReturn => {
           id: String(org.id),
           org_type_id: String(org.org_type_id),
           org_type_name: org.org_type_name || "",
+          campus_name: org.campus_name || "",
+          campus_id: org.campus_id || "",
           views: Number(org.views) || 0,
         }));
 
@@ -91,6 +93,13 @@ export const useOrganizationsWithFilters =
       if (filters.orgTypeName !== undefined && filters.orgTypeName !== "") {
         result = result.filter((org) => {
           return org.org_type_name === filters.orgTypeName;
+        });
+      }
+
+      // Filter by campus ID instead of name
+      if (filters.campusId !== undefined && filters.campusId !== "") {
+        result = result.filter((org) => {
+          return org.campus_id === filters.campusId;
         });
       }
 
