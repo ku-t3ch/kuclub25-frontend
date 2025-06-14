@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
@@ -16,43 +15,41 @@ export const useOrganizations = (): OrganizationAllReturn => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchOrganizations = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const normalizeOrganization = useCallback((org: any): Organization => ({
+    ...org,
+    id: String(org.id),
+    org_type_id: String(org.org_type_id),
+    org_type_name: org.org_type_name || "",
+    campus_name: org.campus_name || "",
+    campus_id: org.campus_id || "",
+    views: Number(org.views) || 0,
+  }), []);
 
+  const fetchOrganizations = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
       const response = await apiService.get<OrganizationsResponse>(
         API_CONFIG.ENDPOINTS.ORGANIZATIONS.LIST
       );
 
       if (response.success && response.data) {
-        const normalizedData = response.data.map((org) => ({
-          ...org,
-          id: String(org.id),
-          org_type_id: String(org.org_type_id),
-          org_type_name: org.org_type_name || "",
-          campus_name: org.campus_name || "",
-          campus_id: org.campus_id || "",
-          views: Number(org.views) || 0,
-        }));
-
-        setOrganizations(normalizedData);
+        setOrganizations(response.data.map(normalizeOrganization));
       } else {
         throw new Error(response.message || "Failed to fetch organizations");
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof ApiError
-          ? error.message
-          : "An unexpected error occurred while fetching organizations";
-
-      console.error("Error fetching organizations:", error);
+      const errorMessage = error instanceof ApiError 
+        ? error.message 
+        : "An unexpected error occurred while fetching organizations";
+      
       setError(errorMessage);
       setOrganizations([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [normalizeOrganization]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -71,148 +68,127 @@ export const useOrganizations = (): OrganizationAllReturn => {
   };
 };
 
-// Hook สำหรับดึงข้อมูลองค์กรด้วย filters
 interface UseOrganizationsWithFiltersReturn extends OrganizationAllReturn {
   filteredOrganizations: Organization[];
   setFilters: (filters: OrganizationFilters) => void;
   currentFilters: OrganizationFilters;
 }
 
-export const useOrganizationsWithFilters =
-  (): UseOrganizationsWithFiltersReturn => {
-    const { organizations, loading, error, refetch, clearError } =
-      useOrganizations();
-    const { projects } = useProjects(); // ดึงข้อมูล projects
-    const [filters, setFilters] = useState<OrganizationFilters>({});
+export const useOrganizationsWithFilters = (): UseOrganizationsWithFiltersReturn => {
+  const { organizations, loading, error, refetch, clearError } = useOrganizations();
+  const { projects } = useProjects();
+  const [filters, setFilters] = useState<OrganizationFilters>({});
 
-    const filteredOrganizations = useMemo(() => {
-      let result = [...organizations];
-      const now = new Date();
+  const filterByType = useCallback((orgs: Organization[], typeName: string) => 
+    orgs.filter(org => org.org_type_name === typeName), []);
 
-      // Filter by org type name
-      if (filters.orgTypeName !== undefined && filters.orgTypeName !== "") {
-        result = result.filter((org) => {
-          return org.org_type_name === filters.orgTypeName;
-        });
-      }
+  const filterByCampus = useCallback((orgs: Organization[], campusId: string) => 
+    orgs.filter(org => org.campus_id === campusId), []);
 
-      // Filter by campus ID instead of name
-      if (filters.campusId !== undefined && filters.campusId !== "") {
-        result = result.filter((org) => {
-          return org.campus_id === filters.campusId;
-        });
-      }
+  const filterBySearch = useCallback((orgs: Organization[], search: string) => {
+    const searchLower = search.toLowerCase();
+    return orgs.filter(org =>
+      org.orgnameth.toLowerCase().includes(searchLower) ||
+      org.orgnameen.toLowerCase().includes(searchLower) ||
+      org.org_nickname?.toLowerCase().includes(searchLower) ||
+      org.description?.toLowerCase().includes(searchLower)
+    );
+  }, []);
 
-      // Filter by search
-      if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        result = result.filter(
-          (org) =>
-            org.orgnameth.toLowerCase().includes(searchLower) ||
-            org.orgnameen.toLowerCase().includes(searchLower) ||
-            org.org_nickname?.toLowerCase().includes(searchLower) ||
-            org.description?.toLowerCase().includes(searchLower)
-        );
-      }
+  const sortOrganizations = useCallback((orgs: Organization[], sortBy: string) => {
+    switch (sortBy) {
+      case "latest":
+        return orgs.sort((a, b) => {
+          if (!projects?.length) return parseInt(b.id) - parseInt(a.id);
 
-      // Sort
-      if (filters.sortBy) {
-        switch (filters.sortBy) {
-          case "latest":
-            // เรียงตามกิจกรรมที่กำลังจะมาถึงเร็วที่สุด
-            result = result.sort((a, b) => {
-              if (!projects || !projects.length) {
-                return parseInt(b.id) - parseInt(a.id);
-              }
-
-              const aProjects = projects.filter(
-                (project) =>
-                  project.organization_orgid === a.id &&
-                  project.date_start &&
-                  new Date(project.date_start) >= now
-              );
-
-              const bProjects = projects.filter(
-                (project) =>
-                  project.organization_orgid === b.id &&
-                  project.date_start &&
-                  new Date(project.date_start) >= now
-              );
-
-              if (aProjects.length === 0 && bProjects.length === 0) {
-                return parseInt(b.id) - parseInt(a.id);
-              }
-
-              if (aProjects.length === 0) return 1;
-
-              if (bProjects.length === 0) return -1;
-
-              try {
-                const nextProjectA = aProjects.sort((p1, p2) => {
-                  const date1 = new Date(p1.date_start);
-                  const date2 = new Date(p2.date_start);
-                  return date1.getTime() - date2.getTime();
-                })[0];
-
-                const nextProjectB = bProjects.sort((p1, p2) => {
-                  const date1 = new Date(p1.date_start);
-                  const date2 = new Date(p2.date_start);
-                  return date1.getTime() - date2.getTime();
-                })[0];
-
-                // ใช้ date_start โดยตรงในการเปรียบเทียบ
-                const dateTimeA = new Date(nextProjectA.date_start);
-                const dateTimeB = new Date(nextProjectB.date_start);
-
-                return dateTimeA.getTime() - dateTimeB.getTime();
-              } catch (error) {
-                console.error("Error sorting projects:", error);
-                return 0;
-              }
-            });
-            break;
-
-          case "name":
-            result = result.sort(
-              (a, b) =>
-                (a.orgnameen || "").localeCompare(b.orgnameen || "") ||
-                (a.orgnameth || "").localeCompare(b.orgnameth || "") ||
-                (a.org_nickname || "").localeCompare(b.org_nickname || "")
+          const now = new Date();
+          const getUpcomingProjects = (orgId: string) => 
+            projects.filter(project => 
+              project.organization_orgid === orgId &&
+              project.date_start &&
+              new Date(project.date_start) >= now
             );
-            break;
 
-          case "views":
-            result = result.sort((a, b) => (b.views || 0) - (a.views || 0));
-            break;
+          const aProjects = getUpcomingProjects(a.id);
+          const bProjects = getUpcomingProjects(b.id);
 
-          default:
-            break;
-        }
-      }
+          if (!aProjects.length && !bProjects.length) {
+            return parseInt(b.id) - parseInt(a.id);
+          }
+          if (!aProjects.length) return 1;
+          if (!bProjects.length) return -1;
 
-      // Pagination
-      if (filters.offset !== undefined && filters.limit !== undefined) {
-        result = result.slice(filters.offset, filters.offset + filters.limit);
-      } else if (filters.limit !== undefined) {
-        result = result.slice(0, filters.limit);
-      }
+          const getNextProject = (projects: any[]) => 
+            projects.sort((p1, p2) => 
+              new Date(p1.date_start).getTime() - new Date(p2.date_start).getTime()
+            )[0];
 
-      return result;
-    }, [organizations, projects, filters]);
+          const nextProjectA = getNextProject(aProjects);
+          const nextProjectB = getNextProject(bProjects);
 
-    return {
-      organizations,
-      filteredOrganizations,
-      loading,
-      error,
-      refetch,
-      clearError,
-      setFilters,
-      currentFilters: filters,
-    };
+          return new Date(nextProjectA.date_start).getTime() - 
+                 new Date(nextProjectB.date_start).getTime();
+        });
+
+      case "name":
+        return orgs.sort((a, b) =>
+          (a.orgnameen || "").localeCompare(b.orgnameen || "") ||
+          (a.orgnameth || "").localeCompare(b.orgnameth || "") ||
+          (a.org_nickname || "").localeCompare(b.org_nickname || "")
+        );
+
+      case "views":
+        return orgs.sort((a, b) => (b.views || 0) - (a.views || 0));
+
+      default:
+        return orgs;
+    }
+  }, [projects]);
+
+  const applyPagination = useCallback((orgs: Organization[], offset?: number, limit?: number) => {
+    if (offset !== undefined && limit !== undefined) {
+      return orgs.slice(offset, offset + limit);
+    }
+    if (limit !== undefined) {
+      return orgs.slice(0, limit);
+    }
+    return orgs;
+  }, []);
+
+  const filteredOrganizations = useMemo(() => {
+    let result = [...organizations];
+
+    if (filters.orgTypeName) {
+      result = filterByType(result, filters.orgTypeName);
+    }
+
+    if (filters.campusId) {
+      result = filterByCampus(result, filters.campusId);
+    }
+
+    if (filters.search) {
+      result = filterBySearch(result, filters.search);
+    }
+
+    if (filters.sortBy) {
+      result = sortOrganizations(result, filters.sortBy);
+    }
+
+    return applyPagination(result, filters.offset, filters.limit);
+  }, [organizations, filters, filterByType, filterByCampus, filterBySearch, sortOrganizations, applyPagination]);
+
+  return {
+    organizations,
+    filteredOrganizations,
+    loading,
+    error,
+    refetch,
+    clearError,
+    setFilters,
+    currentFilters: filters,
   };
+};
 
-// Hook สำหรับดึงข้อมูลองค์กรเฉพาะ ID
 interface UseOrganizationDetailReturn {
   organization: Organization | null;
   loading: boolean;
@@ -221,9 +197,7 @@ interface UseOrganizationDetailReturn {
   clearError: () => void;
 }
 
-export const useOrganizationDetail = (
-  id: string | null
-): UseOrganizationDetailReturn => {
+export const useOrganizationDetail = (id: string | null): UseOrganizationDetailReturn => {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -231,35 +205,30 @@ export const useOrganizationDetail = (
   const fetchOrganization = useCallback(async () => {
     if (!id) return;
 
-    try {
-      setLoading(true);
-      setError(null);
+    setLoading(true);
+    setError(null);
 
-      const endpoint = API_CONFIG.ENDPOINTS.ORGANIZATIONS.DETAIL(id);
+    try {
       const response = await apiService.get<OrganizationDetailResponse>(
-        endpoint
+        API_CONFIG.ENDPOINTS.ORGANIZATIONS.DETAIL(id)
       );
 
       if (response.success && response.data) {
-        const normalizedData = {
+        setOrganization({
           ...response.data,
           id: String(response.data.id),
           org_type_id: String(response.data.org_type_id),
           org_type_name: response.data.org_type_name || "",
           views: Number(response.data.views) || 0,
-        };
-
-        setOrganization(normalizedData);
+        });
       } else {
         throw new Error(response.message || "Failed to fetch organization");
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof ApiError
-          ? error.message
-          : "An unexpected error occurred while fetching organization";
-
-      console.error("Error fetching organization:", error);
+      const errorMessage = error instanceof ApiError 
+        ? error.message 
+        : "An unexpected error occurred while fetching organization";
+      
       setError(errorMessage);
       setOrganization(null);
     } finally {
@@ -287,12 +256,10 @@ export const useOrganizationDetail = (
 export const useUpdateOrganizationViews = () => {
   const updateViews = useCallback(async (orgId: string) => {
     try {
-      const response = await apiService.put(
+      return await apiService.put(
         API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE_VIEWS(orgId)
       );
-      return response;
     } catch (error) {
-      console.error("Error updating organization views:", error);
       throw error;
     }
   }, []);

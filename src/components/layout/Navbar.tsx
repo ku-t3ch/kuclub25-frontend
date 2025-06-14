@@ -8,9 +8,9 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import LogoDark from "../../assets/logo.png";
-import LogoLight from "../../assets/logo_light.png";
+import LogoLight from "../../assets/logo.png";
 
-// Memoized icon components to prevent re-renders
+
 const SunIcon = React.memo(() => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -25,7 +25,6 @@ const SunIcon = React.memo(() => (
     />
   </svg>
 ));
-SunIcon.displayName = "SunIcon";
 
 const MoonIcon = React.memo(({ className }: { className: string }) => (
   <svg
@@ -37,36 +36,6 @@ const MoonIcon = React.memo(({ className }: { className: string }) => (
     <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
   </svg>
 ));
-MoonIcon.displayName = "MoonIcon";
-
-// Mobile icon component
-const MoonIconMobile = React.memo(({ className }: { className: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    viewBox="0 0 20 20"
-    fill="currentColor"
-  >
-    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-  </svg>
-));
-MoonIconMobile.displayName = "MoonIconMobile";
-
-const SunIconMobile = React.memo(() => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-4 w-4 text-yellow-300"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-  >
-    <path
-      fillRule="evenodd"
-      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-      clipRule="evenodd"
-    />
-  </svg>
-));
-SunIconMobile.displayName = "SunIconMobile";
 
 // Memoized theme toggle button
 const ThemeToggleButton = React.memo(
@@ -83,22 +52,15 @@ const ThemeToggleButton = React.memo(
   }) => (
     <button onClick={onClick} className={className} aria-label="สลับธีม">
       {resolvedTheme === "dark" ? (
-        isMobile ? (
-          <SunIconMobile />
-        ) : (
-          <SunIcon />
-        )
-      ) : isMobile ? (
-        <MoonIconMobile className="h-4 w-4 text-[#006C67]" />
+        <SunIcon />
       ) : (
-        <MoonIcon className="h-5 w-5 text-slate-300 dark:text-[#006C67]" />
+        <MoonIcon className={isMobile ? "h-4 w-4 text-[#006C67]" : "h-5 w-5 text-slate-300 dark:text-[#006C67]"} />
       )}
     </button>
   )
 );
-ThemeToggleButton.displayName = "ThemeToggleButton";
 
-// Memoized hamburger menu button
+// Memoized hamburger button
 const HamburgerButton = React.memo(
   ({
     isOpen,
@@ -132,7 +94,27 @@ const HamburgerButton = React.memo(
     </button>
   )
 );
-HamburgerButton.displayName = "HamburgerButton";
+
+// Memoized navigation link component
+const NavLink = React.memo(
+  ({
+    href,
+    isActive,
+    className,
+    children,
+    onClick,
+  }: {
+    href: string;
+    isActive: boolean;
+    className: string;
+    children: React.ReactNode;
+    onClick?: () => void;
+  }) => (
+    <Link href={href} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  )
+);
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -142,7 +124,7 @@ const NavBar = () => {
   const { combine, getValueForTheme, resolvedTheme } = useThemeUtils();
   const { scrollY } = useScroll();
 
-  // Memoized navigation links to prevent recreation on every render
+  // Memoized navigation links
   const navLinks = useMemo(
     () => [
       { path: "/", label: "หน้าหลัก" },
@@ -152,7 +134,7 @@ const NavBar = () => {
     []
   );
 
-  // Optimized scroll handler with useCallback
+  // Optimized scroll handler
   useEffect(() => {
     return scrollY.onChange((latest) => {
       const shouldScroll = latest > 10;
@@ -167,23 +149,20 @@ const NavBar = () => {
     setIsOpen(false);
   }, [pathname]);
 
-  // Memoized theme toggle handler
+  // Memoized handlers
   const toggleTheme = useCallback(() => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
-    } else {
-      setTheme("light");
-    }
+    setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light");
   }, [theme, setTheme]);
 
-  // Memoized menu toggle handler
   const toggleMenu = useCallback(() => {
-    setIsOpen((prev) => !prev);
+    setIsOpen(prev => !prev);
   }, []);
 
-  // Memoized class calculations to prevent recalculation
+  const closeMobileMenu = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  // Memoized styles
   const headerClasses = useMemo(
     () =>
       combine(
@@ -234,7 +213,28 @@ const NavBar = () => {
     [combine, getValueForTheme]
   );
 
-  // Memoized motion variants for better animation performance
+  const getNavLinkClasses = useCallback(
+    (isActive: boolean, isMobile: boolean = false) =>
+      combine(
+        isMobile
+          ? "block px-4 py-3 rounded-lg transition-all duration-200 font-medium mb-1"
+          : "px-4 py-2 rounded-full transition-all duration-200 font-medium",
+        isActive
+          ? getValueForTheme(
+              isMobile
+                ? "bg-gradient-to-r from-[#015a5e] via-[#54CF90] to-[#54CF90]/90 text-white border border-[#54CF90]/30"
+                : "bg-gradient-to-r from-[#015a5e]/10 via-[#54CF90]/10 to-[#54CF90]/10 text-[#54CF90] border border-[#54CF90]/30",
+              "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
+            )
+          : getValueForTheme(
+              "text-white/80 hover:text-white hover:bg-white/10",
+              "text-gray-700 hover:text-[#006C67] hover:bg-[#006C67]/5"
+            )
+      ),
+    [combine, getValueForTheme]
+  );
+
+  // Memoized motion variants
   const mobileMenuVariants = useMemo(
     () => ({
       initial: { opacity: 0, height: 0 },
@@ -245,7 +245,7 @@ const NavBar = () => {
     []
   );
 
-  // Memoized logo selection based on theme
+  // Memoized logo
   const currentLogo = useMemo(() => {
     return resolvedTheme === "light" ? LogoLight : LogoDark;
   }, [resolvedTheme]);
@@ -260,59 +260,45 @@ const NavBar = () => {
               <Image
                 src={currentLogo}
                 alt="KU Club Logo"
-                className="w-full h-full object-cover "
-                width={200}
-                height={200}
+                className="w-full h-full object-cover"
+                width={80}
+                height={80}
                 priority
-                sizes="(max-width: 640px) 80px, 80px"
+                sizes="(max-width: 640px) 40px, 48px"
               />
             </div>
 
             <div className="hidden sm:flex flex-col">
-              <div className="font-medium tracking-wider hover:scale-105 transition-transform">
-                <span
-                  className={combine(
-                    "font-bold text-2xl sm:text-3xl tracking-wider",
-                    getValueForTheme(
-                      "bg-gradient-to-r from-[#54CF90] via-[#54CF90]/90 to-[#54CF90]/80 bg-clip-text text-transparent",
-                      "text-[#006C67]"
-                    )
-                  )}
-                >
-                  KU Club & Acitivity
-                </span>
-        
-              </div>
+              <span
+                className={combine(
+                  "font-bold text-2xl sm:text-3xl tracking-wider hover:scale-105 transition-transform",
+                  getValueForTheme(
+                    "bg-gradient-to-r from-[#54CF90] via-[#54CF90]/90 to-[#54CF90]/80 bg-clip-text text-transparent",
+                    "text-[#006C67]"
+                  )
+                )}
+              >
+                KU CLUB
+              </span>
             </div>
           </Link>
 
-          {/* Navigation Links - Desktop */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => {
               const isActive = pathname === link.path;
               return (
-                <Link
+                <NavLink
                   key={link.path}
                   href={link.path}
-                   className={combine(
-                    "px-4 py-2 rounded-full transition-all duration-200 font-medium",
-                    isActive
-                      ? getValueForTheme(
-                          "bg-gradient-to-r from-[#015a5e]/10 via-[#54CF90]/10 to-[#54CF90]/10 text-[#54CF90] border border-[#54CF90]/30",
-                          "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
-                        )
-                      : getValueForTheme(
-                          "text-white/80 hover:text-white hover:bg-white/10",
-                          "text-gray-700 hover:text-[#006C67] hover:bg-[#006C67]/5"
-                        )
-                  )}
+                  isActive={isActive}
+                  className={getNavLinkClasses(isActive)}
                 >
                   {link.label}
-                </Link>
+                </NavLink>
               );
             })}
 
-            {/* Theme Toggle Button - Desktop */}
             <ThemeToggleButton
               onClick={toggleTheme}
               resolvedTheme={resolvedTheme}
@@ -320,9 +306,8 @@ const NavBar = () => {
             />
           </div>
 
-          {/* Mobile Menu Controls */}
+          {/* Mobile Controls */}
           <div className="flex items-center gap-2 md:hidden">
-            {/* Theme Toggle Button - Mobile */}
             <ThemeToggleButton
               onClick={toggleTheme}
               resolvedTheme={resolvedTheme}
@@ -330,7 +315,6 @@ const NavBar = () => {
               isMobile
             />
 
-            {/* Menu Toggle Button */}
             <HamburgerButton
               isOpen={isOpen}
               onClick={toggleMenu}
@@ -357,24 +341,15 @@ const NavBar = () => {
                 {navLinks.map((link) => {
                   const isActive = pathname === link.path;
                   return (
-                    <Link
+                    <NavLink
                       key={link.path}
                       href={link.path}
-                      className={combine(
-                        "block px-4 py-3 rounded-lg transition-all duration-200 font-medium mb-1",
-                        isActive
-                          ? getValueForTheme(
-                              "bg-gradient-to-r from-[#015a5e] via-[#54CF90] to-[#54CF90]/90 text-white border border-[#54CF90]/30",
-                              "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
-                            )
-                          : getValueForTheme(
-                              "text-white/80 hover:text-white hover:bg-white/10",
-                              "text-gray-700 hover:text-[#006C67] hover:bg-[#006C67]/5"
-                            )
-                      )}
+                      isActive={isActive}
+                      className={getNavLinkClasses(isActive, true)}
+                      onClick={closeMobileMenu}
                     >
                       {link.label}
-                    </Link>
+                    </NavLink>
                   );
                 })}
               </div>
@@ -385,7 +360,5 @@ const NavBar = () => {
     </header>
   );
 };
-
-NavBar.displayName = "NavBar";
 
 export default React.memo(NavBar);

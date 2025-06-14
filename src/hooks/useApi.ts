@@ -23,9 +23,9 @@ export const useApi = <T>(
   });
 
   const fetchData = useCallback(async () => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
     try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      
       const result = await apiService.get<T>(endpoint);
       setState(prev => ({ ...prev, data: result, loading: false }));
     } catch (error) {

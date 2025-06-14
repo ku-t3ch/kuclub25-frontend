@@ -35,10 +35,10 @@ export default function Home() {
     }
   }, [campuses, activeCampus]);
 
-  const combine = (...classes: string[]) => classes.filter(Boolean).join(" ");
+  const combine = useCallback((...classes: string[]) => classes.filter(Boolean).join(" "), []);
 
-  const getValueForTheme = (darkValue: string, lightValue: string) => 
-    resolvedTheme === "dark" ? darkValue : lightValue;
+  const getValueForTheme = useCallback((darkValue: string, lightValue: string) => 
+    resolvedTheme === "dark" ? darkValue : lightValue, [resolvedTheme]);
 
   const categories = useMemo(() => {
     const allCategory = { id: undefined, name: "ทั้งหมด" };
@@ -109,11 +109,6 @@ export default function Home() {
       filtered = filtered.filter(org => org.org_type_name === activeCategory);
     }
 
-    console.log('filteredOrganizations:', {
-      count: filtered.length,
-      firstOrg: filtered[0]?.orgnameth
-    });
-
     return filtered;
   }, [organizationsByCampus, activeCategory, searchQuery, searchOrganizations]);
 
@@ -143,13 +138,11 @@ export default function Home() {
     (project: any) => {
       try {
         const projectId = project.id || project.projectid || project.project_id;
-        if (!projectId) {
-          console.error("Project ID not found:", project);
-          return;
+        if (projectId) {
+          router.push(`/projects/${projectId}`);
         }
-        router.push(`/projects/${projectId}`);
       } catch (error) {
-        console.error("Error navigating to project:", error);
+        // ลบ console.error เพื่อปรับปรุงประสิทธิภาพ
       }
     },
     [router]
@@ -157,16 +150,18 @@ export default function Home() {
 
   const loading = typesLoading || orgsLoading;
 
+  // ปรับปรุง: cache className เพื่อป้องกันการคำนวณซ้ำ
+  const containerClassName = useMemo(() => 
+    combine(
+      "min-h-screen pt-16 md:pt-20",
+      getValueForTheme(
+        "bg-[#ffff]/2",
+        "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+      )
+    ), [combine, getValueForTheme]);
+
   return (
-    <div
-      className={combine(
-        "min-h-screen pt-16 md:pt-20",
-        getValueForTheme(
-          "bg-[#ffff]/2",
-          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-        )
-      )}
-    >
+    <div className={containerClassName}>
       {campusError && (
         <div className="fixed top-20 right-4 bg-red-500 text-white p-4 rounded-lg z-50">
           <p>Campus Error: {campusError}</p>

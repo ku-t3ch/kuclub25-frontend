@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/th";
@@ -10,9 +9,15 @@ import { ACTIVITY_TYPE_COLORS } from "../../constants/activity";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../../styles/calendar.css";
 
-const messages = {
+const MESSAGES = {
   showMore: (total: number) => `+ อีก ${total} กิจกรรม`,
 } as const;
+
+const ACTIVITY_ORDER = [
+  "university_activities",
+  "social_activities",
+  "competency_development_activities",
+] as const;
 
 const localizer = momentLocalizer(moment);
 
@@ -20,7 +25,7 @@ interface CalendarViewSectionProps {
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
   setSelectedMonth: (month: number) => void;
-  filteredEvents: any[]; 
+  filteredEvents: any[];
   handleSelectSlot: (slotInfo: any) => void;
   handleSelectEvent: (project: any) => void;
   activeFilters: string[];
@@ -32,8 +37,10 @@ interface CalendarViewSectionProps {
   ACTIVITY_TYPES: ActivityType[];
 }
 
-// Memoized helper component for loading state
-const LoadingState = memo(({ getValueForTheme, combine }: { 
+const LoadingState = memo(({
+  getValueForTheme,
+  combine,
+}: {
   getValueForTheme: (dark: string, light: string) => string;
   combine: (...classes: string[]) => string;
 }) => (
@@ -52,18 +59,14 @@ const LoadingState = memo(({ getValueForTheme, combine }: {
     style={{ height: "500px", minHeight: "45vh", maxHeight: "650px" }}
   >
     <div className="flex flex-col items-center space-y-4">
-      <div 
-        className={combine(
-          "animate-spin rounded-full h-8 w-8 border-b-2",
-          getValueForTheme("border-[#54CF90]-500", "border-[#006C67]")
-        )}
-      />
-      <p 
-        className={combine(
-          "transition-colors duration-300",
-          getValueForTheme("text-white/70", "text-gray-600")
-        )}
-      >
+      <div className={combine(
+        "animate-spin rounded-full h-8 w-8 border-b-2",
+        getValueForTheme("border-[#54CF90]", "border-[#006C67]")
+      )} />
+      <p className={combine(
+        "transition-colors duration-300",
+        getValueForTheme("text-white/70", "text-gray-600")
+      )}>
         กำลังโหลดกิจกรรม...
       </p>
     </div>
@@ -75,48 +78,59 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
   currentDate,
   setCurrentDate,
   setSelectedMonth,
-  filteredEvents, // ใช้ filteredEvents ที่ส่งมาจาก parent
+  filteredEvents,
   handleSelectSlot,
   handleSelectEvent,
-  activeFilters = ['all'],
-  projectMatchesFilters,
+  activeFilters = ["all"],
   ACTIVITY_TYPES = [],
 }) => {
   const { getValueForTheme, combine } = useThemeUtils();
-
-  // Cache refs for DOM manipulation
+  
+  const [isMounted, setIsMounted] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(1024);
   const clickHandlersRef = useRef(new Map<Element, EventListener>());
   const timeoutRef = useRef<NodeJS.Timeout>();
-  const lastUpdateRef = useRef<string>('');
+  const lastUpdateRef = useRef<string>("");
 
-  // ใช้ filteredEvents ที่ส่งมาจาก parent แทนการ filter เอง
+  useEffect(() => {
+    setIsMounted(true);
+    
+    const updateWindowWidth = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    updateWindowWidth();
+    window.addEventListener('resize', updateWindowWidth);
+
+    return () => {
+      window.removeEventListener('resize', updateWindowWidth);
+    };
+  }, []);
+
   const calendarProjects = useMemo(() => {
     if (!Array.isArray(filteredEvents) || filteredEvents.length === 0) return [];
 
-    return filteredEvents.map(event => ({
+    return filteredEvents.map((event) => ({
       id: event.id,
       title: event.title,
       start: event.start,
       end: event.end,
       allDay: event.allDay || true,
       originalProject: event.originalProject,
-      activityType: event.activityType
+      activityType: event.activityType,
     }));
   }, [filteredEvents]);
 
-  // Optimized date-based project grouping
   const projectsByDate = useMemo(() => {
     const dateMap = new Map<string, any[]>();
-    
-    for (let i = 0; i < calendarProjects.length; i++) {
-      const project = calendarProjects[i];
-      if (!project.start || !project.end) continue;
-      
+
+    calendarProjects.forEach(project => {
+      if (!project.start || !project.end) return;
+
       const startDate = new Date(project.start);
       const endDate = new Date(project.end);
-      
-      // Create date range for multi-day projects
       const current = new Date(startDate);
+
       while (current <= endDate) {
         const dateKey = `${current.getFullYear()}-${current.getMonth()}-${current.getDate()}`;
         
@@ -124,31 +138,65 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
           dateMap.set(dateKey, []);
         }
         dateMap.get(dateKey)!.push(project);
-        
         current.setDate(current.getDate() + 1);
       }
-    }
-    
+    });
+
     return dateMap;
   }, [calendarProjects]);
 
-  // Optimized calendar dots update with debouncing and caching
+  const createDayIndicator = useCallback((activityType: string) => {
+    const dot = document.createElement("div");
+    dot.className = "day-indicator";
+    
+    const activityColor = ACTIVITY_TYPE_COLORS[activityType as keyof typeof ACTIVITY_TYPE_COLORS];
+    dot.style.backgroundColor = activityColor || "#9CA3AF";
+
+    const activityClass = {
+      university_activities: "activity-university",
+      social_activities: "activity-social", 
+      competency_development_activities: "activity-competency",
+    }[activityType] || "activity-default";
+    
+    dot.classList.add(activityClass);
+    return dot;
+  }, []);
+
+  const getOrderedActivityTypes = useCallback((projects: any[]) => {
+    const activityTypesSet = new Set<string>();
+    
+    projects.forEach(project => {
+      if (project.originalProject) {
+        getActivityTypes(project.originalProject).forEach(type => {
+          activityTypesSet.add(type);
+        });
+      }
+    });
+
+    const orderedTypes = ACTIVITY_ORDER.filter(type => activityTypesSet.has(type));
+    const remainingTypes = Array.from(activityTypesSet).filter(type => 
+      !ACTIVITY_ORDER.includes(type as any)
+    );
+    
+    return [...orderedTypes, ...remainingTypes];
+  }, []);
+
   const updateCalendarDots = useCallback(() => {
+    if (!isMounted) return;
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = setTimeout(() => {
       try {
-        // Create update signature to prevent unnecessary updates
-        const updateSignature = `${calendarProjects.length}-${activeFilters.join(',')}-${currentDate.getMonth()}-${currentDate.getFullYear()}`;
+        const updateSignature = `${calendarProjects.length}-${activeFilters.join(",")}-${currentDate.getMonth()}-${currentDate.getFullYear()}`;
         if (lastUpdateRef.current === updateSignature) return;
         lastUpdateRef.current = updateSignature;
 
         const calendarView = document.querySelector(".rbc-month-view");
         if (!calendarView) return;
 
-        // Clear existing event listeners
         clickHandlersRef.current.forEach((handler, cell) => {
           cell.removeEventListener("click", handler);
         });
@@ -157,79 +205,25 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
         const dateCells = document.querySelectorAll(".rbc-date-cell");
 
         dateCells.forEach((cell) => {
-          // Clear existing indicators
           const existingIndicators = cell.querySelectorAll(".day-indicator-container, .project-count");
-          existingIndicators.forEach((indicator) => indicator.remove());
+          existingIndicators.forEach(indicator => indicator.remove());
 
-          // Remove existing classes
-          cell.classList.remove(
-            "has-projects",
-            "dark-theme-has-projects",
-            "light-theme-has-projects"
-          );
+          cell.classList.remove("has-projects", "dark-theme-has-projects", "light-theme-has-projects");
 
-          // Get day number
           const dayText = (cell as HTMLElement).textContent?.trim() || "";
           const dayNum = parseInt(dayText);
-          if (isNaN(dayNum)) return;
+          if (isNaN(dayNum) || cell.classList.contains("rbc-off-range")) return;
 
-          // Skip days not in current month
-          if (cell.classList.contains("rbc-off-range")) return;
-
-          // Use pre-computed date map
           const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}-${dayNum}`;
           const projectsOnDay = projectsByDate.get(dateKey) || [];
 
           if (projectsOnDay.length > 0) {
-            // Add appropriate classes
             cell.classList.add("has-projects");
-            cell.classList.add(
-              getValueForTheme(
-                "dark-theme-has-projects",
-                "light-theme-has-projects"
-              )
-            );
+            cell.classList.add(getValueForTheme("dark-theme-has-projects", "light-theme-has-projects"));
 
-            // Create dots container
             const dotsContainer = document.createElement("div");
             dotsContainer.className = "day-indicator-container";
 
-            // Get unique activity types in specific order
-            const activityOrder = [
-              'university_activities',
-              'social_activities', 
-              'competency_development_activities'
-            ];
-            
-            const activityTypesSet = new Set<string>();
-            const orderedActivityTypes: string[] = [];
-
-            // First, collect all activity types
-            for (let i = 0; i < projectsOnDay.length; i++) {
-              const project = projectsOnDay[i];
-              if (project.originalProject) {
-                const types = getActivityTypes(project.originalProject);
-                for (let j = 0; j < types.length; j++) {
-                  activityTypesSet.add(types[j]);
-                }
-              }
-            }
-
-            // Then, order them according to our preferred sequence
-            activityOrder.forEach(activityType => {
-              if (activityTypesSet.has(activityType)) {
-                orderedActivityTypes.push(activityType);
-              }
-            });
-
-            // Add any remaining activity types not in our predefined order
-            activityTypesSet.forEach(activityType => {
-              if (!activityOrder.includes(activityType)) {
-                orderedActivityTypes.push(activityType);
-              }
-            });
-
-            // Add project count
             const projectCount = projectsOnDay.length;
             if (projectCount > 0) {
               const projectCountText = document.createElement("span");
@@ -238,49 +232,16 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               dotsContainer.appendChild(projectCountText);
             }
 
-            // Show max 3 unique activity types in order
+            const orderedActivityTypes = getOrderedActivityTypes(projectsOnDay);
             const displayActivityTypes = orderedActivityTypes.slice(0, 3);
 
-            // Add dots for each type in the correct order
-            for (let i = 0; i < displayActivityTypes.length; i++) {
-              const activityType = displayActivityTypes[i];
-              const dot = document.createElement("div");
-              dot.className = "day-indicator";
-
-              const activityColor = ACTIVITY_TYPE_COLORS[activityType as keyof typeof ACTIVITY_TYPE_COLORS];
-              
-              if (activityColor) {
-                dot.style.backgroundColor = activityColor;
-              } else {
-                dot.style.backgroundColor = '#9CA3AF'; // gray-400 fallback
-              }
-
-              // Add specific classes for styling
-              switch (activityType) {
-                case 'university_activities':
-                  dot.classList.add('activity-university');
-                  break;
-                case 'social_activities':
-                  dot.classList.add('activity-social');
-                  break;
-                case 'competency_development_activities':
-                  dot.classList.add('activity-competency');
-                  break;
-                default:
-                  dot.classList.add('activity-default');
-                  break;
-              }
-
+            displayActivityTypes.forEach(activityType => {
+              const dot = createDayIndicator(activityType);
               dotsContainer.appendChild(dot);
-            }
+            });
 
-            
             const clickHandler = () => {
-              const clickedDate = new Date(
-                currentDate.getFullYear(),
-                currentDate.getMonth(),
-                dayNum
-              );
+              const clickedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), dayNum);
               handleSelectSlot({
                 start: clickedDate,
                 end: clickedDate,
@@ -289,59 +250,81 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
               });
             };
 
-            (cell as HTMLElement).classList.add('cursor-pointer');
+            (cell as HTMLElement).classList.add("cursor-pointer");
             cell.addEventListener("click", clickHandler);
             clickHandlersRef.current.set(cell, clickHandler);
-
             cell.appendChild(dotsContainer);
           }
         });
 
         calendarView.classList.add("processed");
       } catch (error) {
-        console.error("Error updating calendar dots:", error);
+        // Silent error handling for production
       }
     }, 50);
   }, [
+    isMounted,
     calendarProjects,
     currentDate,
     activeFilters,
     getValueForTheme,
     handleSelectSlot,
-    projectsByDate
+    projectsByDate,
+    createDayIndicator,
+    getOrderedActivityTypes,
   ]);
 
+  const handleNavigate = useCallback((date: Date) => {
+    setCurrentDate(date);
+    setSelectedMonth(date.getMonth());
+  }, [setCurrentDate, setSelectedMonth]);
+
+  const containerHeight = useMemo(() => {
+    if (!isMounted) {
+      return {
+        height: "650px",
+        minHeight: "50vh",
+        maxHeight: "750px",
+      };
+    }
+
+    const isMobile = windowWidth < 640;
+    return {
+      height: isMobile ? "500px" : "650px",
+      minHeight: isMobile ? "40vh" : "50vh",
+      maxHeight: isMobile ? "600px" : "750px",
+    };
+  }, [isMounted, windowWidth]);
+
   useEffect(() => {
-    updateCalendarDots();
+    if (isMounted) {
+      updateCalendarDots();
+    }
     
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [updateCalendarDots]);
+  }, [updateCalendarDots, isMounted]);
 
-  // Cleanup effect
   useEffect(() => {
     return () => {
       clickHandlersRef.current.forEach((handler, cell) => {
         cell.removeEventListener("click", handler);
       });
       clickHandlersRef.current.clear();
-      
+
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
   }, []);
 
-  // Memoized navigation handler
-  const handleNavigate = useCallback((date: Date) => {
-    setCurrentDate(date);
-    setSelectedMonth(date.getMonth());
-  }, [setCurrentDate, setSelectedMonth]);
+  if (!isMounted) {
+    return <LoadingState getValueForTheme={getValueForTheme} combine={combine} />;
+  }
 
-  // Show loading if no events
   if (!filteredEvents || filteredEvents.length === 0) {
     return <LoadingState getValueForTheme={getValueForTheme} combine={combine} />;
   }
@@ -362,17 +345,14 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
         )
       )}
     >
-      <div
-        className="calendar-container relative"
-        style={{ height: "550px", minHeight: "50vh", maxHeight: "750px" }}
-      >
+      <div className="calendar-container relative" style={containerHeight}>
         <Calendar
           localizer={localizer}
           events={calendarProjects}
           startAccessor="start"
           endAccessor="end"
           style={{ height: "100%" }}
-          messages={messages}
+          messages={MESSAGES}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleSelectEvent}
           selectable
@@ -382,7 +362,7 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
           date={currentDate}
           onNavigate={handleNavigate}
           components={{
-            event: () => null, // Hide default event rendering, use custom dots
+            event: () => null,
           }}
         />
       </div>
@@ -391,5 +371,4 @@ const CalendarViewSection = memo<CalendarViewSectionProps>(({
 });
 
 CalendarViewSection.displayName = "CalendarViewSection";
-
 export default CalendarViewSection;
