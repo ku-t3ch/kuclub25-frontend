@@ -35,6 +35,7 @@ export interface OrganizationAllReturn {
   error: string | null;
   refetch: () => Promise<void>;
   clearError: () => void;
+  updateViews: (orgId: string) => Promise<void>;
 }
 
 export interface OrganizationsResponse {

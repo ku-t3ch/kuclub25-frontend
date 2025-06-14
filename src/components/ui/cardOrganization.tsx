@@ -3,7 +3,9 @@
 import React, { memo, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
+import { useUpdateOrganizationViews } from "../../hooks/useOrganization";
 import { Organization } from "../../types/organization";
 
 interface CardOrganizationProps {
@@ -14,12 +16,12 @@ interface CardOrganizationProps {
 
 const CardOrganization: React.FC<CardOrganizationProps> = ({
   organization,
-  onClick,
   className = "",
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
+  const { updateViews } = useUpdateOrganizationViews();
+  const router = useRouter();
 
-  // Destructure organization data
   const {
     id,
     org_image: image,
@@ -48,13 +50,6 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
     return viewCount.toLocaleString();
   }, [view]);
 
-  // Handle click with optimization
-  const handleClick = useCallback(() => {
-    if (onClick) {
-      onClick();
-    }
-  }, [onClick]);
-
   // Handle image error
   const handleImageError = useCallback(
     (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -64,6 +59,26 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
         "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPuC5hOC4oeC5iOC4oeC4-teC4o+C4ueC4m+C4oOC4suC4nTwvdGV4dD48L3N2Zz4=";
     },
     []
+  );
+
+  // Handle detail button click with view count update
+  const handleDetailClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+
+      try {
+        // Update view count
+        await updateViews(id);
+
+        // Navigate to detail page
+        router.push(`/organizations/${id}`);
+      } catch (error) {
+        console.error("Error updating views:", error);
+        // Still navigate even if view update fails
+        router.push(`/organizations/${id}`);
+      }
+    },
+    [id, updateViews, router]
   );
 
   return (
@@ -85,7 +100,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
         transition: { duration: 0.3, ease: "easeOut" },
       }}
       whileTap={{ scale: 0.98 }}
-      onClick={handleClick}
+      onClick={handleDetailClick}
       layout
     >
       {/* Image Section */}
@@ -219,66 +234,65 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
           )}
         </div>
 
-        {/* Action Button */}
-        <Link href={`/organizations/${id}`} className="block">
-          <motion.button
-            className={combine(
-              "w-full relative overflow-hidden rounded-lg transition-all duration-300",
-              "group/btn flex justify-center items-center shadow-inner",
-              "py-1.5 xs:py-1.5 sm:py-2 md:py-2.5",
-              getValueForTheme(
-                "text-white/90 bg-gradient-to-r from-[#006C67] via-[#54CF90]/70 to-[#54CF90]/50 hover:from-[#54CF90]/50 hover:to-[#54CF90]/50 hover:text-white border border-[#54CF90]/30 hover:border-[#54CF90]/40 shadow-white/5",
-                "text-[#006C67]/90 bg-gradient-to-r from-[#006C67]/10 to-teal-600/10 hover:from-[#006C67]/20 hover:to-teal-600/20 hover:text-[#006C67] border border-[#006C67]/20 hover:border-[#006C67]/30 shadow-[#006C67]/5"
-              )
-            )}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="button"
-          >
-            <span className="relative z-10 flex items-center justify-center text-inherit font-medium tracking-wide text-xs xs:text-2xs sm:text-xs md:text-sm">
-              รายละเอียด
-              <motion.svg
-                className={combine(
-                  "w-3 xs:w-2.5 sm:w-3 md:w-4 h-3 xs:h-2.5 sm:h-3 md:h-4 ml-1.5 xs:ml-1 sm:ml-1.5 md:ml-2",
-                  getValueForTheme(
-                    "text-[#54CF90] group-hover/btn:text-white",
-                    "text-[#006C67]/70 group-hover/btn:text-[#006C67]"
-                  )
-                )}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                initial={{ x: 0 }}
-                whileHover={{ x: 2 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </motion.svg>
-            </span>
-
-            {/* Hover effect overlay */}
-            <motion.div
+        {/* Action Button - Updated */}
+        <motion.button
+          className={combine(
+            "w-full relative overflow-hidden rounded-lg transition-all duration-300",
+            "group/btn flex justify-center items-center shadow-inner",
+            "py-1.5 xs:py-1.5 sm:py-2 md:py-2.5",
+            getValueForTheme(
+              "text-white/90 bg-gradient-to-r from-[#006C67] via-[#54CF90]/70 to-[#54CF90]/50 hover:from-[#54CF90]/50 hover:to-[#54CF90]/50 hover:text-white border border-[#54CF90]/30 hover:border-[#54CF90]/40 shadow-white/5",
+              "text-[#006C67]/90 bg-gradient-to-r from-[#006C67]/10 to-teal-600/10 hover:from-[#006C67]/20 hover:to-teal-600/20 hover:text-[#006C67] border border-[#006C67]/20 hover:border-[#006C67]/30 shadow-[#006C67]/5"
+            )
+          )}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleDetailClick}
+          type="button"
+        >
+          <span className="relative z-10 flex items-center justify-center text-inherit font-medium tracking-wide text-xs xs:text-2xs sm:text-xs md:text-sm">
+            รายละเอียด
+            <motion.svg
               className={combine(
-                "absolute inset-0 opacity-0 group-hover/btn:opacity-100",
+                "w-3 xs:w-2.5 sm:w-3 md:w-4 h-3 xs:h-2.5 sm:h-3 md:h-4 ml-1.5 xs:ml-1 sm:ml-1.5 md:ml-2",
                 getValueForTheme(
-                  "bg-gradient-to-r from-[#54CF90]/20 to-[#54CF90]/20",
-                  "bg-gradient-to-r from-[#006C67]/20 to-teal-500/20"
+                  "text-[#54CF90] group-hover/btn:text-white",
+                  "text-[#006C67]/70 group-hover/btn:text-[#006C67]"
                 )
               )}
-              initial={{ scale: 0, borderRadius: "100%" }}
-              whileHover={{
-                scale: 1,
-                borderRadius: "0.5rem",
-                transition: { duration: 0.4, ease: "easeOut" },
-              }}
-            />
-          </motion.button>
-        </Link>
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              initial={{ x: 0 }}
+              whileHover={{ x: 2 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </motion.svg>
+          </span>
+
+          {/* Hover effect overlay */}
+          <motion.div
+            className={combine(
+              "absolute inset-0 opacity-0 group-hover/btn:opacity-100",
+              getValueForTheme(
+                "bg-gradient-to-r from-[#54CF90]/20 to-[#54CF90]/20",
+                "bg-gradient-to-r from-[#006C67]/20 to-teal-500/20"
+              )
+            )}
+            initial={{ scale: 0, borderRadius: "100%" }}
+            whileHover={{
+              scale: 1,
+              borderRadius: "0.5rem",
+              transition: { duration: 0.4, ease: "easeOut" },
+            }}
+          />
+        </motion.button>
       </div>
 
       {/* Subtle glow effect on hover */}

@@ -102,9 +102,9 @@ const OrganizationHeroSection: React.FC<OrganizationHeroSectionProps> = ({
     [getValueForTheme]
   );
 
-  // Memoized parallax transforms for better performance
 
-  // Memoized error handler
+
+
   const handleImageError = useCallback(() => {
     setImageError(true);
   }, []);

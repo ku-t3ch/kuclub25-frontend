@@ -1,8 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useThemeUtils } from '../../../hooks/useThemeUtils';
+import { useUpdateOrganizationViews } from '../../../hooks/useOrganization'; // เพิ่ม import นี้
 
 interface DateInfoCardProps {
   icon: React.ReactNode;
@@ -20,6 +21,7 @@ interface SidebarSectionProps {
   onViewOrganization: (orgId: string) => void;
 }
 
+// DateInfoCard component remains the same...
 const DateInfoCard = React.memo<DateInfoCardProps>(({ icon, label, date, time }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
@@ -84,6 +86,22 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
   onViewOrganization
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
+  const { updateViews } = useUpdateOrganizationViews(); // เพิ่มบรรทัดนี้
+
+  // Handle organization click with view count update
+  const handleOrganizationClick = useCallback(async (orgId: string) => {
+    try {
+      // Update organization views first
+      await updateViews(orgId);
+      
+      // Then navigate to organization
+      onViewOrganization(orgId);
+    } catch (error) {
+      console.warn('Failed to update organization views:', error);
+      // Still navigate even if view update fails
+      onViewOrganization(orgId);
+    }
+  }, [updateViews, onViewOrganization]);
 
   const themeValues = {
     cardBg: getValueForTheme(
@@ -92,7 +110,10 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
     ),
     primaryText: getValueForTheme("text-white", "text-[#006C67]"),
     secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
-    accentBlueBg: getValueForTheme("bg-gradient-to-r from-[#006C67]/50 via-[#54CF90]/50] to-[#54CF90]/50 border-[#54CF90]", "bg-[#006C67]/10 border-[#006C67]/20"),
+    accentBlueBg: getValueForTheme(
+      "bg-gradient-to-r from-[#006C67]/50 via-[#54CF90]/50 to-[#54CF90]/50 border-[#54CF90]", // แก้ไข syntax error
+      "bg-[#006C67]/10 border-[#006C67]/20"
+    ),
     buttonPrimary: getValueForTheme(
       "bg-gradient-to-r from-[#006C67]/75 via-[#54CF90]/75 to-[#54CF90]/75 hover:from-[#006C67]/60 hover:to-[#54CF90]/60 shadow-[#54CF90]/20 hover:shadow-[#54CF90]/30",
       "bg-gradient-to-r from-[#006C67] to-[#006C67]/90 hover:from-[#006C67]/90 hover:to-[#006C67]/80 shadow-[#006C67]/20 hover:shadow-[#006C67]/30"
@@ -228,7 +249,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
               <div className={combine(
                 "inline-block px-3 py-1 rounded-full text-xs font-medium",
                 getValueForTheme(
-                  "bg-gradient-to-r from-[#006C67]/75 via-[#54CF90]/75 to-[#54CF90]/75 text-[white]",
+                  "bg-gradient-to-r from-[#006C67]/75 via-[#54CF90]/75 to-[#54CF90]/75 text-white", // แก้ไข text-[white] เป็น text-white
                   "bg-[#006C67]/10 text-[#006C67]"
                 )
               )}>
@@ -287,7 +308,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
       >
         {organizationInfo.isValid ? (
           <button
-            onClick={() => onViewOrganization(organizationInfo.id!)}
+            onClick={() => handleOrganizationClick(organizationInfo.id!)} // เปลี่ยนจาก onViewOrganization เป็น handleOrganizationClick
             disabled={orgLoading}
             className={combine(
               "group block w-full text-white text-center py-3 xs:py-3.5 sm:py-4 px-4 xs:px-5 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-sm xs:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none",

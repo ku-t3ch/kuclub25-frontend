@@ -35,6 +35,7 @@ export const API_CONFIG = {
     ORGANIZATIONS: {
       LIST: "/organizations",
       DETAIL: (id: string) => `/organizations/${id}`,
+      UPDATE_VIEWS : (id: string) => `/organizations/${id}/views`,
     },
     PROJECTS: {
       LIST: "/projects",

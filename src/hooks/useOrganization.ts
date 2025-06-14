@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
-import { useProjects } from "./useProject"; // เพิ่ม import
+import { useProjects } from "./useProject";
 import {
   Organization,
   OrganizationsResponse,
@@ -26,13 +26,12 @@ export const useOrganizations = (): OrganizationAllReturn => {
       );
 
       if (response.success && response.data) {
-        // Normalize data - แปลงข้อมูลให้ตรงกับ interface
         const normalizedData = response.data.map((org) => ({
           ...org,
-          id: String(org.id), // ให้แน่ใจว่า id เป็น string
-          org_type_id: String(org.org_type_id), // ให้แน่ใจว่า org_type_id เป็น string
-          org_type_name: org.org_type_name || "", // ให้แน่ใจว่า org_type_name มีค่า
-          views: Number(org.views) || 0, // แปลงเป็น number
+          id: String(org.id),
+          org_type_id: String(org.org_type_id),
+          org_type_name: org.org_type_name || "",
+          views: Number(org.views) || 0,
         }));
 
         setOrganizations(normalizedData);
@@ -113,7 +112,6 @@ export const useOrganizationsWithFilters =
           case "latest":
             // เรียงตามกิจกรรมที่กำลังจะมาถึงเร็วที่สุด
             result = result.sort((a, b) => {
-        
               if (!projects || !projects.length) {
                 return parseInt(b.id) - parseInt(a.id);
               }
@@ -132,33 +130,26 @@ export const useOrganizationsWithFilters =
                   new Date(project.date_start) >= now
               );
 
-             
               if (aProjects.length === 0 && bProjects.length === 0) {
                 return parseInt(b.id) - parseInt(a.id);
               }
 
-       
               if (aProjects.length === 0) return 1;
 
               if (bProjects.length === 0) return -1;
 
-       
               try {
-                const nextProjectA = aProjects.sort(
-                  (p1, p2) => {
-                    const date1 = new Date(p1.date_start);
-                    const date2 = new Date(p2.date_start);
-                    return date1.getTime() - date2.getTime();
-                  }
-                )[0];
+                const nextProjectA = aProjects.sort((p1, p2) => {
+                  const date1 = new Date(p1.date_start);
+                  const date2 = new Date(p2.date_start);
+                  return date1.getTime() - date2.getTime();
+                })[0];
 
-                const nextProjectB = bProjects.sort(
-                  (p1, p2) => {
-                    const date1 = new Date(p1.date_start);
-                    const date2 = new Date(p2.date_start);
-                    return date1.getTime() - date2.getTime();
-                  }
-                )[0];
+                const nextProjectB = bProjects.sort((p1, p2) => {
+                  const date1 = new Date(p1.date_start);
+                  const date2 = new Date(p2.date_start);
+                  return date1.getTime() - date2.getTime();
+                })[0];
 
                 // ใช้ date_start โดยตรงในการเปรียบเทียบ
                 const dateTimeA = new Date(nextProjectA.date_start);
@@ -173,10 +164,11 @@ export const useOrganizationsWithFilters =
             break;
 
           case "name":
-            result = result.sort((a, b) =>
-              (a.orgnameen || "").localeCompare(b.orgnameen || "") ||
-              (a.orgnameth || "").localeCompare(b.orgnameth || "") ||
-              (a.org_nickname || "").localeCompare(b.org_nickname || "")
+            result = result.sort(
+              (a, b) =>
+                (a.orgnameen || "").localeCompare(b.orgnameen || "") ||
+                (a.orgnameth || "").localeCompare(b.orgnameth || "") ||
+                (a.org_nickname || "").localeCompare(b.org_nickname || "")
             );
             break;
 
@@ -240,7 +232,6 @@ export const useOrganizationDetail = (
       );
 
       if (response.success && response.data) {
-        // Normalize data
         const normalizedData = {
           ...response.data,
           id: String(response.data.id),
@@ -282,4 +273,20 @@ export const useOrganizationDetail = (
     refetch: fetchOrganization,
     clearError,
   };
+};
+
+export const useUpdateOrganizationViews = () => {
+  const updateViews = useCallback(async (orgId: string) => {
+    try {
+      const response = await apiService.put(
+        API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE_VIEWS(orgId)
+      );
+      return response;
+    } catch (error) {
+      console.error("Error updating organization views:", error);
+      throw error;
+    }
+  }, []);
+
+  return { updateViews };
 };
