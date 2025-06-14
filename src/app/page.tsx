@@ -18,103 +18,60 @@ export default function Home() {
   const { organizationTypes, loading: typesLoading } = useOrganizationTypes();
   const { organizations, loading: orgsLoading } = useOrganizations();
   const { projects, loading: projectsLoading } = useAllProjects();
-  const {
-    campuses,
-    loading: campusLoading,
-    error: campusError,
-  } = useCampuses();
+  const { campuses, loading: campusLoading, error: campusError } = useCampuses();
 
-  const [activeCategory, setActiveCategory] = useState<string | undefined>(
-    undefined
-  );
-  const [activeCampus, setActiveCampus] = useState<string | undefined>(
-    undefined
-  );
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
+  const [activeCampus, setActiveCampus] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
-  // ตั้งค่า default campus เป็นวิทยาเขตบางเขน
   useEffect(() => {
     if (campuses.length > 0 && activeCampus === undefined) {
-      const bangkhenCampus = campuses.find(
-        (campus) =>
-          campus.name.includes("บางเขน") ||
-          campus.name.includes("Bangkhen") ||
-          campus.name.toLowerCase().includes("bangkhen")
+      const bangkhenCampus = campuses.find(campus => 
+        campus.name.includes("บางเขน")
       );
-
-      if (bangkhenCampus) {
-        setActiveCampus(bangkhenCampus.id);
-      } else {
-        setActiveCampus(campuses[0].id);
-      }
+      const selectedCampusId = bangkhenCampus?.id || campuses[0].id;
+      setActiveCampus(selectedCampusId);
     }
   }, [campuses, activeCampus]);
 
-  const combine = (...classes: string[]) => {
-    return classes.filter(Boolean).join(" ");
-  };
+  const combine = (...classes: string[]) => classes.filter(Boolean).join(" ");
 
-  const getValueForTheme = (darkValue: string, lightValue: string) => {
-    return resolvedTheme === "dark" ? darkValue : lightValue;
-  };
+  const getValueForTheme = (darkValue: string, lightValue: string) => 
+    resolvedTheme === "dark" ? darkValue : lightValue;
 
   const categories = useMemo(() => {
     const allCategory = { id: undefined, name: "ทั้งหมด" };
-    const typeCategories = organizationTypes.map((type) => ({
+    const typeCategories = organizationTypes.map(type => ({
       id: type.name,
       name: type.name,
     }));
-
     return [allCategory, ...typeCategories];
   }, [organizationTypes]);
 
-  // ฟังก์ชันช่วยในการเทียบชื่อวิทยาเขต
   const isCampusMatch = useCallback(
-    (
-      orgCampusName: string | null | undefined,
-      selectedCampusName: string
-    ): boolean => {
-      if (!orgCampusName || !selectedCampusName) return false;
-      return orgCampusName === selectedCampusName;
+    (orgCampusId: string | null | undefined, selectedCampusId: string): boolean => {
+      return orgCampusId === selectedCampusId;
     },
     []
   );
 
-  // กรององค์กรตามวิทยาเขตก่อน (สำหรับการนับ)
   const organizationsByCampus = useMemo(() => {
-    if (activeCampus === undefined) {
-      return organizations;
-    }
+    if (activeCampus === undefined) return organizations;
+    return organizations.filter(org => isCampusMatch(org.campus_id, activeCampus));
+  }, [organizations, activeCampus, isCampusMatch]);
 
-    const selectedCampus = campuses.find(
-      (campus) => campus.id === activeCampus
-    );
-    if (!selectedCampus) {
-      return organizations;
-    }
+  const totalClubCount = useMemo(() => organizationsByCampus.length, [organizationsByCampus]);
 
-    return organizations.filter((org) => {
-      return isCampusMatch(org.campus_name, selectedCampus.name);
-    });
-  }, [organizations, activeCampus, campuses, isCampusMatch]);
-
-  const totalClubCount = useMemo(() => {
-    return organizationsByCampus.length;
-  }, [organizationsByCampus]);
-
-  // สร้าง categoryCountMap จากองค์กรที่กรองตามวิทยาเขตแล้ว
   const categoryCountMap = useMemo(() => {
     const countMap = new Map<string | undefined, number>();
-
-    organizationsByCampus.forEach((org) => {
+    
+    organizationsByCampus.forEach(org => {
       const typeName = org.org_type_name;
       countMap.set(typeName, (countMap.get(typeName) || 0) + 1);
     });
-
-    // เพิ่มจำนวนรวมทั้งหมดสำหรับ "ทั้งหมด"
+    
     countMap.set(undefined, organizationsByCampus.length);
-
     return countMap;
   }, [organizationsByCampus]);
 
@@ -123,77 +80,50 @@ export default function Home() {
       if (!query.trim()) return orgs;
 
       const searchTerm = query.toLowerCase().trim();
-
-      return orgs.filter((org) => {
-        const thaiName = org.orgnameth?.toLowerCase() || "";
-        const englishName = org.orgnameen?.toLowerCase() || "";
-        const nickname = org.org_nickname?.toLowerCase() || "";
-        const description = org.description?.toLowerCase() || "";
-        const orgType = org.org_type_name?.toLowerCase() || "";
-        const campusName = org.campus_name?.toLowerCase() || "";
-
-        return (
-          thaiName.includes(searchTerm) ||
-          englishName.includes(searchTerm) ||
-          nickname.includes(searchTerm) ||
-          description.includes(searchTerm) ||
-          orgType.includes(searchTerm) ||
-          campusName.includes(searchTerm)
+      return orgs.filter(org => {
+        const searchFields = [
+          org.orgnameth,
+          org.orgnameen,
+          org.org_nickname,
+          org.description,
+          org.org_type_name,
+          org.campus_name
+        ];
+        
+        return searchFields.some(field => 
+          field?.toLowerCase().includes(searchTerm)
         );
       });
     },
     []
   );
 
-  // Filter organizations based on active category, campus, and search query
   const filteredOrganizations = useMemo(() => {
-    let filtered = organizations;
+    let filtered = organizationsByCampus;
 
-    // Apply search filter first if there's a search query
     if (searchQuery.trim()) {
       filtered = searchOrganizations(searchQuery, filtered);
     }
 
-    // Apply campus filter - ใช้ campus name เป็นหลัก
-    if (activeCampus !== undefined) {
-      const selectedCampus = campuses.find(
-        (campus) => campus.id === activeCampus
-      );
-      if (selectedCampus) {
-        filtered = filtered.filter((org) => {
-          return isCampusMatch(org.campus_name, selectedCampus.name);
-        });
-      }
+    if (activeCategory !== undefined) {
+      filtered = filtered.filter(org => org.org_type_name === activeCategory);
     }
 
-    // Then apply category filter if a category is selected
-    if (activeCategory !== undefined) {
-      filtered = filtered.filter((org) => {
-        return org.org_type_name === activeCategory;
-      });
-    }
+    console.log('filteredOrganizations:', {
+      count: filtered.length,
+      firstOrg: filtered[0]?.orgnameth
+    });
 
     return filtered;
-  }, [
-    organizations,
-    activeCategory,
-    activeCampus,
-    searchQuery,
-    searchOrganizations,
-    campuses,
-    isCampusMatch,
-  ]);
+  }, [organizationsByCampus, activeCategory, searchQuery, searchOrganizations]);
 
   const handleCategoryChange = useCallback(
-    (categoryName: string | undefined) => {
-      setActiveCategory(categoryName);
-    },
+    (categoryName: string | undefined) => setActiveCategory(categoryName),
     []
   );
 
   const handleCampusChange = useCallback((campusId: string | undefined) => {
     setActiveCampus(campusId);
-    // Reset category เมื่อเปลี่ยนวิทยาเขต เพื่อแสดงข้อมูลที่ถูกต้อง
     setActiveCategory(undefined);
   }, []);
 
@@ -202,12 +132,9 @@ export default function Home() {
 
     setTimeout(() => {
       setSearchQuery(query);
-
       if (query.trim()) {
         setActiveCategory(undefined);
-        // อย่า reset campus เมื่อค้นหา เพื่อให้ค้นหาในวิทยาเขตที่เลือกไว้
       }
-
       setIsSearching(false);
     }, 300);
   }, []);
@@ -216,7 +143,6 @@ export default function Home() {
     (project: any) => {
       try {
         const projectId = project.id || project.projectid || project.project_id;
-
         if (!projectId) {
           console.error("Project ID not found:", project);
           return;
@@ -262,9 +188,7 @@ export default function Home() {
       <CategorySection
         categories={categories}
         activeCategory={activeCategory}
-        totalClubCount={
-          searchQuery ? filteredOrganizations.length : totalClubCount
-        }
+        totalClubCount={searchQuery ? filteredOrganizations.length : totalClubCount}
         categoryCountMap={categoryCountMap}
         loading={loading}
         onCategoryChange={handleCategoryChange}
@@ -277,7 +201,6 @@ export default function Home() {
       <div className="h-10" />
 
       <OrganizationSection
-        organizations={organizations}
         filteredOrganizations={filteredOrganizations}
         activeCategory={activeCategory}
         categories={categories}
