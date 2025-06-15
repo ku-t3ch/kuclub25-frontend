@@ -28,7 +28,6 @@ export const useOrganizations = (): OrganizationAllReturn => {
   const fetchOrganizations = useCallback(async () => {
     setLoading(true);
     setError(null);
-
     try {
       const response = await apiService.get<OrganizationsResponse>(
         API_CONFIG.ENDPOINTS.ORGANIZATIONS.LIST

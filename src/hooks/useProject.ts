@@ -156,7 +156,7 @@ export const useProjectDetail = (id: string | null): ProjectDetailReturn => {
     if (!id) return null;
 
     const response = await apiService.get<ProjectDetailResponse>(
-      `${API_CONFIG.ENDPOINTS.PROJECTS.LIST}/${id}`
+      API_CONFIG.ENDPOINTS.PROJECTS.DETAIL(id)
     );
     
     if (!response.success || !response.data) {
@@ -186,7 +186,7 @@ export const useProjectsByOrganization = (orgId: string | null): ProjectAllRetur
     if (!orgId) return [];
 
     const response = await apiService.get<ProjectsResponse>(
-      `${API_CONFIG.ENDPOINTS.PROJECTS.LIST}/organization/${orgId}`
+     API_CONFIG.ENDPOINTS.PROJECTS.BY_ORGANIZATION(orgId)
     );
     
     if (!response.success || !response.data) {

@@ -28,7 +28,6 @@ export class AuthService {
   }
 
   private async requestNewToken(): Promise<string> {
-    // ใช้ NEXT_PUBLIC_CLIENT_SECRET สำหรับ client-side
     const clientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET || '';
     
     if (!clientSecret) {

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
-import { useUpdateOrganizationViews } from "../../hooks/useOrganization";
 import { Organization } from "../../types/organization";
 
 interface CardOrganizationProps {
@@ -19,7 +18,6 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
   className = "",
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
-  const { updateViews } = useUpdateOrganizationViews();
   const router = useRouter();
 
   const {
@@ -56,29 +54,18 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
       const target = e.target as HTMLImageElement;
       target.onerror = null;
       target.src =
-        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPuC5hOC4oeC5iOC4oeC4-teC4o+C4ueC4m+C4oOC4suC4nTwvdGV4dD48L3N2Zz4=";
+        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIyNSIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPuC5hOC4oeC5iOC4oeC4_teC4o-C4ueC4m-C4oOC4suC4nTwvdGV4dD48L3N2Zz4=";
     },
     []
   );
 
-  // Handle detail button click with view count update
+  // Handle detail button click - simplified without updateViews
   const handleDetailClick = useCallback(
-    async (e: React.MouseEvent) => {
+    (e: React.MouseEvent) => {
       e.preventDefault();
-
-      try {
-        // Update view count
-        await updateViews(id);
-
-        // Navigate to detail page
-        router.push(`/organizations/${id}`);
-      } catch (error) {
-        console.error("Error updating views:", error);
-        // Still navigate even if view update fails
-        router.push(`/organizations/${id}`);
-      }
+      router.push(`/organizations/${id}`);
     },
-    [id, updateViews, router]
+    [id, router]
   );
 
   return (
@@ -312,7 +299,7 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
   );
 };
 
-// Memoized component for performance
+
 export default memo(CardOrganization, (prevProps, nextProps) => {
   return (
     prevProps.organization.id === nextProps.organization.id &&

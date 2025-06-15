@@ -18,31 +18,47 @@ export default function Home() {
   const { organizationTypes, loading: typesLoading } = useOrganizationTypes();
   const { organizations, loading: orgsLoading } = useOrganizations();
   const { projects, loading: projectsLoading } = useAllProjects();
-  const { campuses, loading: campusLoading, error: campusError } = useCampuses();
+  const {
+    campuses,
+    loading: campusLoading,
+    error: campusError,
+  } = useCampuses();
 
-  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
-  const [activeCampus, setActiveCampus] = useState<string | undefined>(undefined);
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(
+    undefined
+  );
+  const [activeCampus, setActiveCampus] = useState<string | undefined>(
+    undefined
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
   useEffect(() => {
     if (campuses.length > 0 && activeCampus === undefined) {
-      const bangkhenCampus = campuses.find(campus => 
+      const bangkhenCampus = campuses.find((campus) =>
         campus.name.includes("บางเขน")
       );
-      const selectedCampusId = bangkhenCampus?.id || campuses[0].id;
+      const selectedCampusId = bangkhenCampus?.name|| campuses[0]?.name;
       setActiveCampus(selectedCampusId);
     }
   }, [campuses, activeCampus]);
 
-  const combine = useCallback((...classes: string[]) => classes.filter(Boolean).join(" "), []);
+  
 
-  const getValueForTheme = useCallback((darkValue: string, lightValue: string) => 
-    resolvedTheme === "dark" ? darkValue : lightValue, [resolvedTheme]);
+  const combine = useCallback(
+    (...classes: string[]) => classes.filter(Boolean).join(" "),
+    []
+  );
+
+  const getValueForTheme = useCallback(
+    (darkValue: string, lightValue: string) =>
+      resolvedTheme === "dark" ? darkValue : lightValue,
+    [resolvedTheme]
+  );
 
   const categories = useMemo(() => {
     const allCategory = { id: undefined, name: "ทั้งหมด" };
-    const typeCategories = organizationTypes.map(type => ({
+    const typeCategories = organizationTypes.map((type) => ({
       id: type.name,
       name: type.name,
     }));
@@ -50,7 +66,10 @@ export default function Home() {
   }, [organizationTypes]);
 
   const isCampusMatch = useCallback(
-    (orgCampusId: string | null | undefined, selectedCampusId: string): boolean => {
+    (
+      orgCampusId: string | null | undefined,
+      selectedCampusId: string
+    ): boolean => {
       return orgCampusId === selectedCampusId;
     },
     []
@@ -58,19 +77,24 @@ export default function Home() {
 
   const organizationsByCampus = useMemo(() => {
     if (activeCampus === undefined) return organizations;
-    return organizations.filter(org => isCampusMatch(org.campus_id, activeCampus));
+    return organizations.filter((org) =>
+      isCampusMatch(org.campus_name, activeCampus)
+    );
   }, [organizations, activeCampus, isCampusMatch]);
 
-  const totalClubCount = useMemo(() => organizationsByCampus.length, [organizationsByCampus]);
+  const totalClubCount = useMemo(
+    () => organizationsByCampus.length,
+    [organizationsByCampus]
+  );
 
   const categoryCountMap = useMemo(() => {
     const countMap = new Map<string | undefined, number>();
-    
-    organizationsByCampus.forEach(org => {
+
+    organizationsByCampus.forEach((org) => {
       const typeName = org.org_type_name;
       countMap.set(typeName, (countMap.get(typeName) || 0) + 1);
     });
-    
+
     countMap.set(undefined, organizationsByCampus.length);
     return countMap;
   }, [organizationsByCampus]);
@@ -80,17 +104,17 @@ export default function Home() {
       if (!query.trim()) return orgs;
 
       const searchTerm = query.toLowerCase().trim();
-      return orgs.filter(org => {
+      return orgs.filter((org) => {
         const searchFields = [
           org.orgnameth,
           org.orgnameen,
           org.org_nickname,
           org.description,
           org.org_type_name,
-          org.campus_name
+          org.campus_name,
         ];
-        
-        return searchFields.some(field => 
+
+        return searchFields.some((field) =>
           field?.toLowerCase().includes(searchTerm)
         );
       });
@@ -106,7 +130,7 @@ export default function Home() {
     }
 
     if (activeCategory !== undefined) {
-      filtered = filtered.filter(org => org.org_type_name === activeCategory);
+      filtered = filtered.filter((org) => org.org_type_name === activeCategory);
     }
 
     return filtered;
@@ -137,12 +161,12 @@ export default function Home() {
   const handleProjectClick = useCallback(
     (project: any) => {
       try {
-        const projectId = project.id || project.projectid || project.project_id;
+        const projectId = project.id ;
         if (projectId) {
           router.push(`/projects/${projectId}`);
         }
       } catch (error) {
-        // ลบ console.error เพื่อปรับปรุงประสิทธิภาพ
+  
       }
     },
     [router]
@@ -150,15 +174,18 @@ export default function Home() {
 
   const loading = typesLoading || orgsLoading;
 
-  // ปรับปรุง: cache className เพื่อป้องกันการคำนวณซ้ำ
-  const containerClassName = useMemo(() => 
-    combine(
-      "min-h-screen pt-16 md:pt-20",
-      getValueForTheme(
-        "bg-[#ffff]/2",
-        "bg-gradient-to-b from-white via-gray-50 to-gray-100"
-      )
-    ), [combine, getValueForTheme]);
+
+  const containerClassName = useMemo(
+    () =>
+      combine(
+        "min-h-screen pt-16 md:pt-20",
+        getValueForTheme(
+          "bg-[#ffff]/2",
+          "bg-gradient-to-b from-white via-gray-50 to-gray-100"
+        )
+      ),
+    [combine, getValueForTheme]
+  );
 
   return (
     <div className={containerClassName}>

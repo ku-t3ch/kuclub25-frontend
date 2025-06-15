@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
-import { Campus, CampusResponse } from '../types/organization';
+import { Campus, CampusApiResponse } from "../types/organization";
 
 export const useCampuses = () => {
   const [campuses, setCampuses] = useState<Campus[]>([]);
@@ -12,23 +12,38 @@ export const useCampuses = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await apiService.get<CampusResponse>(
-        API_CONFIG.ENDPOINTS.CAMPUSES || '/campuses'
+
+    
+      const response = await apiService.get<CampusApiResponse>(
+        API_CONFIG.ENDPOINTS.CAMPUSES || "/campuses"
       );
-      
+
       if (response.success && response.data) {
-        setCampuses(response.data);
+        const normalizedCampuses: Campus[] = response.data.map(
+          (campusName, index) => ({
+            name: campusName,
+          })
+        );
+
+        setCampuses(normalizedCampuses);
+
+
+        if (process.env.NODE_ENV === "development") {
+          console.log("🏛️ Campuses loaded:", {
+            rawApiData: response.data,
+            normalizedData: normalizedCampuses,
+          });
+        }
       } else {
-        setError(response.message || 'Failed to fetch campuses');
+        throw new Error(response.message || "Failed to fetch campuses");
       }
     } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else {
-        setError('Error fetching campuses');
-      }
-      console.error('Error fetching campuses:', err);
+      const errorMessage =
+        err instanceof ApiError ? err.message : "Error fetching campuses";
+
+      setError(errorMessage);
+      setCampuses([]);
+      console.error("Error fetching campuses:", err);
     } finally {
       setLoading(false);
     }
@@ -46,11 +61,11 @@ export const useCampuses = () => {
     setError(null);
   }, []);
 
-  return { 
-    campuses, 
-    loading, 
+  return {
+    campuses,
+    loading,
     error,
     refetch,
-    clearError
+    clearError,
   };
 };

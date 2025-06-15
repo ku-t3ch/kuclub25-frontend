@@ -1,15 +1,15 @@
 // Get API base URL dynamically based on current hostname
 const getApiBaseUrl = (): string => {
-  // For server-side rendering, always return default
+
   if (typeof window === "undefined") {
-    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
   }
 
   // For client-side, check hostname
   const hostname = window.location.hostname;
 
   if (hostname === process.env.NEXT_PUBLIC_NETWORK) {
-    return `http://${process.env.NEXT_PUBLIC_NETWORK}:4000` || "http://localhost:4000";
+    return `http://${process.env.NEXT_PUBLIC_NETWORK}:9000` || "http://localhost:4000";
   }
 
   return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -40,7 +40,11 @@ export const API_CONFIG = {
     PROJECTS: {
       LIST: "/projects",
       DETAIL: (id: string) => `/projects/${id}`,
+      BY_ORGANIZATION: (orgId: string) => `/projects/organization/${orgId}`
+
     },
+    CAMPUSES: "/campuses",
+    CAMPUS: (id: string) => `/campuses/${id}`,
    
   },
 
@@ -62,15 +66,14 @@ export const getApiUrl = (endpoint: string): string => {
   return `${API_CONFIG.BASE_URL}${API_CONFIG.PREFIX}${endpoint}`;
 };
 
-// Helper function to get current API URL for debugging
+
 export const getCurrentApiUrl = (): string => {
   return API_CONFIG.BASE_URL;
 };
 
-// Helper function to check if using network mode
 export const isNetworkMode = (): boolean => {
   if (typeof window !== "undefined") {
-    return window.location.hostname === "172.20.10.4";
+    return window.location.hostname === process.env.NEXT_PUBLIC_NETWORK;
   }
   return false;
 };

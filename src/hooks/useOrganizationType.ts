@@ -3,7 +3,7 @@ import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
 import {
   OrganizationType,
-  OrganizationTypesResponse,
+  OrganizationTypesApiResponse,
 } from "../types/organizationType";
 
 interface UseOrganizationTypesReturn {
@@ -26,15 +26,13 @@ export const useOrganizationTypes = (): UseOrganizationTypesReturn => {
       setLoading(true);
       setError(null);
 
-      const response = await apiService.get<OrganizationTypesResponse>(
+      const response = await apiService.get<OrganizationTypesApiResponse>(
         API_CONFIG.ENDPOINTS.ORGANIZATION_TYPES.LIST
       );
 
       if (response.success && response.data) {
-        // Normalize data - แปลง id เป็น string
-        const normalizedData = response.data.map((type) => ({
-          ...type,
-          id: type.id,
+        const normalizedData = response.data.map((typeName) => ({
+          name: typeName,
         }));
 
         setOrganizationTypes(normalizedData);
