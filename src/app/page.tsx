@@ -103,7 +103,7 @@ export default function Home() {
     (query: string, orgs: typeof organizations) => {
       if (!query.trim()) return orgs;
 
-      const searchTerm = query.toLowerCase().trim();
+      const searchTerm = query.toLowerCase().trim().replace(/\s+/g, '');
       return orgs.filter((org) => {
         const searchFields = [
           org.orgnameth,
@@ -115,7 +115,7 @@ export default function Home() {
         ];
 
         return searchFields.some((field) =>
-          field?.toLowerCase().includes(searchTerm)
+          field?.toLowerCase().replace(/\s+/g, '').includes(searchTerm)
         );
       });
     },

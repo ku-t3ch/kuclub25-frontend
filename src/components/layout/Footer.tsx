@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
                                 "text-sm font-medium",
                                 themeStyles.primaryText
                             )}>
-                                KU CLUB
+                                KU Club & Activity
                             </h3>
                             <p className={combine(
                                 "text-xs mt-0.5",
