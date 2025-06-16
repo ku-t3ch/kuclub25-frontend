@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useThemeUtils } from '../../../hooks/useThemeUtils';
-import { useUpdateOrganizationViews } from '../../../hooks/useOrganization'; // เพิ่ม import นี้
+import { useUpdateOrganizationViews } from '../../../hooks/useOrganization';
 
 interface DateInfoCardProps {
   icon: React.ReactNode;
@@ -87,25 +87,32 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
   const { updateViews } = useUpdateOrganizationViews();
+  
+  // เพิ่ม state เพื่อป้องกันการเรียกซ้ำ
+  const [isUpdatingViews, setIsUpdatingViews] = useState(false);
 
-  // Handle organization click with view count update
+  // แก้ไข organization click handler
   const handleOrganizationClick = useCallback(async (orgId: string) => {
+    if (isUpdatingViews) return; // ป้องกันการคลิกซ้ำ
+    
+    setIsUpdatingViews(true);
+    
     try {
-      // Update organization views first
       const newViewCount = await updateViews(orgId);
       
       if (newViewCount !== null) {
-        console.log(`Updated views for organization ${orgId}: ${newViewCount}`);
+        console.log(`อัพเดทจำนวนการดูองค์กร ${orgId}: ${newViewCount}`);
       }
       
-      // Then navigate to organization
       onViewOrganization(orgId);
     } catch (error) {
-      console.warn('Failed to update organization views:', error);
-      // Still navigate even if view update fails
+      console.warn('ไม่สามารถอัพเดทจำนวนการดูองค์กรได้:', error);
       onViewOrganization(orgId);
+    } finally {
+      // รอสักครู่ก่อน reset state
+      setTimeout(() => setIsUpdatingViews(false), 1000);
     }
-  }, [updateViews, onViewOrganization]);
+  }, [updateViews, onViewOrganization, isUpdatingViews]);
 
   const themeValues = {
     cardBg: getValueForTheme(
@@ -115,7 +122,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
     primaryText: getValueForTheme("text-white", "text-[#006C67]"),
     secondaryText: getValueForTheme("text-white/70", "text-[#006C67]/70"),
     accentBlueBg: getValueForTheme(
-      "bg-gradient-to-r from-[#006C67]/50 via-[#54CF90]/50 to-[#54CF90]/50 border-[#54CF90]", // แก้ไข syntax error
+      "bg-gradient-to-r from-[#006C67]/50 via-[#54CF90]/50 to-[#54CF90]/50 border-[#54CF90]",
       "bg-[#006C67]/10 border-[#006C67]/20"
     ),
     buttonPrimary: getValueForTheme(
@@ -126,7 +133,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
 
   const icons = {
     calendar: (
-      <svg className={`w-4 h-4 ${getValueForTheme("text-[white]/75", "text-[#006C67]")}`} 
+      <svg className={`w-4 h-4 ${getValueForTheme("text-white/75", "text-[#006C67]")}`} 
            fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
           d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -253,7 +260,7 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
               <div className={combine(
                 "inline-block px-3 py-1 rounded-full text-xs font-medium",
                 getValueForTheme(
-                  "bg-gradient-to-r from-[#006C67]/75 via-[#54CF90]/75 to-[#54CF90]/75 text-white", // แก้ไข text-[white] เป็น text-white
+                  "bg-gradient-to-r from-[#006C67]/75 via-[#54CF90]/75 to-[#54CF90]/75 text-white",
                   "bg-[#006C67]/10 text-[#006C67]"
                 )
               )}>
@@ -312,8 +319,8 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
       >
         {organizationInfo.isValid ? (
           <button
-            onClick={() => handleOrganizationClick(organizationInfo.id!)} // เปลี่ยนจาก onViewOrganization เป็น handleOrganizationClick
-            disabled={orgLoading}
+            onClick={() => handleOrganizationClick(organizationInfo.id!)}
+            disabled={orgLoading || isUpdatingViews}
             className={combine(
               "group block w-full text-white text-center py-3 xs:py-3.5 sm:py-4 px-4 xs:px-5 sm:px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 text-sm xs:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none",
               themeValues.buttonPrimary
@@ -321,9 +328,9 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
           >
             <span className="flex items-center justify-center">
               <span className="mr-2">
-                {orgLoading ? "กำลังโหลด..." : "ดูข้อมูลองค์กร"}
+                {orgLoading || isUpdatingViews ? "กำลังโหลด..." : "ดูข้อมูลองค์กร"}
               </span>
-              {!orgLoading && icons.arrow}
+              {!orgLoading && !isUpdatingViews && icons.arrow}
             </span>
           </button>
         ) : (

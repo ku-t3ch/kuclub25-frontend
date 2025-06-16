@@ -358,22 +358,31 @@ interface UpdateViewsResponse {
 }
 
 export const useUpdateOrganizationViews = () => {
+  const lastUpdateTime = useRef<Record<string, number>>({});
+  const RATE_LIMIT_MS = 3000; // 3 วินาที
+
   const updateViews = useCallback(async (orgId: string): Promise<number | null> => {
+    if (!orgId) return null;
+    
+    const now = Date.now();
+    const lastUpdate = lastUpdateTime.current[orgId] || 0;
+    
+    if (now - lastUpdate < RATE_LIMIT_MS) {
+      console.log('Rate limit: รออีกสักครู่ก่อนอัพเดทครั้งต่อไป');
+      return null;
+    }
+    
+    lastUpdateTime.current[orgId] = now;
+    
     try {
       const response = await apiService.put<UpdateViewsResponse>(
         API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE_VIEWS(orgId),
-        {} // Empty body since it's just updating views
+        {}
       );
 
-      if (response.success && response.data) {
-        // Return the new view count
-        return response.data.currentViews;
-      } else {
-        console.warn('Failed to update organization views:', response.message);
-        return null;
-      }
+      return response.success ? response.data?.currentViews ?? null : null;
     } catch (error) {
-      console.error('Error updating organization views:', error);
+      console.error('เกิดข้อผิดพลาดในการอัพเดทจำนวนการดู:', error);
       return null;
     }
   }, []);
