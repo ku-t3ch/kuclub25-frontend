@@ -93,7 +93,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
             <h2
               className={`text-lg md:text-3xl font-bold ${getValueForTheme(
                 "text-white",
-                "text-[#155434]"
+                "text-[#006C67]"
               )}`}
             >
               {displayTitle}
@@ -193,13 +193,16 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
           <h2
             className={`text-xl lg:text-2xl font-medium   ${getValueForTheme(
               "text-white",
-              "text-[#155434]"
+              "text-[#006C67]"
             )} leading-tight`}
           >
             {displayTitle.split(" ")[0]}
           </h2>
           <div className="w-3"/>
-          <h1>
+          <h1 className={`text-md lg:text-lg font-medium ${getValueForTheme(
+            "text-white",
+            "text-[#006C67]"
+          )} leading-tight`}>
             {displayTitle.split(" ")[1]}
           </h1>
 
@@ -211,7 +214,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
                 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                 ${getValueForTheme(
                   "bg-[#54CF90] hover:bg-[#54CF90]/80 text-white",
-                  "bg-[#155434] hover:bg-[#155434]/90 text-white"
+                  "bg-[#006C67] hover:bg-[#006C67]/90 text-white"
                 )}
               `}
             >
@@ -224,13 +227,13 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
           <div
             className={`text-center py-8 sm:py-12 px-4 ${getValueForTheme(
               "text-white/70",
-              "text-[#155434]/70"
+              "text-[#006C67]/70"
             )}`}
           >
             <div
               className={`
               w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 rounded-full flex items-center justify-center
-              ${getValueForTheme("bg-white/10", "bg-[#155434]/10")}
+              ${getValueForTheme("bg-white/10", "bg-[#006C67]")}
             `}
             >
               <svg
@@ -250,7 +253,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
             <h3
               className={`text-lg sm:text-xl font-semibold mb-2 ${getValueForTheme(
                 "text-white",
-                "text-[#155434]"
+                "text-[#006C67]"
               )}`}
             >
               {activeCampus ? 
