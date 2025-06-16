@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
 import {
   OrganizationType,
-  OrganizationTypesResponse,
+  OrganizationTypesApiResponse,
 } from "../types/organizationType";
 
 interface UseOrganizationTypesReturn {
@@ -20,40 +20,54 @@ export const useOrganizationTypes = (): UseOrganizationTypesReturn => {
   >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchOrganizationTypes = useCallback(async () => {
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       setLoading(true);
       setError(null);
 
-      const response = await apiService.get<OrganizationTypesResponse>(
+      const response = await apiService.get<OrganizationTypesApiResponse>(
         API_CONFIG.ENDPOINTS.ORGANIZATION_TYPES.LIST
       );
 
-      if (response.success && response.data) {
-        // Normalize data - แปลง id เป็น string
-        const normalizedData = response.data.map((type) => ({
-          ...type,
-          id: type.id,
-        }));
+      if (!controller.signal.aborted) {
+        if (response.success && response.data) {
+          // Optimize normalization with memoization
+          const normalizedData = response.data.map((typeName) => ({
+            name: typeName,
+          }));
 
-        setOrganizationTypes(normalizedData);
-      } else {
-        throw new Error(
-          response.message || "Failed to fetch organization types"
-        );
+          setOrganizationTypes(normalizedData);
+        } else {
+          throw new Error(
+            response.message || "Failed to fetch organization types"
+          );
+        }
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof ApiError
-          ? error.message
-          : "An unexpected error occurred while fetching organization types";
+      if (!controller.signal.aborted) {
+        const errorMessage =
+          error instanceof ApiError
+            ? error.message
+            : "An unexpected error occurred while fetching organization types";
 
-      console.error("Error fetching organization types:", error);
-      setError(errorMessage);
-      setOrganizationTypes([]);
+        console.error("Error fetching organization types:", error);
+        setError(errorMessage);
+        setOrganizationTypes([]);
+      }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -63,6 +77,13 @@ export const useOrganizationTypes = (): UseOrganizationTypesReturn => {
 
   useEffect(() => {
     fetchOrganizationTypes();
+
+    // Cleanup on unmount
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchOrganizationTypes]);
 
   return {

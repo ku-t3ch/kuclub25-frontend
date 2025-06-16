@@ -1,8 +1,8 @@
 "use client";
 
-import React, { memo, useMemo, useState, useRef, useEffect, useCallback } from 'react';
-import { useThemeUtils } from '../../hooks/useThemeUtils';
-import { Campus } from '../../types/organization';
+import React, { memo, useMemo, useState, useRef, useEffect, useCallback } from "react";
+import { useThemeUtils } from "../../hooks/useThemeUtils";
+import { Campus } from "../../types/organization";
 
 interface CategoryItemProps {
   category: { id: string | undefined; name: string };
@@ -12,56 +12,53 @@ interface CategoryItemProps {
   isMobile?: boolean;
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = memo(({
-  category,
-  isActive,
-  count,
-  onClick,
-  isMobile = false
+// Memoized Category Item Component
+const CategoryItem = memo<CategoryItemProps>(({ 
+  category, 
+  isActive, 
+  count, 
+  onClick, 
+  isMobile = false 
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
   const classes = useMemo(() => {
-    if (isMobile) {
-      return combine(
-        "transition-all duration-200 px-3 py-3 rounded-lg text-sm relative overflow-hidden touch-manipulation",
-        isActive
-          ? getValueForTheme(
-            "bg-[#54CF90]/15 border border-[#54CF90]/30 text-[#54CF90]",
-            "bg-[#006C67]/10 border border-[#006C67]/20 text-[#006C67]"
-          )
-          : getValueForTheme(
-            "bg-white/5 border border-white/10 hover:bg-white/10 text-white/70 hover:text-white",
-            "bg-gray-50/70 border border-gray-100 hover:bg-gray-100/80 text-gray-600 hover:text-gray-800"
-          )
-      );
-    }
-    
-    return combine(
-      "whitespace-nowrap transition-all duration-200 px-4 py-2.5 rounded-full text-sm font-medium",
-      isActive
-        ? getValueForTheme(
-          "bg-[#54CF90]/20 text-[#54CF90] border border-[#54CF90]/30",
-          "bg-[#006C67]/10 text-[#006C67] border border-[#006C67]/20"
+    const baseClasses = isMobile 
+      ? "transition-all duration-200 px-3 py-3 rounded-lg text-sm relative overflow-hidden touch-manipulation"
+      : "whitespace-nowrap transition-all duration-200 px-4 py-2.5 rounded-full text-sm font-medium";
+
+    const stateClasses = isActive
+      ? getValueForTheme(
+          "bg-[#54CF90]/15 border border-[#54CF90]/30 text-[#54CF90]",
+          "bg-[#006C67]/10 border border-[#006C67]/20 text-[#006C67]"
         )
-        : getValueForTheme(
-          "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10",
-          "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border border-gray-200"
-        )
-    );
+      : getValueForTheme(
+          isMobile 
+            ? "bg-white/5 border border-white/10 hover:bg-white/10 text-white/70 hover:text-white"
+            : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-white/10",
+          isMobile
+            ? "bg-gray-50/70 border border-gray-100 hover:bg-gray-100/80 text-gray-600 hover:text-gray-800"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border border-gray-200"
+        );
+
+    return combine(baseClasses, stateClasses);
   }, [isActive, isMobile, combine, getValueForTheme]);
 
   const countBadgeClasses = useMemo(() => {
-    const baseClasses = isMobile ? "px-2 py-0.5 rounded-full text-xs font-medium" : "ml-2 px-2 py-0.5 rounded-full text-xs";
+    const baseClasses = isMobile
+      ? "px-2 py-0.5 rounded-full text-xs font-medium"
+      : "ml-2 px-2 py-0.5 rounded-full text-xs";
+      
     const colorClasses = isActive
       ? getValueForTheme(
-        isMobile ? "bg-[#54CF90]/20 text-[#54CF90]" : "bg-[#54CF90]/30 text-[#54CF90]",
-        "bg-[#006C67]/20 text-[#006C67]"
-      )
+          isMobile ? "bg-[#54CF90]/20 text-[#54CF90]" : "bg-[#54CF90]/30 text-[#54CF90]",
+          "bg-[#006C67]/20 text-[#006C67]"
+        )
       : getValueForTheme(
-        isMobile ? "bg-white/10 text-white/70" : "bg-white/10 text-white/60",
-        isMobile ? "bg-gray-200 text-gray-600" : "bg-gray-200 text-gray-500"
-      );
+          isMobile ? "bg-white/10 text-white/70" : "bg-white/10 text-white/60",
+          isMobile ? "bg-gray-200 text-gray-600" : "bg-gray-200 text-gray-500"
+        );
+        
     return combine(baseClasses, colorClasses);
   }, [isActive, isMobile, combine, getValueForTheme]);
 
@@ -79,14 +76,17 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(({
         className={classes}
         type="button"
         aria-pressed={isActive}
+        aria-label={`${category.name}${shouldShowCount ? ` (${count} รายการ)` : ''}`}
       >
         <div className="flex flex-col items-center justify-center gap-1">
-          <span className="font-medium leading-tight text-center">{category.name}</span>
+          <span className="font-medium leading-tight text-center">
+            {category.name}
+          </span>
           {shouldShowCount && (
             <span className={countBadgeClasses}>{count}</span>
           )}
         </div>
-        {isActive && <div className={indicatorClasses} />}
+        {isActive && <div className={indicatorClasses} aria-hidden="true" />}
       </button>
     );
   }
@@ -97,30 +97,23 @@ const CategoryItem: React.FC<CategoryItemProps> = memo(({
       className={classes}
       type="button"
       aria-pressed={isActive}
+      aria-label={`${category.name}${shouldShowCount ? ` (${count} รายการ)` : ''}`}
     >
       {category.name}
       {shouldShowCount && <span className={countBadgeClasses}>{count}</span>}
     </button>
   );
 });
+CategoryItem.displayName = "CategoryItem";
 
-CategoryItem.displayName = 'CategoryItem';
-
-interface DropdownOptionProps {
+// Memoized Dropdown Option Component
+const DropdownOption = memo<{
   category: { id: string | undefined; name: string };
   isActive: boolean;
   count?: number;
   onClick: () => void;
   isLast: boolean;
-}
-
-const DropdownOption: React.FC<DropdownOptionProps> = memo(({
-  category,
-  isActive,
-  count,
-  onClick,
-  isLast
-}) => {
+}>(({ category, isActive, count, onClick, isLast }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
   const classes = useMemo(() => combine(
@@ -128,30 +121,29 @@ const DropdownOption: React.FC<DropdownOptionProps> = memo(({
     "transition-colors duration-150 touch-manipulation",
     isActive
       ? getValueForTheme(
-        "bg-[#54CF90]/20 text-[#54CF90]",
-        "bg-[#006C67]/10 text-[#006C67]"
-      )
+          "bg-[#54CF90]/20 text-[#54CF90]",
+          "bg-[#006C67]/10 text-[#006C67]"
+        )
       : getValueForTheme(
-        "text-white/80 hover:bg-white/10 hover:text-white",
-        "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-      ),
-    !isLast ? getValueForTheme(
-      "border-b border-white/10",
-      "border-b border-gray-100"
-    ) : ""
+          "text-white/80 hover:bg-white/10 hover:text-white",
+          "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+        ),
+    !isLast
+      ? getValueForTheme("border-b border-white/10", "border-b border-gray-100")
+      : ""
   ), [isActive, isLast, combine, getValueForTheme]);
 
   const countClasses = useMemo(() => combine(
     "px-2 py-1 rounded-full text-xs font-medium",
     isActive
       ? getValueForTheme(
-        "bg-[#54CF90]/20 text-[#54CF90]",
-        "bg-[#006C67]/20 text-[#006C67]"
-      )
+          "bg-[#54CF90]/20 text-[#54CF90]",
+          "bg-[#006C67]/20 text-[#006C67]"
+        )
       : getValueForTheme(
-        "bg-white/15 text-white/70",
-        "bg-gray-200 text-gray-600"
-      )
+          "bg-white/15 text-white/70",
+          "bg-gray-200 text-gray-600"
+        )
   ), [isActive, combine, getValueForTheme]);
 
   const indicatorClasses = useMemo(() => combine(
@@ -160,23 +152,65 @@ const DropdownOption: React.FC<DropdownOptionProps> = memo(({
   ), [combine, getValueForTheme]);
 
   return (
-    <button
-      onClick={onClick}
-      className={classes}
+    <button 
+      onClick={onClick} 
+      className={classes} 
       type="button"
+      aria-label={`${category.name}${count !== undefined ? ` (${count} รายการ)` : ''}`}
     >
       <span className="font-medium truncate">{category.name}</span>
       <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-        {count !== undefined && (
-          <span className={countClasses}>{count}</span>
-        )}
-        {isActive && <div className={indicatorClasses} />}
+        {count !== undefined && <span className={countClasses}>{count}</span>}
+        {isActive && <div className={indicatorClasses} aria-hidden="true" />}
       </div>
     </button>
   );
 });
+DropdownOption.displayName = "DropdownOption";
 
-DropdownOption.displayName = 'DropdownOption';
+// Memoized Loading Skeleton Component
+const FilterSkeleton = memo<{
+  getValueForTheme: (dark: string, light: string) => string;
+  combine: (...classes: string[]) => string;
+}>(({ getValueForTheme, combine }) => (
+  <section className="relative z-10 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto">
+      <div className="md:hidden space-y-6">
+        {/* Mobile skeleton */}
+        {[1, 2].map((i) => (
+          <div key={i} className="space-y-3">
+            <div className={combine(
+              "h-5 w-20 rounded animate-pulse",
+              getValueForTheme("bg-white/10", "bg-gray-200")
+            )} />
+            <div className={combine(
+              "h-12 w-full rounded-xl animate-pulse",
+              getValueForTheme("bg-white/5", "bg-gray-100")
+            )} />
+          </div>
+        ))}
+      </div>
+      
+      <div className="hidden md:block space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {[1, 2].map((i) => (
+            <div key={i} className="space-y-4">
+              <div className={combine(
+                "h-6 w-24 rounded animate-pulse",
+                getValueForTheme("bg-white/10", "bg-gray-200")
+              )} />
+              <div className={combine(
+                "h-12 w-full rounded-xl animate-pulse",
+                getValueForTheme("bg-white/5", "bg-gray-100")
+              )} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+));
+FilterSkeleton.displayName = "FilterSkeleton";
 
 interface CategoryFilterProps {
   categories: Array<{ id: string | undefined; name: string }>;
@@ -191,7 +225,7 @@ interface CategoryFilterProps {
   campusLoading?: boolean;
 }
 
-const CategoryFilter: React.FC<CategoryFilterProps> = ({
+const CategoryFilter = memo<CategoryFilterProps>(({
   categories,
   activeCategory,
   totalClubCount,
@@ -201,11 +235,17 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   campuses,
   activeCampus,
   onCampusChange,
-  campusLoading = false
+  campusLoading = false,
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Client-side mounting check
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Memoized handlers
   const handleCategorySelect = useCallback((categoryId: string | undefined) => {
@@ -218,97 +258,89 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     onCampusChange(selectedValue || undefined);
   }, [onCampusChange]);
 
+  const handleCategorySelectChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedValue = event.target.value;
+    onCategoryChange(selectedValue || undefined);
+  }, [onCategoryChange]);
+
   const toggleDropdown = useCallback(() => {
-    setIsDropdownOpen(prev => !prev);
+    setIsDropdownOpen((prev) => !prev);
   }, []);
 
   // Memoized computed values
   const activeCategoryName = useMemo(() => {
-    const active = categories.find(cat => cat.id === activeCategory);
+    const active = categories.find((cat) => cat.id === activeCategory);
     return active?.name || "ทั้งหมด";
   }, [categories, activeCategory]);
 
   const activeCategoryCount = useMemo(() => 
-    categoryCountMap.get(activeCategory), 
+    categoryCountMap.get(activeCategory),
     [categoryCountMap, activeCategory]
   );
 
-  // Memoized class strings
-  const sectionClasses = useMemo(() => "relative z-10 px-4 sm:px-6 lg:px-8 ", []);
-  const containerClasses = useMemo(() => "max-w-7xl mx-auto", []);
-  const mobileLayoutClasses = useMemo(() => "md:hidden space-y-6", []);
-  const desktopLayoutClasses = useMemo(() => "hidden md:block space-y-8", []);
-
-  const headerClasses = useMemo(() => ({
-    mobile: combine("text-l font-medium", getValueForTheme("text-white", "text-[#006C67]")),
-    desktop: combine("text-xl lg:text-2xl font-medium ", getValueForTheme("text-white", "text-[#006C67]"))
-  }), [combine, getValueForTheme]);
-
-  const selectClasses = useMemo(() => ({
-    mobile: combine(
-      "w-full px-4 py-3 rounded-xl text-sm font-medium",
-      "transition-all duration-200 appearance-none cursor-pointer",
-      "focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm",
-      getValueForTheme(
-        "bg-white/10 border border-white/20 text-white focus:bg-white/15 focus:ring-#006C67-500",
-        "bg-white border border-gray-200 text-gray-700 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
+  // Memoized theme classes
+  const themeClasses = useMemo(() => ({
+    header: {
+      mobile: combine(
+        "text-lg font-medium",
+        getValueForTheme("text-white", "text-[#006C67]")
       ),
-      campusLoading ? "opacity-50 cursor-not-allowed" : ""
-    ),
-    desktop: combine(
-      "px-6 py-3 pr-12 rounded-xl text-sm font-medium",
-      "transition-all duration-200 appearance-none cursor-pointer",
-      "focus:outline-none focus:ring-2 focus:ring-offset-2",
-      "min-w-[240px] shadow-sm",
-      getValueForTheme(
-        "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-#006C67-500",
+      desktop: combine(
+        "text-xl lg:text-2xl font-medium",
+        getValueForTheme("text-white", "text-[#006C67]")
+      ),
+    },
+    select: {
+      base: combine(
+        "w-full px-4 py-3 rounded-xl text-sm font-medium appearance-none cursor-pointer",
+        "transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm"
+      ),
+      theme: getValueForTheme(
+        "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-[#54CF90]",
         "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
       ),
-      campusLoading ? "opacity-50 cursor-not-allowed" : ""
-    )
-  }), [combine, getValueForTheme, campusLoading]);
-
-  const dropdownButtonClasses = useMemo(() => combine(
-    "w-full flex items-center justify-between",
-    "px-4 py-3 rounded-xl text-sm font-medium",
-    "transition-all duration-200 touch-manipulation shadow-sm",
-    getValueForTheme(
-      "bg-white/10 border border-white/20 text-white hover:bg-white/15",
-      "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
-    )
-  ), [combine, getValueForTheme]);
-
-  const dropdownContentClasses = useMemo(() => combine(
-    "absolute top-full left-0 right-0 mt-2 z-50",
-    "rounded-xl border shadow-lg overflow-hidden",
-    "animate-in fade-in-0 zoom-in-95 duration-200",
-    getValueForTheme(
-      "bg-black/75 border-white/20 backdrop-blur-md",
-      "bg-white border-gray-200 shadow-xl"
-    )
-  ), [combine, getValueForTheme]);
-
-  const countBadgeClasses = useMemo(() => combine(
-    "px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0",
-    getValueForTheme(
-      "bg-[#54CF90]/20 text-[#54CF90]",
-      "bg-[#006C67]/10 text-[#006C67]"
-    )
-  ), [combine, getValueForTheme]);
-
-  const chevronClasses = useMemo(() => combine(
-    "w-5 h-5 transition-transform duration-200 flex-shrink-0",
-    isDropdownOpen ? "rotate-180" : "",
-    getValueForTheme("text-white/70", "text-gray-500")
-  ), [combine, getValueForTheme, isDropdownOpen]);
-
-  const iconClasses = useMemo(() => combine(
-    "w-5 h-5 transition-transform duration-200",
-    getValueForTheme("text-white/70", "text-gray-500")
-  ), [combine, getValueForTheme]);
+      disabled: "opacity-50 cursor-not-allowed",
+    },
+    dropdown: {
+      button: combine(
+        "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium",
+        "transition-all duration-200 touch-manipulation shadow-sm",
+        getValueForTheme(
+          "bg-white/10 border border-white/20 text-white hover:bg-white/15",
+          "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+        )
+      ),
+      content: combine(
+        "absolute top-full left-0 right-0 mt-2 z-50 rounded-xl border shadow-lg overflow-hidden",
+        "animate-in fade-in-0 zoom-in-95 duration-200",
+        getValueForTheme(
+          "bg-black/75 border-white/20 backdrop-blur-md",
+          "bg-white border-gray-200 shadow-xl"
+        )
+      ),
+    },
+    countBadge: combine(
+      "px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0",
+      getValueForTheme(
+        "bg-[#54CF90]/20 text-[#54CF90]",
+        "bg-[#006C67]/10 text-[#006C67]"
+      )
+    ),
+    chevron: combine(
+      "w-5 h-5 transition-transform duration-200 flex-shrink-0",
+      isDropdownOpen ? "rotate-180" : "",
+      getValueForTheme("text-white/70", "text-gray-500")
+    ),
+    icon: combine(
+      "w-5 h-5 transition-transform duration-200",
+      getValueForTheme("text-white/70", "text-gray-500")
+    ),
+  }), [combine, getValueForTheme, isDropdownOpen]);
 
   // Click outside handler
   useEffect(() => {
+    if (!isClient) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
@@ -316,94 +348,90 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [isDropdownOpen]);
+  }, [isDropdownOpen, isClient]);
 
-  // Memoized campus options
-  const campusOptions = useMemo(() => 
-    campuses.map((campus) => (
-      <option 
-        key={campus.id} 
-        value={campus.id}
-        className={getValueForTheme(
-          "bg-gray-800 text-white",
-          "bg-white text-gray-900"
-        )}
+  // Memoized options
+  const campusOptions = useMemo(() => {
+    if (!isClient || campusLoading) return null;
+    
+    return campuses.map((campus, index) => (
+      <option
+        key={campus.name || `campus-${index}`}
+        value={campus.name}
+        className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
       >
         {campus.name}
       </option>
-    )), 
-    [campuses, getValueForTheme]
-  );
+    ));
+  }, [campuses, getValueForTheme, isClient, campusLoading]);
 
-  // Memoized category items
-  const categoryItems = useMemo(() => 
-    categories.map((category) => (
-      <CategoryItem
-        key={category.id || 'all'}
-        category={category}
-        isActive={activeCategory === category.id}
-        count={categoryCountMap.get(category.id)}
-        onClick={() => onCategoryChange(category.id)}
-        isMobile={false}
-      />
-    )), 
-    [categories, activeCategory, categoryCountMap, onCategoryChange]
-  );
+  const categoryOptions = useMemo(() => {
+    if (!isClient || loading) return null;
 
-  // Memoized dropdown options
-  const dropdownOptions = useMemo(() => 
-    categories.map((category, index) => (
+    return categories
+      .filter((category) => category.id !== undefined)
+      .map((category, index) => (
+        <option
+          key={category.id || `category-${index}`}
+          value={category.id}
+          className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
+        >
+          {category.name}
+          {categoryCountMap.get(category.id) && ` (${categoryCountMap.get(category.id)})`}
+        </option>
+      ));
+  }, [categories, categoryCountMap, getValueForTheme, isClient, loading]);
+
+  const dropdownOptions = useMemo(() => {
+    if (!isClient || loading) return null;
+
+    return categories.map((category, index) => (
       <DropdownOption
-        key={category.id || 'all'}
+        key={category.id || "all"}
         category={category}
         isActive={activeCategory === category.id}
         count={categoryCountMap.get(category.id)}
         onClick={() => handleCategorySelect(category.id)}
         isLast={index === categories.length - 1}
       />
-    )), 
-    [categories, activeCategory, categoryCountMap, handleCategorySelect]
-  );
+    ));
+  }, [categories, activeCategory, categoryCountMap, handleCategorySelect, isClient, loading]);
 
-  // Loading skeleton
-  const loadingSkeleton = useMemo(() => (
-    <div className="flex gap-3 overflow-hidden">
-      {Array.from({ length: 6 }, (_, index) => (
-        <div
-          key={index}
-          className={combine(
-            "animate-pulse h-10 rounded-xl",
-            getValueForTheme("bg-white/10", "bg-gray-200"),
-            index === 0 ? "w-20" : "w-24"
-          )}
-        />
-      ))}
-    </div>
-  ), [combine, getValueForTheme]);
+  // Show skeleton until client-side hydration
+  if (!isClient) {
+    return <FilterSkeleton getValueForTheme={getValueForTheme} combine={combine} />;
+  }
 
   return (
-    <section className={sectionClasses}>
-      <div className={containerClasses}>
-        
+    <section className="relative z-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Mobile Layout */}
-        <div className={mobileLayoutClasses}>
+        <div className="md:hidden space-y-6">
           {/* Campus Filter - Mobile */}
           <div className="space-y-3">
-            <h2 className={headerClasses.mobile}>วิทยาเขต</h2>
+            <h2 className={themeClasses.header.mobile}>วิทยาเขต</h2>
             <div className="relative">
               <select
-                value={activeCampus || ''}
+                value={activeCampus || ""}
                 onChange={handleCampusSelectChange}
                 disabled={campusLoading}
-                className={selectClasses.mobile}
+                className={combine(
+                  themeClasses.select.base,
+                  themeClasses.select.theme,
+                  campusLoading ? themeClasses.select.disabled : ""
+                )}
+                aria-label="เลือกวิทยาเขต"
               >
-                {!campusLoading && campusOptions}
+                <option value="" className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}>
+                  ทุกวิทยาเขต
+                </option>
+                {campusOptions}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={themeClasses.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -412,30 +440,31 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
           {/* Category Filter - Mobile */}
           <div className="space-y-3">
-            <h2 className={headerClasses.mobile}>ประเภทองค์กร</h2>
+            <h2 className={themeClasses.header.mobile}>ประเภทองค์กร</h2>
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={toggleDropdown}
-                className={dropdownButtonClasses}
+                className={themeClasses.dropdown.button}
                 type="button"
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
+                aria-label="เลือกประเภทองค์กร"
               >
-                <div className="flex items-center gap-3 "> 
+                <div className="flex items-center gap-3">
                   <span className="truncate font-medium">{activeCategoryName}</span>
                   {activeCategoryCount !== undefined && (
-                    <span className={countBadgeClasses}>{activeCategoryCount}</span>
+                    <span className={themeClasses.countBadge}>{activeCategoryCount}</span>
                   )}
                 </div>
-                <svg className={chevronClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={themeClasses.chevron} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {isDropdownOpen && (
-                <div className={dropdownContentClasses}>
+                <div className={themeClasses.dropdown.content}>
                   <div className="max-h-64 overflow-y-auto relative z-10">
-                    {!loading && dropdownOptions}
+                    {dropdownOptions}
                   </div>
                 </div>
               )}
@@ -444,33 +473,30 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         </div>
 
         {/* Desktop Layout */}
-        <div className={desktopLayoutClasses}>
+        <div className="hidden md:block space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Campus Filter - Desktop */}
             <div className="space-y-4">
-              <h2 className={headerClasses.desktop}>วิทยาเขต</h2>
+              <h2 className={themeClasses.header.desktop}>วิทยาเขต</h2>
               <div className="relative">
                 <select
-                  value={activeCampus || ''}
+                  value={activeCampus || ""}
                   onChange={handleCampusSelectChange}
                   disabled={campusLoading}
                   className={combine(
-                    "px-6 py-3 pr-12 rounded-xl text-sm font-medium",
-                    "transition-all duration-200 appearance-none cursor-pointer",
-                    "focus:outline-none focus:ring-2 focus:ring-offset-2",
-                    "w-full shadow-sm",
-                    getValueForTheme(
-                      "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-[#54CF90]",
-                      "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
-                    ),
-                    campusLoading ? "opacity-50 cursor-not-allowed" : ""
+                    themeClasses.select.base,
+                    themeClasses.select.theme,
+                    campusLoading ? themeClasses.select.disabled : ""
                   )}
+                  aria-label="เลือกวิทยาเขต"
                 >
-                
-                  {!campusLoading && campusOptions}
+                  <option value="" className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}>
+                    ทุกวิทยาเขต
+                  </option>
+                  {campusOptions}
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                  <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={themeClasses.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -479,56 +505,27 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
             {/* Category Filter - Desktop */}
             <div className="space-y-4">
-              <h2 className={headerClasses.desktop}>ประเภทองค์กร</h2>
+              <h2 className={themeClasses.header.desktop}>ประเภทองค์กร</h2>
               <div className="relative">
                 <select
-                  value={activeCategory || ''}
-                  onChange={(event) => {
-                    const selectedValue = event.target.value;
-                    onCategoryChange(selectedValue || undefined);
-                  }}
+                  value={activeCategory || ""}
+                  onChange={handleCategorySelectChange}
                   disabled={loading}
                   className={combine(
-                    "px-6 py-3 pr-12 rounded-xl text-sm font-medium",
-                    "transition-all duration-200 appearance-none cursor-pointer",
-                    "focus:outline-none focus:ring-2 focus:ring-offset-2",
-                    "w-full shadow-sm",
-                    getValueForTheme(
-                      "bg-white/10 border border-white/20 text-white hover:bg-white/15 focus:bg-white/15 focus:ring-[#54CF90]",
-                      "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-[#006C67] focus:border-[#006C67]"
-                    ),
-                    loading ? "opacity-50 cursor-not-allowed" : ""
+                    themeClasses.select.base,
+                    themeClasses.select.theme,
+                    loading ? themeClasses.select.disabled : ""
                   )}
+                  aria-label="เลือกประเภทองค์กร"
                 >
-                  <option 
-                    value=""
-                    className={getValueForTheme(
-                      "bg-gray-800 text-white",
-                      "bg-white text-gray-900"
-                    )}
-                  >
+                  <option value="" className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}>
                     ทั้งหมด
                     {categoryCountMap.get(undefined) && ` (${categoryCountMap.get(undefined)})`}
                   </option>
-                  {!loading && categories
-                    .filter(category => category.id !== undefined)
-                    .map((category) => (
-                      <option 
-                        key={category.id} 
-                        value={category.id}
-                        className={getValueForTheme(
-                          "bg-gray-800 text-white",
-                          "bg-white text-gray-900"
-                        )}
-                      >
-                        {category.name}
-                        {categoryCountMap.get(category.id) && ` (${categoryCountMap.get(category.id)})`}
-                      </option>
-                    ))
-                  }
+                  {categoryOptions}
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                  <svg className={iconClasses} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={themeClasses.icon} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -536,13 +533,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             </div>
           </div>
         </div>
-
-  
-        {(loading || campusLoading) && loadingSkeleton}
       </div>
     </section>
   );
-};
+});
 
+CategoryFilter.displayName = "CategoryFilter";
 export { CategoryItem };
-export default memo(CategoryFilter);
+export default CategoryFilter;

@@ -18,8 +18,8 @@ interface OrganizationEnhancedFiltersProps {
   campusOptions: FilterOption[];
   campusLoading: boolean;
   onSearch: (query: string) => void;
-  onCategoryChange: (categoryId: string | undefined) => void;
-  onCampusChange: (campusId: string | undefined) => void;
+  onCategoryChange: (categoryName: string | undefined) => void;
+  onCampusChange: (campusName: string) => void;
   onSortChange: (sort: "name" | "views" | "latest") => void;
   onClearFilters: () => void;
   onToggleFilters: () => void;
@@ -158,7 +158,7 @@ const OrganizationEnhancedFilters: React.FC<OrganizationEnhancedFiltersProps> = 
             </div>
           </div>
 
-          {/* Category Filter */}
+          {/* Category Filter - ใช้ name แทน id */}
           <div className={themeClasses.filterGroup}>
             <label className={themeClasses.filterLabel}>ประเภทองค์กร</label>
             <select
@@ -166,10 +166,10 @@ const OrganizationEnhancedFilters: React.FC<OrganizationEnhancedFiltersProps> = 
               onChange={(e) => onCategoryChange(e.target.value || undefined)}
               className={themeClasses.filterSelect}
             >
-              {categories.map((category) => (
+              {categories.map((category, index) => (
                 <option 
-                  key={category.id || "all"} 
-                  value={category.id || ""}
+                  key={category.name || `category-${index}`} 
+                  value={category.name || ""}
                   className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
                 >
                   {category.name}
@@ -178,22 +178,22 @@ const OrganizationEnhancedFilters: React.FC<OrganizationEnhancedFiltersProps> = 
             </select>
           </div>
 
-          {/* Campus Filter */}
+          {/* Campus Filter - ใช้ name แทน id */}
           <div className={themeClasses.filterGroup}>
             <label className={themeClasses.filterLabel}>วิทยาเขต</label>
             <select
               value={selectedCampus || ""}
-              onChange={(e) => onCampusChange(e.target.value || undefined)}
+              onChange={(e) => onCampusChange(e.target.value)}
               disabled={campusLoading}
               className={combine(
                 themeClasses.filterSelect,
                 campusLoading ? "opacity-50 cursor-not-allowed" : ""
               )}
             >
-              {campusOptions.map((option) => (
+              {campusOptions.map((option, index) => (
                 <option 
-                  key={option.id || "all"} 
-                  value={option.id || ""}
+                  key={option.name || `campus-${index}`} 
+                  value={option.name || ""}
                   className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
                 >
                   {option.name}
@@ -210,13 +210,25 @@ const OrganizationEnhancedFilters: React.FC<OrganizationEnhancedFiltersProps> = 
               onChange={(e) => onSortChange(e.target.value as "name" | "views" | "latest")}
               className={themeClasses.filterSelect}
             >
-              <option value="name" className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}>
+              <option 
+                key="sort-name"
+                value="name" 
+                className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
+              >
                 ชื่อ A-Z
               </option>
-              <option value="views" className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}>
+              <option 
+                key="sort-views"
+                value="views" 
+                className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
+              >
                 ความนิยม
               </option>
-              <option value="latest" className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}>
+              <option 
+                key="sort-latest"
+                value="latest" 
+                className={getValueForTheme("bg-gray-800 text-white", "bg-white text-gray-900")}
+              >
                 ล่าสุด
               </option>
             </select>
