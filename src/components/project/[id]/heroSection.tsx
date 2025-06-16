@@ -3,7 +3,7 @@
 import React, { useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useThemeUtils } from "../../../hooks/useThemeUtils";
-import { useUpdateOrganizationViews } from "../../../hooks/useOrganization"; // เพิ่ม import นี้
+import { useUpdateOrganizationViews } from "../../../hooks/useOrganization";
 import ProjectCardDateDisplay from "../../ui/dateDisplay";
 
 interface ActivityTag {
@@ -121,20 +121,19 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(
     onViewOrganization,
   }) => {
     const { combine, getValueForTheme } = useThemeUtils();
-    const { updateViews } = useUpdateOrganizationViews(); // เพิ่มบรรทัดนี้
+    const { updateViews } = useUpdateOrganizationViews();
 
-    // Handle organization click with view count update
     const handleOrganizationClick = useCallback(
       async (orgId: string) => {
         try {
-          // Update organization views first
-          await updateViews(orgId);
+          const newViewCount = await updateViews(orgId);
 
-          // Then navigate to organization
+          if (newViewCount !== null) {
+            console.log(`Updated organization views to: ${newViewCount}`);
+          }
           onViewOrganization(orgId);
         } catch (error) {
           console.warn("Failed to update organization views:", error);
-          // Still navigate even if view update fails
           onViewOrganization(orgId);
         }
       },
@@ -335,7 +334,7 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(
                     <span>{projectData.location}</span>
                   )}
 
-                {/* Organizer Pill - Updated */}
+                {/* Organizer Pill - Updated with click handler */}
                 {organizationInfo.name &&
                   renderInfoPill(
                     <svg
@@ -357,17 +356,20 @@ const ProjectHeroSection = React.memo<HeroSectionProps>(
                     <span>
                       จัดโดย:{" "}
                       {organizationInfo.isValid ? (
-                        <span
+                        <button
                           onClick={() =>
-                            handleOrganizationClick(organizationInfo.id!) // เปลี่ยนจาก onViewOrganization เป็น handleOrganizationClick
+                            handleOrganizationClick(organizationInfo.id!)
                           }
-                          className={getValueForTheme(
-                            "text-[#54CF90] hover:text-[#54CF90]/80 transition-colors cursor-pointer", // แก้ไข hover color
-                            "text-[#006C67] hover:text-[#006C67]/80 transition-colors cursor-pointer"
+                          className={combine(
+                            "transition-colors cursor-pointer hover:underline",
+                            getValueForTheme(
+                              "text-[#54CF90] hover:text-[#54CF90]/80",
+                              "text-[#006C67] hover:text-[#006C67]/80"
+                            )
                           )}
                         >
                           {organizationInfo.name}
-                        </span>
+                        </button>
                       ) : (
                         <span
                           className={getValueForTheme(

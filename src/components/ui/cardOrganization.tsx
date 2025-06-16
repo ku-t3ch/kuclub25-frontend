@@ -6,19 +6,23 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useThemeUtils } from "../../hooks/useThemeUtils";
 import { Organization } from "../../types/organization";
+import { useUpdateOrganizationViews } from "../../hooks/useOrganization";
 
 interface CardOrganizationProps {
   organization: Organization;
   onClick?: () => void;
   className?: string;
+  onViewsUpdate?: (id: string, newViewCount: number) => void; // Add this prop type
 }
 
 const CardOrganization: React.FC<CardOrganizationProps> = ({
   organization,
   className = "",
+  onViewsUpdate, // Add this prop if you want to handle updates at parent level
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
   const router = useRouter();
+  const { updateViews } = useUpdateOrganizationViews();
 
   const {
     id,
@@ -59,13 +63,29 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
     []
   );
 
-  // Handle detail button click - simplified without updateViews
+  // Update the handleDetailClick function
   const handleDetailClick = useCallback(
-    (e: React.MouseEvent) => {
+    async (e: React.MouseEvent) => {
       e.preventDefault();
-      router.push(`/organizations/${id}`);
+
+      try {
+        // Update views first
+        const newViewCount = await updateViews(id);
+
+        // Optionally update local state if you have a callback
+        if (newViewCount !== null && onViewsUpdate) {
+          onViewsUpdate(id, newViewCount);
+        }
+
+        // Then navigate
+        router.push(`/organizations/${id}`);
+      } catch (error) {
+        console.warn("Failed to update views:", error);
+        // Still navigate even if view update fails
+        router.push(`/organizations/${id}`);
+      }
     },
-    [id, router]
+    [id, router, updateViews, onViewsUpdate]
   );
 
   // เพิ่ม utility function สำหรับตรวจสอบขนาดรูป

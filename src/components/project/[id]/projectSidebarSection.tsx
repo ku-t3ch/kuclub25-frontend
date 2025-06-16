@@ -86,13 +86,17 @@ const ProjectSidebarSection = React.memo<SidebarSectionProps>(({
   onViewOrganization
 }) => {
   const { combine, getValueForTheme } = useThemeUtils();
-  const { updateViews } = useUpdateOrganizationViews(); // เพิ่มบรรทัดนี้
+  const { updateViews } = useUpdateOrganizationViews();
 
   // Handle organization click with view count update
   const handleOrganizationClick = useCallback(async (orgId: string) => {
     try {
       // Update organization views first
-      await updateViews(orgId);
+      const newViewCount = await updateViews(orgId);
+      
+      if (newViewCount !== null) {
+        console.log(`Updated views for organization ${orgId}: ${newViewCount}`);
+      }
       
       // Then navigate to organization
       onViewOrganization(orgId);
