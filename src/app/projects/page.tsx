@@ -339,7 +339,7 @@ export default function ProjectsPage() {
                   </option>
                   {campuses.map((campus) => (
                     <option
-                      key={campus.id}
+                      key={campus.name}
                       value={campus.name}
                       className={getValueForTheme("bg-gray-900 text-white", "bg-white text-gray-900")}
                     >

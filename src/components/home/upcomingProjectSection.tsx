@@ -12,7 +12,7 @@ interface UpcomingProjectSectionProps {
   showViewAllButton?: boolean;
   onViewAll?: () => void;
   activeCampus?: string;
-  campuses?: Array<{ id: string; name: string }>;
+  campuses?: Array<{name: string }>;
 }
 
 const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
@@ -53,7 +53,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
 
     // Apply campus filter if specified
     if (activeCampus !== undefined && campuses.length > 0) {
-      const selectedCampus = campuses.find(campus => campus.id === activeCampus);
+      const selectedCampus = campuses.find(campus => campus.name === activeCampus);
       if (selectedCampus) {
         filteredProjects = filteredProjects.filter((project) => {
           return isCampusMatch(project.campus_name, selectedCampus.name);
@@ -77,7 +77,7 @@ const UpcomingProjectSection: React.FC<UpcomingProjectSectionProps> = ({
   // Update title เพื่อแสดง campus ที่เลือก
   const displayTitle = useMemo(() => {
     if (activeCampus && campuses.length > 0) {
-      const selectedCampus = campuses.find(campus => campus.id === activeCampus);
+      const selectedCampus = campuses.find(campus => campus.name === activeCampus);
       if (selectedCampus) {
         return `${title} (${selectedCampus.name})`;
       }

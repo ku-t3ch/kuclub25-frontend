@@ -13,7 +13,6 @@ interface OrganizationProjectSectionProps {
   onProjectClick: (project: any) => void;
 }
 
-// Constants outside component to prevent recreation
 const CONTAINER_VARIANTS = {
   hidden: { opacity: 0 },
   visible: {

@@ -49,7 +49,7 @@ const OrganizationsPage: React.FC = () => {
       return filteredOrganizations;
     }
 
-    const selectedCampusData = campuses.find(campus => campus.id === selectedCampus);
+    const selectedCampusData = campuses.find(campus => campus.name === selectedCampus);
     if (!selectedCampusData) {
       return filteredOrganizations;
     }

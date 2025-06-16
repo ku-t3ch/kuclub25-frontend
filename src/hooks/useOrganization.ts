@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { apiService, ApiError } from "../services/apiService";
 import { API_CONFIG } from "../configs/API.config";
 import { useProjects } from "./useProject";
@@ -10,46 +10,75 @@ import {
   OrganizationFilters,
 } from "../types/organization";
 
+
+const normalizeOrganization = (() => {
+  const cache = new WeakMap<any, Organization>();
+  
+  return (org: any): Organization => {
+    if (cache.has(org)) {
+      return cache.get(org)!;
+    }
+
+    const normalized = {
+      ...org,
+      id: String(org.id),
+      org_type_id: String(org.org_type_id),
+      org_type_name: org.org_type_name || "",
+      campus_name: org.campus_name || "",
+      campus_id: org.campus_id || "",
+      views: Number(org.views) || 0,
+    };
+
+    cache.set(org, normalized);
+    return normalized;
+  };
+})();
+
 export const useOrganizations = (): OrganizationAllReturn => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  const normalizeOrganization = useCallback((org: any): Organization => ({
-    ...org,
-    id: String(org.id),
-    org_type_id: String(org.org_type_id),
-    org_type_name: org.org_type_name || "",
-    campus_name: org.campus_name || "",
-    campus_id: org.campus_id || "",
-    views: Number(org.views) || 0,
-  }), []);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchOrganizations = useCallback(async () => {
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setLoading(true);
     setError(null);
-
+    
     try {
       const response = await apiService.get<OrganizationsResponse>(
         API_CONFIG.ENDPOINTS.ORGANIZATIONS.LIST
       );
 
-      if (response.success && response.data) {
-        setOrganizations(response.data.map(normalizeOrganization));
-      } else {
-        throw new Error(response.message || "Failed to fetch organizations");
+      if (!controller.signal.aborted) {
+        if (response.success && response.data) {
+          setOrganizations(response.data.map(normalizeOrganization));
+        } else {
+          throw new Error(response.message || "Failed to fetch organizations");
+        }
       }
     } catch (error) {
-      const errorMessage = error instanceof ApiError 
-        ? error.message 
-        : "An unexpected error occurred while fetching organizations";
-      
-      setError(errorMessage);
-      setOrganizations([]);
+      if (!controller.signal.aborted) {
+        const errorMessage = error instanceof ApiError 
+          ? error.message 
+          : "An unexpected error occurred while fetching organizations";
+        
+        setError(errorMessage);
+        setOrganizations([]);
+      }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
-  }, [normalizeOrganization]);
+  }, []);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -57,6 +86,13 @@ export const useOrganizations = (): OrganizationAllReturn => {
 
   useEffect(() => {
     fetchOrganizations();
+
+    // Cleanup on unmount
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchOrganizations]);
 
   return {
@@ -79,6 +115,7 @@ export const useOrganizationsWithFilters = (): UseOrganizationsWithFiltersReturn
   const { projects } = useProjects();
   const [filters, setFilters] = useState<OrganizationFilters>({});
 
+  // Memoized filter functions
   const filterByType = useCallback((orgs: Organization[], typeName: string) => 
     orgs.filter(org => org.org_type_name === typeName), []);
 
@@ -95,6 +132,7 @@ export const useOrganizationsWithFilters = (): UseOrganizationsWithFiltersReturn
     );
   }, []);
 
+  // Memoized sorting with performance optimization
   const sortOrganizations = useCallback((orgs: Organization[], sortBy: string) => {
     switch (sortBy) {
       case "latest":
@@ -155,6 +193,7 @@ export const useOrganizationsWithFilters = (): UseOrganizationsWithFiltersReturn
     return orgs;
   }, []);
 
+
   const filteredOrganizations = useMemo(() => {
     let result = [...organizations];
 
@@ -177,6 +216,18 @@ export const useOrganizationsWithFilters = (): UseOrganizationsWithFiltersReturn
     return applyPagination(result, filters.offset, filters.limit);
   }, [organizations, filters, filterByType, filterByCampus, filterBySearch, sortOrganizations, applyPagination]);
 
+  // Optimized setFilters to avoid unnecessary updates
+  const optimizedSetFilters = useCallback((newFilters: OrganizationFilters) => {
+    setFilters(prev => {
+      const merged = { ...prev, ...newFilters };
+      // Only update if actually different
+      if (JSON.stringify(merged) !== JSON.stringify(prev)) {
+        return merged;
+      }
+      return prev;
+    });
+  }, []);
+
   return {
     organizations,
     filteredOrganizations,
@@ -184,7 +235,7 @@ export const useOrganizationsWithFilters = (): UseOrganizationsWithFiltersReturn
     error,
     refetch,
     clearError,
-    setFilters,
+    setFilters: optimizedSetFilters,
     currentFilters: filters,
   };
 };
@@ -201,9 +252,18 @@ export const useOrganizationDetail = (id: string | null): UseOrganizationDetailR
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchOrganization = useCallback(async () => {
     if (!id) return;
+
+    // Cancel previous request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     setLoading(true);
     setError(null);
@@ -213,26 +273,26 @@ export const useOrganizationDetail = (id: string | null): UseOrganizationDetailR
         API_CONFIG.ENDPOINTS.ORGANIZATIONS.DETAIL(id)
       );
 
-      if (response.success && response.data) {
-        setOrganization({
-          ...response.data,
-          id: String(response.data.id),
-          org_type_id: String(response.data.org_type_id),
-          org_type_name: response.data.org_type_name || "",
-          views: Number(response.data.views) || 0,
-        });
-      } else {
-        throw new Error(response.message || "Failed to fetch organization");
+      if (!controller.signal.aborted) {
+        if (response.success && response.data) {
+          setOrganization(normalizeOrganization(response.data));
+        } else {
+          throw new Error(response.message || "Failed to fetch organization");
+        }
       }
     } catch (error) {
-      const errorMessage = error instanceof ApiError 
-        ? error.message 
-        : "An unexpected error occurred while fetching organization";
-      
-      setError(errorMessage);
-      setOrganization(null);
+      if (!controller.signal.aborted) {
+        const errorMessage = error instanceof ApiError 
+          ? error.message 
+          : "An unexpected error occurred while fetching organization";
+        
+        setError(errorMessage);
+        setOrganization(null);
+      }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
   }, [id]);
 
@@ -242,6 +302,13 @@ export const useOrganizationDetail = (id: string | null): UseOrganizationDetailR
 
   useEffect(() => {
     fetchOrganization();
+
+    // Cleanup on unmount
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [fetchOrganization]);
 
   return {

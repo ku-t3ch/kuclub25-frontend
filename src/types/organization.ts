@@ -1,8 +1,11 @@
 export interface Campus {
-  id: string;
   name: string;
-  code?: string;
-  description?: string;
+}
+
+export interface CampusApiResponse {
+  success: boolean;
+  data: string[]; 
+  message?: string;
 }
 
 export interface CampusResponse {
@@ -10,6 +13,8 @@ export interface CampusResponse {
   data: Campus[];
   message?: string;
 }
+
+
 
 export interface Organization {
   org_type_id: string;
