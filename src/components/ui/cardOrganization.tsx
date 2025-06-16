@@ -68,6 +68,37 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
     [id, router]
   );
 
+  // เพิ่ม utility function สำหรับตรวจสอบขนาดรูป
+  const isSquareImage = useMemo(() => {
+    if (!image) return false;
+    return (
+      image.includes("400x400") ||
+      image.includes("200x200") ||
+      (image.match(/\d+x\d+/) && image.match(/(\d+)x\1/)) // ตรวจสอบ pattern เช่น 300x300
+    );
+  }, [image]);
+
+  const getImageStyles = useMemo(() => {
+    const baseStyles = {
+      filter: "contrast(1.05) saturate(1.05) brightness(1.02)",
+      imageRendering: "high-quality" as const,
+      objectPosition: "center center" as const,
+    };
+
+    if (isSquareImage) {
+      return {
+        ...baseStyles,
+        objectFit: "contain" as const,
+        padding: "8px", // เพิ่ม padding เล็กน้อยสำหรับรูปสี่เหลี่ยมจัตุรัส
+      };
+    }
+
+    return {
+      ...baseStyles,
+      objectFit: "cover" as const,
+    };
+  }, [isSquareImage]);
+
   return (
     <motion.div
       className={combine(
@@ -90,21 +121,71 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
       onClick={handleDetailClick}
       layout
     >
-      {/* Image Section */}
+      {/* Image Section - Updated with dynamic styling */}
       <div className="aspect-[16/9] relative overflow-hidden group">
         {image ? (
           <div className="w-full h-full relative">
             <motion.img
               src={image}
               alt={displayName}
-              className="w-full h-full object-cover object-center"
+              className={combine(
+                "w-full h-full transition-all duration-400",
+                "object-center",
+                isSquareImage ? "object-contain" : "object-cover",
+                "[image-rendering:crisp-edges] [image-rendering:-webkit-optimize-contrast]",
+                "backdrop-blur-sm",
+                // เพิ่มเงาเล็กน้อยสำหรับรูปสี่เหลี่ยมจัตุรัส
+                isSquareImage && "drop-shadow-sm"
+              )}
+              style={getImageStyles}
               initial={{ scale: 1 }}
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: isSquareImage ? 1.02 : 1.05 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
               onError={handleImageError}
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+
+            {/* Background blur - ปรับความเข้มตามประเภทรูป */}
+            <div
+              className="absolute inset-0 -z-10"
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                filter: isSquareImage
+                  ? "blur(30px) brightness(0.3) saturate(1.8) contrast(1.3)"
+                  : "blur(25px) brightness(0.4) saturate(1.5) contrast(1.2)",
+                transform: "scale(1.15)",
+                opacity: isSquareImage ? 0.9 : 0.8,
+              }}
+            />
+
+            {/* Gradient overlay - ปรับตามประเภทรูป */}
+            <div
+              className={combine(
+                "absolute inset-0 transition-opacity duration-300",
+                isSquareImage
+                  ? "bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-40"
+                  : "bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-50 group-hover:opacity-30"
+              )}
+            />
+
+            {/* Decorative frame สำหรับรูปสี่เหลี่ยมจัตุรัส */}
+            {isSquareImage && (
+              <div
+                className={combine(
+                  "absolute inset-3 rounded-xl border-2 opacity-0 transition-all duration-300",
+                  "group-hover:opacity-30 group-hover:inset-2",
+                  getValueForTheme(
+                    "border-[#54CF90]/40 shadow-[#54CF90]/20",
+                    "border-[#006C67]/30 shadow-[#006C67]/10"
+                  )
+                )}
+                style={{
+                  boxShadow: "inset 0 0 20px rgba(255,255,255,0.1)",
+                }}
+              />
+            )}
           </div>
         ) : (
           <div
@@ -132,21 +213,22 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
           </div>
         )}
 
-        {/* Type Tag */}
+        {/* Type Tag - เพิ่มการปรับแต่ง */}
         {type && (
-          <div className="absolute top-2 xs:top-1.5 sm:top-3 md:top-3 left-2.5 xs:left-1.5 sm:left-2 md:left-3">
+          <div className="absolute top-2 xs:top-1.5 sm:top-3 md:top-3 left-2.5 xs:left-1.5 sm:left-2 md:left-3 z-20">
             <div
               className={combine(
-                "backdrop-blur-sm rounded-full shadow-sm flex items-center",
+                "backdrop-blur-md rounded-full shadow-lg flex items-center transition-transform duration-300",
                 "px-1 xs:px-1.5 sm:px-2 md:px-3 py-px xs:py-0.5 sm:py-1",
+                "group-hover:scale-105",
                 getValueForTheme(
-                  "bg-[#54CF90]/70  text-white  border border-[#54CF90]/30",
-                  "bg-gradient-to-r from-[#006C67]/90 to-teal-600/90 text-white shadow-[#006C67]/20 border border-[#006C67]/30"
+                  "bg-[#54CF90]/85 text-white border border-[#54CF90]/50 shadow-black/30",
+                  "bg-gradient-to-r from-[#006C67]/95 to-teal-600/95 text-white shadow-[#006C67]/40 border border-[#006C67]/50"
                 )
               )}
             >
-              <span className="bg-white/30 hidden xs:block w-0.5 h-0.5 xs:w-1 xs:h-1 sm:w-1.5 sm:h-1.5 rounded-full mr-0.5 xs:mr-1 sm:mr-1.5" />
-              <span className="text-[0.5rem] xs:text-3xs sm:text-2xs md:text-xs font-medium truncate max-w-[80px] xs:max-w-[100px] sm:max-w-full">
+              <span className="bg-white/50 hidden xs:block w-0.5 h-0.5 xs:w-1 xs:h-1 sm:w-1.5 sm:h-1.5 rounded-full mr-0.5 xs:mr-1 sm:mr-1.5 animate-pulse" />
+              <span className="text-[0.5rem] xs:text-3xs sm:text-2xs md:text-xs font-bold truncate max-w-[80px] xs:max-w-[100px] sm:max-w-full">
                 {type}
               </span>
             </div>
@@ -298,7 +380,6 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
     </motion.div>
   );
 };
-
 
 export default memo(CardOrganization, (prevProps, nextProps) => {
   return (
