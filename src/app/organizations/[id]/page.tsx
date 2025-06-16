@@ -309,16 +309,6 @@ export default function OrganizationDetailPage() {
           </div>
         </div>
 
-        {/* Visual separator - moved inside Suspense for consistency */}
-        <div
-          className={combine(
-            "relative h-px mx-auto w-[70%] my-8",
-            getValueForTheme(
-              "bg-gradient-to-r from-transparent via-white/20 to-transparent",
-              "bg-gradient-to-r from-transparent via-gray-300 to-transparent"
-            )
-          )}
-        />
       </React.Suspense>
     </div>
   );

@@ -609,6 +609,31 @@
   
   .rbc-header {
     padding: 6px 3px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Abbreviated day names for mobile */
+  .rbc-header:nth-child(1)::after { content: 'อา'; }
+  .rbc-header:nth-child(2)::after { content: 'จ'; }
+  .rbc-header:nth-child(3)::after { content: 'อ'; }
+  .rbc-header:nth-child(4)::after { content: 'พ'; }
+  .rbc-header:nth-child(5)::after { content: 'พฤ'; }
+  .rbc-header:nth-child(6)::after { content: 'ศ'; }
+  .rbc-header:nth-child(7)::after { content: 'ส'; }
+  
+  .rbc-header {
+    text-indent: -9999px;
+    position: relative;
+  }
+  
+  .rbc-header::after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-indent: 0;
+    font-weight: 500;
   }
   
   .rbc-date-cell {

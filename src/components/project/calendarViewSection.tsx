@@ -127,7 +127,15 @@ const CalendarSkeleton = memo(
         <div className="p-4">
           {/* Week headers */}
           <div className="grid grid-cols-7 gap-2 mb-2">
-            {["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"].map((day, i) => (
+            {[
+              { full: "อาทิตย์", short: "อา" },
+              { full: "จันทร์", short: "จ" },
+              { full: "อังคาร", short: "อ" },
+              { full: "พุธ", short: "พ" },
+              { full: "พฤหัสบดี", short: "พฤ" },
+              { full: "ศุกร์", short: "ศ" },
+              { full: "เสาร์", short: "ส" }
+            ].map((day, i) => (
               <div
                 key={i}
                 className={combine(
@@ -135,7 +143,8 @@ const CalendarSkeleton = memo(
                   getValueForTheme("text-white/60", "text-gray-500")
                 )}
               >
-                {day}
+                <span className="hidden sm:inline">{day.full}</span>
+                <span className="sm:hidden">{day.short}</span>
               </div>
             ))}
           </div>
