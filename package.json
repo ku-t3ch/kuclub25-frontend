@@ -21,7 +21,8 @@
     "react-big-calendar": "^1.19.2",
     "react-dom": "^19.0.0",
     "simplex-noise": "^4.0.3",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "tanstack": "^1.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
