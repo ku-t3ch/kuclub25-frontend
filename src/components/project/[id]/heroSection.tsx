@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useCallback, memo, useState } from "react";
+import React, { useMemo, useCallback, memo } from "react";
 import { motion } from "framer-motion";
 import { useThemeUtils } from "../../../hooks/useThemeUtils";
 import { useUpdateOrganizationViews } from "../../../hooks/useOrganization";
@@ -192,25 +192,21 @@ const BackButton = memo<BackButtonProps>(({ onClick }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
   const buttonClass = useMemo(() => combine(
-    "mb-8 px-4 py-2 flex items-center rounded-full shadow-lg group transition-all",
+    "flex items-center gap-2 mb-6 px-4 py-2 rounded-lg transition-all duration-300",
     getValueForTheme(
-      "bg-white/10 text-white hover:bg-white/20 border border-white/20",
-      "bg-white text-[#006C67] hover:bg-gray-50 border border-[#006C67]/20"
+      "text-white/70 hover:text-white bg-white/5 border border-white/10 hover:bg-white/10",
+      "text-[#006C67]/70 hover:text-[#006C67] bg-white border border-[#006C67]/20 hover:bg-[#006C67]/5"
     )
   ), [combine, getValueForTheme]);
 
   return (
     <motion.button
       {...ANIMATION_VARIANTS.backButton}
-      whileHover={{ x: -5 }}
-      whileTap={{ scale: 0.95 }}
       onClick={onClick}
       className={buttonClass}
     >
-      <span className="mr-2 group-hover:transform group-hover:-translate-x-1 transition-transform">
-        ←
-      </span>
-      <span>ย้อนกลับ</span>
+      <BackIcon />
+      กลับ
     </motion.button>
   );
 });
@@ -243,7 +239,7 @@ const ProjectHeroSection = memo<HeroSectionProps>(({
   const { updateViews } = useUpdateOrganizationViews();
 
   // เพิ่ม state เพื่อป้องกันการเรียกซ้ำ
-  const [isUpdatingViews, setIsUpdatingViews] = useState(false);
+  const [isUpdatingViews, setIsUpdatingViews] = React.useState(false);
 
   // Memoize sorted activity tags
   const sortedActivityTags = useMemo(() => {
