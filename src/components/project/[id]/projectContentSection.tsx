@@ -16,7 +16,7 @@ interface ContentSectionProps {
   projectData: any;
 }
 
-// Pre-defined animation variants for better performance
+// Pre-defined animation variants
 const containerVariants = {
   initial: { opacity: 0, x: -20 },
   animate: { opacity: 1, x: 0 },
@@ -33,22 +33,41 @@ const itemVariants = {
   animate: { opacity: 1, y: 0 },
 };
 
-const ClockIcon = React.memo(() => (
+const ClockIcon = () => (
   <svg className="w-3 h-3 xs:w-4 xs:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
-));
-ClockIcon.displayName = "ClockIcon";
+);
 
-const ChevronDownIcon = React.memo(() => (
+const ChevronDownIcon = () => (
   <svg className="w-3 h-3 xs:w-4 xs:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
-));
-ChevronDownIcon.displayName = "ChevronDownIcon";
+);
 
-// Memoized time slot component with responsive design
+// Helper function to extract time from ISO string or regular time string
+const formatTimeFromString = (timeString: string): string => {
+  if (!timeString) return '';
+  
+  if (timeString.includes('T') && (timeString.includes('Z') || timeString.includes('+'))) {
+    try {
+      const date = new Date(timeString);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleTimeString('th-TH', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          timeZone: 'Asia/Bangkok'
+        });
+      }
+    } catch (error) {
+      console.warn('Error parsing ISO date string:', timeString);
+    }
+  }
+  
+  return timeString;
+};
+
 const TimeSlot = React.memo<{
   timeSlot: { startTime: string; endTime: string; description: string };
   slotIndex: number;
@@ -57,17 +76,19 @@ const TimeSlot = React.memo<{
   const { combine, getValueForTheme } = themeUtils;
 
   const timeDisplay = useMemo(() => {
-    if (timeSlot.startTime && timeSlot.endTime) {
-      return `${timeSlot.startTime} - ${timeSlot.endTime} น.`;
-    } else if (timeSlot.startTime) {
-      return `${timeSlot.startTime} น.`;
+    const startTime = formatTimeFromString(timeSlot.startTime);
+    const endTime = formatTimeFromString(timeSlot.endTime);
+    
+    if (startTime && endTime) {
+      return `${startTime} - ${endTime} น.`;
+    } else if (startTime) {
+      return `${startTime} น.`;
     }
     return 'ไม่ระบุเวลา';
   }, [timeSlot.startTime, timeSlot.endTime]);
 
   return (
     <motion.div
-      key={slotIndex}
       variants={itemVariants}
       initial="initial"
       animate="animate"
@@ -80,7 +101,6 @@ const TimeSlot = React.memo<{
         )
       )}
     >
-      {/* Time Range */}
       <div className="flex items-center gap-1 xs:gap-2 mb-1 xs:mb-2">
         <div className={combine(
           "w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full flex-shrink-0",
@@ -95,7 +115,6 @@ const TimeSlot = React.memo<{
         </div>
       </div>
       
-      {/* Activity Description */}
       {timeSlot.description && (
         <p className={combine(
           "text-xs xs:text-sm leading-relaxed pl-2 xs:pl-4 break-words",
@@ -107,14 +126,12 @@ const TimeSlot = React.memo<{
     </motion.div>
   );
 });
-TimeSlot.displayName = "TimeSlot";
 
 const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
   const themeUtils = useThemeUtils();
   const { combine, getValueForTheme } = themeUtils;
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Memoized parsed day data
   const parsedDay = useMemo(() => {
     if (!day) return null;
 
@@ -126,62 +143,45 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
     }> = [];
     let dayDescription = '';
 
-    // Parse date - handle both regular date strings and ISO strings
     try {
-      if (day.date) {
-        date = new Date(day.date);
-        if (isNaN(date.getTime())) {
-          date = new Date();
-        }
-      } else {
-        date = new Date();
-      }
+      date = day.date ? new Date(day.date) : new Date();
+      if (isNaN(date.getTime())) date = new Date();
     } catch {
       date = new Date();
     }
 
-    // Parse day description
     dayDescription = day.description ? String(day.description) : '';
 
-    // Parse time data - handle multiple formats
     if (day.time) {
       if (Array.isArray(day.time)) {
-        // Format 1: Array of objects with time_start, time_end, description
         if (day.time.length > 0 && typeof day.time[0] === 'object' && day.time[0].time_start) {
           timeSlots = day.time.map((timeSlot: any) => ({
-            startTime: timeSlot.time_start || '',
-            endTime: timeSlot.time_end || '',
+            startTime: formatTimeFromString(timeSlot.time_start || ''),
+            endTime: formatTimeFromString(timeSlot.time_end || ''),
             description: timeSlot.description || dayDescription
           }));
-        }
-        // Format 2: Array of time strings [startTime, endTime]
-        else if (day.time.length >= 2 && typeof day.time[0] === 'string') {
+        } else if (day.time.length >= 2 && typeof day.time[0] === 'string') {
           timeSlots = [{
-            startTime: day.time[0],
-            endTime: day.time[1],
+            startTime: formatTimeFromString(day.time[0]),
+            endTime: formatTimeFromString(day.time[1]),
             description: dayDescription
           }];
-        }
-        // Format 3: Single time slot
-        else if (day.time.length === 1) {
+        } else if (day.time.length === 1) {
           timeSlots = [{
-            startTime: day.time[0],
+            startTime: formatTimeFromString(day.time[0]),
             endTime: '',
             description: dayDescription
           }];
         }
-      }
-      // If time is not an array, treat as single time
-      else if (typeof day.time === 'string') {
+      } else if (typeof day.time === 'string') {
         timeSlots = [{
-          startTime: day.time,
+          startTime: formatTimeFromString(day.time),
           endTime: '',
           description: dayDescription
         }];
       }
     }
 
-    // If no time slots found, create a default one
     if (timeSlots.length === 0) {
       timeSlots = [{
         startTime: '',
@@ -190,14 +190,9 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
       }];
     }
 
-    return {
-      date,
-      timeSlots,
-      dayDescription
-    };
+    return { date, timeSlots, dayDescription };
   }, [day]);
 
-  // Memoized calculations
   const scheduleInfo = useMemo(() => {
     if (!parsedDay) return null;
 
@@ -215,28 +210,16 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
           ? `${firstTimeSlot.startTime} น.`
           : 'ไม่ระบุเวลา';
 
-    return {
-      totalTimeSlots,
-      hasMultipleSlots,
-      firstTimeSlot,
-      timeDisplay
-    };
+    return { totalTimeSlots, hasMultipleSlots, firstTimeSlot, timeDisplay };
   }, [parsedDay]);
 
-  // Memoized event handlers
   const handleToggle = useCallback(() => {
     if (scheduleInfo?.hasMultipleSlots) {
       setIsExpanded(prev => !prev);
     }
   }, [scheduleInfo?.hasMultipleSlots]);
 
-  const truncateDescription = useCallback((text: string, maxLength: number = 30) => {
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-  }, []);
-
-  if (!parsedDay || !scheduleInfo) {
-    return null;
-  }
+  if (!parsedDay || !scheduleInfo) return null;
 
   const { date, timeSlots, dayDescription } = parsedDay;
   const { totalTimeSlots, hasMultipleSlots, firstTimeSlot, timeDisplay } = scheduleInfo;
@@ -255,7 +238,6 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
         )
       )}
     >
-      {/* Header - Always Visible */}
       <div
         className={combine(
           "p-3 xs:p-4 transition-all duration-200",
@@ -266,19 +248,10 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
           )
         )}
         onClick={handleToggle}
-        role={hasMultipleSlots ? "button" : undefined}
-        tabIndex={hasMultipleSlots ? 0 : undefined}
-        onKeyDown={hasMultipleSlots ? (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleToggle();
-          }
-        } : undefined}
       >
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            {/* Date and Time Section */}
-            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-3 mb-2 ">
+            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-3 mb-2">
               <h4 className={combine(
                 "font-medium text-md xs:text-base break-words",
                 getValueForTheme("text-white", "text-[#006C67]")
@@ -286,7 +259,6 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
                 {formatDateForDisplay(date)}
               </h4>
               
-              {/* Time Range Summary */}
               <div className="flex items-center gap-1 xs:gap-2">
                 <ClockIcon />
                 <span className={combine(
@@ -298,7 +270,6 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
               </div>
             </div>
 
-            {/* Day Description */}
             {dayDescription && (
               <p className={combine(
                 "text-sm xs:text-sm font-medium mb-2 break-words",
@@ -308,44 +279,31 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
               </p>
             )}
 
-            {/* Activity Count and Preview */}
             <div className="space-y-2">
               {hasMultipleSlots && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className={combine(
-                    "text-xs px-2 py-1 rounded-full flex-shrink-0",
-                    getValueForTheme(
-                      "bg-purple-500/20 text-purple-300",
-                      "bg-purple-100 text-purple-700"
-                    )
-                  )}>
-                    {totalTimeSlots} กิจกรรม
-                  </span>
-                </div>
+                <span className={combine(
+                  "text-xs px-2 py-1 rounded-full",
+                  getValueForTheme(
+                    "bg-purple-500/20 text-purple-300",
+                    "bg-purple-100 text-purple-700"
+                  )
+                )}>
+                  {totalTimeSlots} กิจกรรม
+                </span>
               )}
 
-              {/* Activity preview/description */}
               {firstTimeSlot.description && firstTimeSlot.description !== dayDescription && (
-                <div className="block">
-                  <span className={combine(
-                    "text-xs xs:text-sm leading-relaxed break-words",
-                    getValueForTheme("text-white/70", "text-[#006C67]/60")
-                  )}>
-                    {hasMultipleSlots && !isExpanded 
-                      ? truncateDescription(firstTimeSlot.description, window.innerWidth < 375 ? 20 : 30)
-                      : !hasMultipleSlots 
-                        ? firstTimeSlot.description
-                        : truncateDescription(firstTimeSlot.description, window.innerWidth < 375 ? 20 : 30)
-                    }
-                  </span>
-                </div>
+                <span className={combine(
+                  "text-xs xs:text-sm leading-relaxed break-words block",
+                  getValueForTheme("text-white/70", "text-[#006C67]/60")
+                )}>
+                  {firstTimeSlot.description}
+                </span>
               )}
             </div>
           </div>
 
-          {/* Right Side - Day Indicator and Expand Button */}
           <div className="flex flex-col xs:flex-row items-end xs:items-center gap-2 flex-shrink-0">
-            {/* Day Indicator */}
             <div className={combine(
               "text-xs px-2 py-1 rounded-full",
               getValueForTheme(
@@ -356,7 +314,6 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
               วันที่ {index + 1}
             </div>
 
-            {/* Expand/Collapse Button */}
             {hasMultipleSlots && (
               <motion.div
                 animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -376,7 +333,6 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
         </div>
       </div>
 
-      {/* Expandable Content - Time Slots Details */}
       <AnimatePresence mode="wait">
         {hasMultipleSlots && isExpanded && (
           <motion.div
@@ -409,9 +365,8 @@ const ScheduleItem = React.memo<ScheduleItemProps>(({ day, index }) => {
     </motion.div>
   );
 });
-ScheduleItem.displayName = "ScheduleItem";
 
-// Memoized static icons with responsive sizing
+// Static icons
 const ICONS = {
   objectives: (
     <svg className="w-5 h-5 xs:w-6 xs:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -445,12 +400,11 @@ const ICONS = {
         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
   )
-} as const;
+};
 
 const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projectData }) => {
   const { combine, getValueForTheme } = useThemeUtils();
 
-  // Memoized theme values
   const themeValues = useMemo(() => ({
     cardBg: getValueForTheme(
       "bg-white/5 border-white/10 shadow-black/20",
@@ -464,51 +418,45 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
       "bg-white/5 border-white/10",
       "bg-gray-50 border border-[#006C67]/20"
     ),
-    locationTitle: getValueForTheme("text-[white]", "text-[#006C67]"),
+    locationTitle: getValueForTheme("text-white", "text-[#006C67]"),
     locationText: getValueForTheme("text-white/80", "text-[#006C67]/70"),
     contentText: getValueForTheme("text-white/80", "text-[#006C67]/80"),
   }), [getValueForTheme]);
 
-  // Memoized render function with responsive improvements
   const renderProjectCard = useCallback((
     title: string, 
     content: React.ReactNode, 
     delay = 0.4, 
     icon?: React.ReactNode
-  ) => {
-    return (
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay }}
-        className={combine(
-          "backdrop-blur-sm rounded-lg xs:rounded-xl sm:rounded-2xl lg:rounded-3xl",
-          "p-4 xs:p-5 sm:p-6 lg:p-8 border shadow-xl",
-          "mx-2 xs:mx-0", 
-          themeValues.cardBg
-        )}
-      >
-        <h2 className={combine(
-          "text-lg xs:text-xl sm:text-2xl font-semibold  mb-4 xs:mb-6",
-          "flex items-center gap-2 xs:gap-3 break-words",
-          themeValues.primaryText
-        )}>
-          <span className={themeValues.accentBlue}>
-            {icon}
-          </span>
-          <span className="break-words">{title}</span>
-        </h2>
-        <div className={combine(
-          "leading-relaxed font-light text-xs xs:text-sm sm:text-base",
-          themeValues.contentText
-        )}>
-          {content}
-        </div>
-      </motion.section>
-    );
-  }, [combine, themeValues]);
+  ) => (
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      className={combine(
+        "backdrop-blur-sm rounded-lg xs:rounded-xl sm:rounded-2xl lg:rounded-3xl",
+        "p-4 xs:p-5 sm:p-6 lg:p-8 border shadow-xl",
+        "mx-2 xs:mx-0", 
+        themeValues.cardBg
+      )}
+    >
+      <h2 className={combine(
+        "text-lg xs:text-xl sm:text-2xl font-semibold mb-4 xs:mb-6",
+        "flex items-center gap-2 xs:gap-3 break-words",
+        themeValues.primaryText
+      )}>
+        <span className={themeValues.accentBlue}>{icon}</span>
+        <span className="break-words">{title}</span>
+      </h2>
+      <div className={combine(
+        "leading-relaxed font-light text-xs xs:text-sm sm:text-base",
+        themeValues.contentText
+      )}>
+        {content}
+      </div>
+    </motion.section>
+  ), [combine, themeValues]);
 
-  // Memoized data parsing
   const scheduleData = useMemo(() => {
     if (!projectData?.scheduleData) return null;
     
@@ -528,11 +476,9 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
       {/* Project Description Card */}
       {project.project_description && renderProjectCard(
         "รายละเอียดกิจกรรม",
-        <div className="space-y-3 xs:space-y-4">
-          <p className="text-sm xs:text-base leading-relaxed break-words">
-            {project.project_description}
-          </p>
-        </div>,
+        <p className="text-sm xs:text-base leading-relaxed break-words">
+          {project.project_description}
+        </p>,
         0.3
       )}
 
@@ -552,10 +498,10 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
               )}
             >
               <span className={combine(
-                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2 ml-10 md:ml-8 xs:ml-6",
+                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2 ml-6 xs:ml-8 md:ml-10",
                 themeValues.bulletPoint
               )} />
-              <span className="break-words ">{objective}</span>
+              <span className="break-words">{objective}</span>
             </motion.li>
           ))}
         </ul>,
@@ -575,10 +521,9 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
       {scheduleData?.each_day?.length > 0 && renderProjectCard(
         "ตารางการดำเนินงาน",
         <div className="space-y-4 xs:space-y-6">
-          {/* Location */}
           {scheduleData.location && (
             <div className={combine(
-              " p-3 xs:p-4 rounded-lg border flex items-start gap-2 xs:gap-3",
+              "p-3 xs:p-4 rounded-lg border flex items-start gap-2 xs:gap-3",
               themeValues.locationCardBg
             )}>
               <span className={combine("flex-shrink-0 relative z-10 top-1", themeValues.accentBlue)}>
@@ -601,8 +546,7 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
             </div>
           )}
 
-          {/* Schedule Days */}
-          <div className="space-y-3 xs:space-y-4 ">
+          <div className="space-y-3 xs:space-y-4">
             {scheduleData.each_day.map((day: any, index: number) => (
               <ScheduleItem
                 key={`schedule-${index}-${day.date || index}`}
@@ -632,10 +576,10 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
               )}
             >
               <span className={combine(
-                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2 ml-10 md:ml-8 xs:ml-6",
+                "flex-shrink-0 w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full mt-1.5 xs:mt-2 ml-6 xs:ml-8 md:ml-10",
                 themeValues.bulletPoint
               )} />
-              <span className="break-words ">{outcome}</span>
+              <span className="break-words">{outcome}</span>
             </motion.li>
           ))}
         </ul>,
@@ -645,7 +589,5 @@ const ProjectContentSection = React.memo<ContentSectionProps>(({ project, projec
     </div>
   );
 });
-
-ProjectContentSection.displayName = "ProjectContentSection";
 
 export default ProjectContentSection;
