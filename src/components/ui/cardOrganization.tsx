@@ -85,17 +85,11 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
       objectPosition: "center center" as const,
     };
 
-    if (isSquareImage) {
-      return {
-        ...baseStyles,
-        objectFit: "contain" as const,
-        padding: "8px", // เพิ่ม padding เล็กน้อยสำหรับรูปสี่เหลี่ยมจัตุรัส
-      };
-    }
-
+    // ใช้ contain สำหรับทุกรูปเพื่อให้แสดงเหมือนกัน
     return {
       ...baseStyles,
-      objectFit: "cover" as const,
+      objectFit: "contain" as const,
+      padding: isSquareImage ? "8px" : "4px", // padding เล็กน้อยสำหรับทุกรูป
     };
   }, [isSquareImage]);
 
@@ -130,43 +124,37 @@ const CardOrganization: React.FC<CardOrganizationProps> = ({
               alt={displayName}
               className={combine(
                 "w-full h-full transition-all duration-400",
-                "object-center",
-                isSquareImage ? "object-contain" : "object-cover",
+                "object-center object-contain", // ใช้ object-contain สำหรับทุกรูป
                 "[image-rendering:crisp-edges] [image-rendering:-webkit-optimize-contrast]",
                 "backdrop-blur-sm",
-                // เพิ่มเงาเล็กน้อยสำหรับรูปสี่เหลี่ยมจัตุรัส
-                isSquareImage && "drop-shadow-sm"
+                "drop-shadow-sm" // เพิ่มเงาสำหรับทุกรูป
               )}
               style={getImageStyles}
               initial={{ scale: 1 }}
-              whileHover={{ scale: isSquareImage ? 1.02 : 1.05 }}
+              whileHover={{ scale: 1.02 }} // ใช้ scale เดียวกันสำหรับทุกรูป
               transition={{ duration: 0.4, ease: "easeOut" }}
               onError={handleImageError}
               loading="lazy"
             />
 
-            {/* Background blur - ปรับความเข้มตามประเภทรูป */}
+            {/* Background blur - ใช้การตั้งค่าเดียวกันสำหรับทุกรูป */}
             <div
               className="absolute inset-0 -z-10"
               style={{
                 backgroundImage: `url(${image})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                filter: isSquareImage
-                  ? "blur(30px) brightness(0.3) saturate(1.8) contrast(1.3)"
-                  : "blur(25px) brightness(0.4) saturate(1.5) contrast(1.2)",
+                filter: "blur(25px) brightness(0.4) saturate(1.5) contrast(1.2)", // ใช้ค่าเดียวกัน
                 transform: "scale(1.15)",
-                opacity: isSquareImage ? 0.9 : 0.8,
+                opacity: 0.8, // ใช้ opacity เดียวกัน
               }}
             />
 
-            {/* Gradient overlay - ปรับตามประเภทรูป */}
+            {/* Gradient overlay - ใช้การตั้งค่าเดียวกันสำหรับทุกรูป */}
             <div
               className={combine(
                 "absolute inset-0 transition-opacity duration-300",
-                isSquareImage
-                  ? "bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-40"
-                  : "bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-50 group-hover:opacity-30"
+                "bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-50 group-hover:opacity-30" // ใช้ค่าเดียวกัน
               )}
             />
 

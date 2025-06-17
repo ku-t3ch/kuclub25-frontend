@@ -59,17 +59,20 @@ export const useOrganizations = (): OrganizationAllReturn => {
 
       if (!controller.signal.aborted) {
         if (response.success && response.data) {
-          setOrganizations(response.data.map(normalizeOrganization));
+          const normalizedOrganizations = response.data.map(normalizeOrganization);
+          setOrganizations(normalizedOrganizations);
         } else {
           throw new Error(response.message || "Failed to fetch organizations");
         }
       }
     } catch (error) {
       if (!controller.signal.aborted) {
-        const errorMessage = error instanceof ApiError 
-          ? error.message 
-          : "An unexpected error occurred while fetching organizations";
-        
+        const errorMessage =
+          error instanceof ApiError
+            ? error.message
+            : "An unexpected error occurred";
+
+        console.error("Error fetching organizations:", error);
         setError(errorMessage);
         setOrganizations([]);
       }
@@ -82,6 +85,28 @@ export const useOrganizations = (): OrganizationAllReturn => {
 
   const clearError = useCallback(() => {
     setError(null);
+  }, []);
+
+  // Add updateViews function to update local state
+  const updateViews = useCallback(async (orgId: string): Promise<void> => {
+    try {
+      const response = await apiService.put<UpdateViewsResponse>(
+        API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE_VIEWS(orgId),
+        {}
+      );
+
+      if (response.success && response.data) {
+        // Update the local state with new view count
+        setOrganizations(prev => prev.map(org => 
+          org.id === orgId 
+            ? { ...org, views: response.data.currentViews }
+            : org
+        ));
+      }
+    } catch (error) {
+      console.error('Error updating organization views:', error);
+      // Don't throw error to prevent UI from breaking
+    }
   }, []);
 
   useEffect(() => {
@@ -101,6 +126,7 @@ export const useOrganizations = (): OrganizationAllReturn => {
     error,
     refetch: fetchOrganizations,
     clearError,
+    updateViews, // Add this to the return object
   };
 };
 
@@ -320,14 +346,44 @@ export const useOrganizationDetail = (id: string | null): UseOrganizationDetailR
   };
 };
 
+interface UpdateViewsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    currentViews: number;
+    updated: boolean;
+    organization: Organization;
+  };
+}
+
 export const useUpdateOrganizationViews = () => {
-  const updateViews = useCallback(async (orgId: string) => {
+  const lastUpdateTime = useRef<Record<string, number>>({});
+  const RATE_LIMIT_MS = 3000; // 3 วินาที
+
+  const updateViews = useCallback(async (orgId: string): Promise<number | null> => {
+    if (!orgId) return null;
+    
+    const now = Date.now();
+    const lastUpdate = lastUpdateTime.current[orgId] || 0;
+    
+    if (now - lastUpdate < RATE_LIMIT_MS) {
+      console.log('Rate limit: รออีกสักครู่ก่อนอัพเดทครั้งต่อไป');
+      return null;
+    }
+    
+    lastUpdateTime.current[orgId] = now;
+    
     try {
-      return await apiService.put(
-        API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE_VIEWS(orgId)
+      const response = await apiService.put<UpdateViewsResponse>(
+        API_CONFIG.ENDPOINTS.ORGANIZATIONS.UPDATE_VIEWS(orgId),
+        {}
       );
+
+      return response.success ? response.data?.currentViews ?? null : null;
     } catch (error) {
-      throw error;
+      console.error('เกิดข้อผิดพลาดในการอัพเดทจำนวนการดู:', error);
+      return null;
     }
   }, []);
 

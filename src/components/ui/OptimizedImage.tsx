@@ -89,17 +89,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       objectPosition: "center center" as const,
     };
 
-    if (is400x400Image) {
-      return {
-        ...baseStyles,
-        objectFit: "contain" as const, // ใช้ contain สำหรับรูปสี่เหลี่ยมจัตุรัส
-        filter: "contrast(1.15) saturate(1.15) brightness(1.05)", // เพิ่มคุณภาพ
-      };
-    }
-
+    // ใช้ contain สำหรับทุกรูปเพื่อแสดงรูปเต็มไม่ครอบตัด
     return {
       ...baseStyles,
-      objectFit: "cover" as const,
+      objectFit: "contain" as const,
+      filter: is400x400Image 
+        ? "contrast(1.15) saturate(1.15) brightness(1.05)" 
+        : "contrast(1.1) saturate(1.1) brightness(1.02)",
     };
   }, [is400x400Image]);
 
@@ -116,20 +112,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         </div>
       )}
 
-      {/* Background blur layer - ปรับสำหรับรูป 400x400 */}
+      {/* Background blur layer - ใช้แบบเดียวกันทุกรูป */}
       {optimizedSrc && !hasError && imageLoaded && (
         <div 
           className="absolute inset-0 -z-10"
           style={{
             backgroundImage: `url(${optimizedSrc})`,
-            backgroundSize: is400x400Image ? 'contain' : 'cover',
+            backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            filter: is400x400Image 
-              ? 'blur(25px) brightness(0.25) saturate(1.5) contrast(1.3)'
-              : 'blur(20px) brightness(0.3) saturate(1.2)',
+            filter: 'blur(20px) brightness(0.3) saturate(1.2)',
             transform: 'scale(1.1)',
-            opacity: is400x400Image ? 0.9 : 0.8,
+            opacity: 0.8,
           }}
         />
       )}
@@ -184,18 +178,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         </div>
       )}
 
-      {/* Decorative border สำหรับรูป 400x400 */}
-      {is400x400Image && imageLoaded && !hasError && (
-        <motion.div
-          className="absolute inset-2 border-2 border-white/10 rounded-lg pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.4 }}
-          style={{
-            boxShadow: "inset 0 0 20px rgba(255,255,255,0.05)"
-          }}
-        />
-      )}
+  
     </div>
   );
 };
