@@ -4,7 +4,7 @@ export interface OrganizationType {
 
 export interface OrganizationTypesApiResponse {
   success: boolean;
-  data: string[]; 
+  data: OrganizationType[]; 
   message?: string;
 }
 

@@ -4,7 +4,7 @@ export interface Campus {
 
 export interface CampusApiResponse {
   success: boolean;
-  data: string[]; 
+  data: Campus[]; 
   message?: string;
 }
 

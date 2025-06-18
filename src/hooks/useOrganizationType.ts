@@ -23,7 +23,7 @@ export const useOrganizationTypes = (): UseOrganizationTypesReturn => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchOrganizationTypes = useCallback(async () => {
-    // Cancel previous request
+    
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -41,12 +41,14 @@ export const useOrganizationTypes = (): UseOrganizationTypesReturn => {
 
       if (!controller.signal.aborted) {
         if (response.success && response.data) {
-          // Optimize normalization with memoization
-          const normalizedData = response.data.map((typeName) => ({
-            name: typeName,
-          }));
+          setOrganizationTypes(response.data);
 
-          setOrganizationTypes(normalizedData);
+          if (process.env.NODE_ENV === "development") {
+            console.log("🏷️ Organization types loaded:", {
+              count: response.data.length,
+              data: response.data,
+            });
+          }
         } else {
           throw new Error(
             response.message || "Failed to fetch organization types"
@@ -78,7 +80,6 @@ export const useOrganizationTypes = (): UseOrganizationTypesReturn => {
   useEffect(() => {
     fetchOrganizationTypes();
 
-    // Cleanup on unmount
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();

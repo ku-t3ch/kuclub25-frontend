@@ -13,25 +13,18 @@ export const useCampuses = () => {
       setLoading(true);
       setError(null);
 
-    
       const response = await apiService.get<CampusApiResponse>(
         API_CONFIG.ENDPOINTS.CAMPUSES || "/campuses"
       );
 
       if (response.success && response.data) {
-        const normalizedCampuses: Campus[] = response.data.map(
-          (campusName, index) => ({
-            name: campusName,
-          })
-        );
-
-        setCampuses(normalizedCampuses);
-
+      
+        setCampuses(response.data);
 
         if (process.env.NODE_ENV === "development") {
           console.log("🏛️ Campuses loaded:", {
             rawApiData: response.data,
-            normalizedData: normalizedCampuses,
+            count: response.data.length,
           });
         }
       } else {
